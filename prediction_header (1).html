@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PredictChain - Predicciones Descentralizadas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #000000;
+            color: #e7e9ea;
+        }
+
+        /* TOP HEADER CON CATEGORÍAS */
+        .top-header {
+            background-color: #000000;
+            border-bottom: 1px solid #2f3336;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            height: 53px;
+        }
+
+        .top-header-content {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 16px;
+            gap: 20px;
+        }
+
+        /* Logo */
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: #1d9bf0;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .logo svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        /* Categorías */
+        .categories-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .categories-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-link {
+            padding: 0 16px;
+            height: 53px;
+            display: flex;
+            align-items: center;
+            color: #71767b;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: color 0.2s;
+            position: relative;
+        }
+
+        .category-link:hover {
+            color: #e7e9ea;
+            background-color: rgba(29, 155, 240, 0.1);
+        }
+
+        .category-link.active {
+            color: #e7e9ea;
+            font-weight: 700;
+        }
+
+        .category-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background-color: #1d9bf0;
+            border-radius: 2px 2px 0 0;
+        }
+
+        /* Dropdown More */
+        .more-dropdown {
+            position: relative;
+        }
+
+        .more-btn {
+            padding: 0 16px;
+            height: 53px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #71767b;
+            background: none;
+            border: none;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .more-btn:hover {
+            color: #e7e9ea;
+            background-color: rgba(29, 155, 240, 0.1);
+        }
+
+        .more-btn svg {
+            width: 18px;
+            height: 18px;
+            transition: transform 0.2s;
+        }
+
+        .more-btn.active svg {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-content {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #000000;
+            border: 1px solid #2f3336;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(255, 255, 255, 0.1);
+            min-width: 200px;
+            margin-top: 8px;
+            display: none;
+            overflow: hidden;
+        }
+
+        .dropdown-content.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 12px 16px;
+            color: #e7e9ea;
+            text-decoration: none;
+            display: block;
+            font-size: 15px;
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background-color: rgba(29, 155, 240, 0.1);
+        }
+
+        /* Search */
+        .search-container {
+            flex-shrink: 0;
+        }
+
+        .search-input {
+            background-color: #202327;
+            border: 1px solid transparent;
+            border-radius: 9999px;
+            padding: 10px 16px;
+            padding-left: 45px;
+            color: #e7e9ea;
+            font-size: 15px;
+            width: 280px;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .search-wrapper {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #71767b;
+            pointer-events: none;
+        }
+
+        .search-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #1d9bf0;
+            background-color: #000000;
+        }
+
+        .search-input::placeholder {
+            color: #71767b;
+        }
+
+        /* MAIN HEADER */
+        .main-header {
+            background-color: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid #2f3336;
+            position: sticky;
+            top: 53px;
+            z-index: 999;
+        }
+
+        .main-nav {
+            display: flex;
+            align-items: stretch;
+            height: 53px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .nav-tab {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #71767b;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            position: relative;
+            text-decoration: none;
+            border: none;
+            background: none;
+        }
+
+        .nav-tab:hover {
+            background-color: rgba(29, 155, 240, 0.1);
+        }
+
+        .nav-tab.active {
+            color: #e7e9ea;
+            font-weight: 700;
+        }
+
+        .nav-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background-color: #1d9bf0;
+            border-radius: 2px 2px 0 0;
+        }
+
+        /* SIDEBAR MENU */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 275px;
+            background-color: #000000;
+            border-right: 1px solid #2f3336;
+            display: flex;
+            flex-direction: column;
+            padding: 8px 0;
+            z-index: 1001;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            width: 68px;
+        }
+
+        .sidebar-header {
+            padding: 0 12px 12px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sidebar-logo {
+            font-size: 26px;
+            font-weight: 800;
+            color: #1d9bf0;
+            padding: 12px;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: #e7e9ea;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .menu-toggle:hover {
+            background-color: rgba(29, 155, 240, 0.1);
+        }
+
+        .menu-toggle svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 12px 16px;
+            margin: 2px 8px;
+            color: #e7e9ea;
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: 400;
+            border-radius: 9999px;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+
+        .sidebar-item:hover {
+            background-color: rgba(29, 155, 240, 0.1);
+        }
+
+        .sidebar-item.active {
+            font-weight: 700;
+        }
+
+        .sidebar-item svg {
+            width: 26px;
+            height: 26px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-item-text {
+            white-space: nowrap;
+        }
+
+        .sidebar.collapsed .sidebar-item-text {
+            display: none;
+        }
+
+        .sidebar.collapsed .sidebar-item {
+            justify-content: center;
+            padding: 12px;
+        }
+
+        /* CONTENT AREA */
+        .content-wrapper {
+            margin-left: 275px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .content-wrapper.expanded {
+            margin-left: 68px;
+        }
+
+        .demo-content {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .prediction-card {
+            background-color: transparent;
+            border-bottom: 1px solid #2f3336;
+            padding: 16px;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+
+        .prediction-card:hover {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .prediction-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .prediction-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1d9bf0, #7856ff);
+        }
+
+        .prediction-info h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #e7e9ea;
+        }
+
+        .prediction-info p {
+            font-size: 13px;
+            color: #71767b;
+        }
+
+        .prediction-question {
+            font-size: 15px;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+
+        .prediction-options {
+            display: flex;
+            gap: 8px;
+        }
+
+        .option-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #2f3336;
+            border-radius: 9999px;
+            background-color: transparent;
+            color: #e7e9ea;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover {
+            background-color: rgba(29, 155, 240, 0.1);
+            border-color: #1d9bf0;
+        }
+
+        .option-btn.yes {
+            color: #00ba7c;
+        }
+
+        .option-btn.no {
+            color: #f91880;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .content-wrapper {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            .search-input {
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .top-header-content {
+                gap: 8px;
+                padding: 0 8px;
+            }
+
+            .logo-text {
+                display: none;
+            }
+
+            .category-link {
+                padding: 0 12px;
+                font-size: 14px;
+            }
+
+            .search-input {
+                width: 150px;
+                font-size: 14px;
+            }
+
+            .more-btn {
+                padding: 0 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .categories-container .category-link:nth-child(n+4) {
+                display: none;
+            }
+
+            .search-input {
+                width: 100px;
+                padding: 8px 12px;
+                padding-left: 35px;
+            }
+        }
+
+        /* Mobile menu button */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: #e7e9ea;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+
+        .mobile-menu-btn:hover {
+            background-color: rgba(29, 155, 240, 0.1);
+        }
+
+        .mobile-menu-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(91, 112, 131, 0.4);
+            z-index: 1000;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Overlay para móvil -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- SIDEBAR MENU -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">🔮</div>
+            <button class="menu-toggle" id="menuToggle">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                </svg>
+            </button>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="#" class="sidebar-item active">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 9c-2.49 0-4.5 2.01-4.5 4.5S9.51 18 12 18s4.5-2.01 4.5-4.5S14.49 9 12 9zm0 7c-1.38 0-2.5-1.12-2.5-2.5S10.62 11 12 11s2.5 1.12 2.5 2.5S13.38 16 12 16z"/>
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
+                </svg>
+                <span class="sidebar-item-text">Home</span>
+            </a>
+            
+            <a href="#" class="sidebar-item">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M10.25 3.75c-3.59 0-6.5 2.91-6.5 6.5s2.91 6.5 6.5 6.5c1.795 0 3.419-.726 4.596-1.904 1.178-1.177 1.904-2.801 1.904-4.596 0-3.59-2.91-6.5-6.5-6.5zm-8.5 6.5c0-4.694 3.806-8.5 8.5-8.5s8.5 3.806 8.5 8.5c0 1.986-.682 3.815-1.824 5.262l4.781 4.781-1.414 1.414-4.781-4.781c-1.447 1.142-3.276 1.824-5.262 1.824-4.694 0-8.5-3.806-8.5-8.5z"/>
+                </svg>
+                <span class="sidebar-item-text">Explore</span>
+            </a>
+            
+            <a href="#" class="sidebar-item">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19.993 9.042C19.48 5.017 16.054 2 11.996 2s-7.49 3.021-7.999 7.051L2.866 18H7.1c.463 2.282 2.481 4 4.9 4s4.437-1.718 4.9-4h4.236l-1.143-8.958zM12 20c-1.306 0-2.417-.835-2.829-2h5.658c-.412 1.165-1.523 2-2.829 2zm-6.866-4l.847-6.698C6.364 6.272 8.941 4 11.996 4s5.627 2.268 6.013 5.295L18.864 16H5.134z"/>
+                </svg>
+                <span class="sidebar-item-text">Notifications</span>
+            </a>
+            
+            <a href="#" class="sidebar-item">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M1.998 5.5c0-1.381 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.119 2.5 2.5v13c0 1.381-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.119-2.5-2.5v-13zm2.5-.5c-.276 0-.5.224-.5.5v2.764l8 3.638 8-3.636V5.5c0-.276-.224-.5-.5-.5h-15zm15.5 5.463l-8 3.636-8-3.638V18.5c0 .276.224.5.5.5h15c.276 0 .5-.224.5-.5v-8.037z"/>
+                </svg>
+                <span class="sidebar-item-text">Messages</span>
+            </a>
+            
+            <a href="#" class="sidebar-item">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M7.471 21H.472l.029-1.027c.184-6.618 3.736-8.977 7-8.977.963 0 1.95.212 2.87.672-.444.478-.851 1.03-1.212 1.656-.507-.204-1.054-.329-1.658-.329-2.767 0-4.57 2.223-4.938 6.004H7.56c-.023.327-.04.662-.04 1.001 0 .424.023.84.05 1.25zM19.5 12c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z"/>
+                    <path d="M13.5 12c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z"/>
+                </svg>
+                <span class="sidebar-item-text">Communities</span>
+            </a>
+            
+            <a href="#" class="sidebar-item">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v18.44l-8-5.71-8 5.71V4.5zM6.5 4c-.276 0-.5.22-.5.5v14.56l6-4.29 6 4.29V4.5c0-.28-.224-.5-.5-.5h-11z"/>
+                </svg>
+                <span class="sidebar-item-text">Bookmarks</span>
+            </a>
+            
+            <a href="#" class="sidebar-item">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M5.651 19h12.698c-.337-1.8-1.023-3.21-1.945-4.19C15.318 13.65 13.838 13 12 13s-3.317.65-4.404 1.81c-.922.98-1.608 2.39-1.945 4.19zm.486-5.56C7.627 11.85 9.648 11 12 11s4.373.85 5.863 2.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H3.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46zM12 4c-1.105 0-2 .9-2 2s.895 2 2 2 2-.9 2-2-.895-2-2-2zM8 6c0-2.21 1.791-4 4-4s4 1.79 4 4-1.791 4-4 4-4-1.79-4-4z"/>
+                </svg>
+                <span class="sidebar-item-text">Profile</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- CONTENT WRAPPER -->
+    <div class="content-wrapper" id="contentWrapper">
+        <!-- TOP HEADER CON CATEGORÍAS -->
+        <header class="top-header">
+            <div class="top-header-content">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </button>
+                
+                <a href="#" class="logo">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+                    </svg>
+                    <span class="logo-text">PredictChain</span>
+                </a>
+
+                <div class="categories-container">
+                    <a href="#" class="category-link active">Politics</a>
+                    <a href="#" class="category-link">Sports</a>
+                    <a href="#" class="category-link">Crypto</a>
+                    <a href="#" class="category-link">Finance</a>
+                    <a href="#" class="category-link">Tech</a>
+                    <a href="#" class="category-link">Culture</a>
+                    
+                    <div class="more-dropdown">
+                        <button class="more-btn" id="moreBtn">
+                            More
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M7 10l5 5 5-5z"/>
+                            </svg>
+                        </button>
+                        <div class="dropdown-content" id="dropdownContent">
+                            <a href="#" class="dropdown-item">Geopolitics</a>
+                            <a href="#" class="dropdown-item">Economy</a>
+                            <a href="#" class="dropdown-item">Climate & Science</a>
+                            <a href="#" class="dropdown-item">Elections</a>
+                            <a href="#" class="dropdown-item">Entertainment</a>
+                            <a href="#" class="dropdown-item">Health</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="search-container">
+                    <div class="search-wrapper">
+                        <div class="search-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M10.25 3.75c-3.59 0-6.5 2.91-6.5 6.5s2.91 6.5 6.5 6.5c1.795 0 3.419-.726 4.596-1.904 1.178-1.177 1.904-2.801 1.904-4.596 0-3.59-2.91-6.5-6.5-6.5zm-8.5 6.5c0-4.694 3.806-8.5 8.5-8.5s8.5 3.806 8.5 8.5c0 1.986-.682 3.815-1.824 5.262l4.781 4.781-1.414 1.414-4.781-4.781c-1.447 1.142-3.276 1.824-5.262 1.824-4.694 0-8.5-3.806-8.5-8.5z"/>
+                            </svg>
+                        </div>
+                        <input type="text" class="search-input" placeholder="Search predictions">
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN HEADER -->
+        <header class="main-header">
+            <nav class="main-nav">
+                <button class="nav-tab active">For you</button>
+                <button class="nav-tab">Trending</button>
+            </nav>
+        </header>
+
+        <!-- DEMO CONTENT -->
+        <div class="demo-content">
+            <div class="prediction-card">
+                <div class="prediction-header">
+                    <div class="prediction-avatar"></div>
+                    <div class="prediction-info">
+                        <h3>PredictMarket</h3>
+                        <p>Politics • 2h ago • 1.2K participants</p>
+                    </div>
+                </div>
+                <div class="prediction-question">
+                    ¿Donald Trump ganará las elecciones de 2028?
+                </div>
+                <div class="prediction-options">
+                    <button class="option-btn yes">SÍ 48%</button>
+                    <button class="option-btn no">NO 52%</button>
+                </div>
+            </div>
+
+            <div class="prediction-card">
+                <div class="prediction-header">
+                    <div class="prediction-avatar"></div>
+                    <div class="prediction-info">
+                        <h3>CryptoPredict</h3>
+                        <p>Crypto • 5h ago • 3.4K participants</p>
+                    </div>
+                </div>
+                <div class="prediction-question">
+                    ¿Bitcoin superará los $150K en 2025?
+                </div>
+                <div class="prediction-options">
+                    <button class="option-btn yes">SÍ 67%</button>
+                    <button class="option-btn no">NO 33%</button>
+                </div>
+            </div>
+
+            <div class="prediction-card">
+                <div class="prediction-header">
+                    <div class="prediction-avatar"></div>
+                    <div class="prediction-info">
+                        <h3>TechFuture</h3>
+                        <p>Tech • 8h ago • 890 participants</p>
+                    </div>
+                </div>
+                <div class="prediction-question">
+                    ¿Apple lanzará un iPhone plegable en 2026?
+                </div>
+                <div class="prediction-options">
+                    <button class="option-btn yes">SÍ 34%</button>
+                    <button class="option-btn no">NO 66%</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // More dropdown toggle
+        const moreBtn = document.getElementById('moreBtn');
+        const dropdownContent = document.getElementById('dropdownContent');
+
+        moreBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownContent.classList.toggle('show');
+            moreBtn.classList.toggle('active');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            dropdownContent.classList.remove('show');
+            moreBtn.classList.remove('active');
+        });
+
+        // Sidebar toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const contentWrapper = document.getElementById('contentWrapper');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            contentWrapper.classList.toggle('expanded');
+        });
+
+        // Mobile menu
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const overlay = document.getElementById('overlay');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('mobile-open');
+            overlay.classList.toggle('show');
+        });
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('mobile-open');
+            overlay.classList.remove('show');
+        });

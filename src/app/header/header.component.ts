@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -9,8 +9,11 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent {
+  @Output() tabChange = new EventEmitter<'for-you' | 'trending'>();
+
   showMoreCategories = false;
-  
+  activeTab: 'for-you' | 'trending' = 'for-you';
+
   categories = [
     { name: 'Politics', active: true },
     { name: 'Sports', active: false },
@@ -26,5 +29,10 @@ export class HeaderComponent {
 
   selectCategory(index: number) {
     this.categories.forEach((cat, i) => cat.active = i === index);
+  }
+
+  setActiveTab(tab: 'for-you' | 'trending') {
+    this.activeTab = tab;
+    this.tabChange.emit(tab);
   }
 }

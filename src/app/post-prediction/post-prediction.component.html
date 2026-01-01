@@ -1,0 +1,18 @@
+<div class="prediction-list">
+  <div class="prediction-card" *ngFor="let prediction of predictions">
+    <div class="prediction-header">
+      <div class="prediction-avatar"></div>
+      <div class="prediction-info">
+        <h3>{{ prediction.creator }}</h3>
+        <p>{{ prediction.category }} • {{ prediction.timeAgo }} • {{ prediction.participants }} participants</p>
+      </div>
+    </div>
+    <div class="prediction-question">
+      {{ prediction.question }}
+    </div>
+    <div class="prediction-options">
+      <button class="option-btn yes">SÍ {{ prediction.yesPercentage }}%</button>
+      <button class="option-btn no">NO {{ prediction.noPercentage }}%</button>
+    </div>
+  </div>
+</div>

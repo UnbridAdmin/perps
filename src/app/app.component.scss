@@ -1,22 +1,26 @@
+@import '../styles/variables';
+
 .app-wrapper {
-  max-width: 1400px;
+  max-width: $container-max-width;
   margin: 0 auto;
   position: relative;
-  background: #000;
+  background: $background-color;
+  min-height: 100vh;
 }
 
 .container {
   text-align: center;
   padding: 20px;
-  margin-left: 260px;
-  margin-top: 130px;
+  margin-left: $sidebar-width;
+  margin-top: $header-height;
   transition: all 0.5s ease;
-  min-height: calc(100vh - 130px);
+  min-height: calc(100vh - $header-height);
+  background: $background-color;
 }
 
 /* Cuando el sidebar está colapsado */
 :global(.sidebar-collapsed) .container {
-  margin-left: 78px;
+  margin-left: $sidebar-collapsed-width;
 }
 
 @media (max-width: 1400px) {
@@ -27,23 +31,23 @@
 
 @media (max-width: 768px) {
   .container {
-    margin-left: 78px;
-    margin-top: 130px;
+    margin-left: $sidebar-collapsed-width;
+    margin-top: $header-height;
   }
   
   :global(.sidebar-collapsed) .container {
-    margin-left: 78px;
+    margin-left: $sidebar-collapsed-width;
   }
 }
 
 @media (max-width: 420px) {
   .container {
-    margin-left: 78px;
+    margin-left: $sidebar-collapsed-width;
     padding: 15px;
-    margin-top: 130px;
+    margin-top: $header-height;
   }
   
   :global(.sidebar-collapsed) .container {
-    margin-left: 78px;
+    margin-left: $sidebar-collapsed-width;
   }
 }

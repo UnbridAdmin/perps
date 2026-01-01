@@ -37,8 +37,8 @@
             <input type="text" placeholder="Search predictions">
         </div>
         <div class="feed-tabs">
-            <div class="tab active">For you</div>
-            <div class="tab">Trending</div>
+            <div class="tab" [class.active]="activeTab === 'for-you'" (click)="setActiveTab('for-you')">For you</div>
+            <div class="tab" [class.active]="activeTab === 'trending'" (click)="setActiveTab('trending')">Trending</div>
         </div>
     </div>
 </header>
