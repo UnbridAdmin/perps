@@ -1,4 +1,4 @@
-@import '../../styles/variables';
+@use '../../styles/variables' as *;
 
 /* Header principal - 2 filas */
 .main-header {
@@ -11,6 +11,7 @@
     z-index: 1000;
     width: calc($container-max-width - $sidebar-width);
     transition: all 0.3s ease;
+    box-sizing: border-box;
 }
 
 /* Primera fila: Logo, categorías, login */
@@ -20,6 +21,8 @@
     justify-content: space-between;
     padding: 12px 20px;
     border-bottom: 1px solid $border-color;
+    height: 56px;
+    box-sizing: border-box;
 }
 
 .logo-section {
@@ -148,49 +151,17 @@
     background: $primary-hover;
 }
 
-/* Segunda fila: Búsqueda y Tabs */
+/* Segunda fila: 2 Columnas (Tabs | Search) */
 .header-row-2 {
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-}
-
-.search-predictions {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    background: $background-light;
-    padding: 10px 18px;
-    border-bottom: 1px solid $border-color;
-    transition: all 0.2s;
-}
-
-.search-predictions:focus-within {
-    background: $background-color;
-    border-bottom-color: $primary-color;
-}
-
-.search-predictions i {
-    color: $text-muted;
-    margin-right: 12px;
-}
-
-.search-predictions input {
-    background: none;
-    border: none;
-    color: $text-primary;
-    flex: 1;
-    outline: none;
-    font-size: 0.95rem;
-}
-
-.search-predictions input::placeholder {
-    color: $text-muted;
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 0;
 }
 
 .feed-tabs {
     display: flex;
-    width: 100%;
+    border-right: 1px solid $border-color;
+    box-sizing: border-box;
 }
 
 .tab {
@@ -211,6 +182,36 @@
 .tab.active {
     color: $text-primary;
     border-bottom-color: $primary-color;
+}
+
+.search-predictions {
+    display: flex;
+    align-items: center;
+    background: $background-light;
+    padding: 10px 18px;
+    transition: all 0.2s;
+}
+
+.search-predictions:focus-within {
+    background: $background-color;
+}
+
+.search-predictions i {
+    color: $text-muted;
+    margin-right: 12px;
+}
+
+.search-predictions input {
+    background: none;
+    border: none;
+    color: $text-primary;
+    flex: 1;
+    outline: none;
+    font-size: 0.95rem;
+}
+
+.search-predictions input::placeholder {
+    color: $text-muted;
 }
 
 /* Responsive */
@@ -243,15 +244,16 @@
     }
 
     .header-row-2 {
-        flex-direction: column;
+        grid-template-columns: 1fr;
+    }
+
+    .feed-tabs {
+        border-right: none;
+        border-bottom: 1px solid $border-color;
     }
 
     .search-predictions {
         padding: 12px 18px;
-    }
-
-    .feed-tabs {
-        width: 100%;
     }
 
     .tab {

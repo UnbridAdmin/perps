@@ -30,15 +30,18 @@
         </div>
     </div>
 
-    <!-- Fila 2: Búsqueda y Tabs (For you, Trending) -->
+    <!-- Fila 2: 2 Columnas (Tabs izquierda | Search derecha) -->
     <div class="header-row-2">
-        <div class="search-predictions">
-            <i class="fas fa-search"></i>
-            <input type="text" placeholder="Search predictions">
-        </div>
+        <!-- Columna izquierda: Tabs -->
         <div class="feed-tabs">
             <div class="tab" [class.active]="activeTab === 'for-you'" (click)="setActiveTab('for-you')">For you</div>
             <div class="tab" [class.active]="activeTab === 'trending'" (click)="setActiveTab('trending')">Trending</div>
+        </div>
+        
+        <!-- Columna derecha: Search -->
+        <div class="search-predictions">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search predictions">
         </div>
     </div>
 </header>

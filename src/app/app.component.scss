@@ -1,4 +1,4 @@
-@import '../styles/variables';
+@use '../styles/variables' as *;
 
 .app-wrapper {
   max-width: $container-max-width;
@@ -9,13 +9,21 @@
 }
 
 .container {
-  text-align: center;
-  padding: 20px;
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 0;
   margin-left: $sidebar-width;
   margin-top: $header-height;
   transition: all 0.5s ease;
   min-height: calc(100vh - $header-height);
   background: $background-color;
+  max-width: calc($container-max-width - $sidebar-width);
+}
+
+.main-content {
+  border-right: 1px solid $border-color;
+  min-height: calc(100vh - $header-height);
+  box-sizing: border-box;
 }
 
 /* Cuando el sidebar está colapsado */
@@ -29,10 +37,17 @@
   }
 }
 
+@media (max-width: 1200px) {
+  .container {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 768px) {
   .container {
     margin-left: $sidebar-collapsed-width;
     margin-top: $header-height;
+    grid-template-columns: 1fr;
   }
   
   :global(.sidebar-collapsed) .container {

@@ -1,0 +1,24 @@
+<div class="news-sidebar">
+  <!-- Trending Topics -->
+  <div class="news-card">
+    <h3 class="news-card-title">Trending Topics</h3>
+    <div class="trending-list">
+      <div class="trending-item" *ngFor="let topic of trendingTopics">
+        <div class="trending-name">{{ topic.name }}</div>
+        <div class="trending-posts">{{ topic.posts }} posts</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Latest News -->
+  <div class="news-card">
+    <h3 class="news-card-title">Latest News</h3>
+    <div class="news-list">
+      <div class="news-item" *ngFor="let news of newsItems">
+        <div class="news-category">{{ news.category }}</div>
+        <div class="news-title">{{ news.title }}</div>
+        <div class="news-time">{{ news.time }}</div>
+      </div>
+    </div>
+  </div>
+</div>

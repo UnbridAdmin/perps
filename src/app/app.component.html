@@ -2,7 +2,10 @@
   <app-sidebar-menu></app-sidebar-menu>
   <app-header (tabChange)="onTabChange($event)"></app-header>
   <div class="container">
-    <app-post-prediction [tab]="activeTab"></app-post-prediction>
-    <router-outlet></router-outlet>
+    <div class="main-content">
+      <app-post-prediction [tab]="activeTab"></app-post-prediction>
+      <router-outlet></router-outlet>
+    </div>
+    <app-news></app-news>
   </div>
 </div>
