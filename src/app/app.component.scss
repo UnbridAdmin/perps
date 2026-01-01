@@ -1,0 +1,13 @@
+.container {
+  text-align: center;
+  padding: 20px;
+  margin-left: 260px;
+  margin-top: 130px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    margin-left: 78px;
+    margin-top: 140px;
+  }
+}
