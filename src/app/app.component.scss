@@ -10,7 +10,7 @@
 
 .container {
   display: grid;
-  grid-template-columns: 1fr 350px;
+  grid-template-columns: calc(100% - 350px) 350px;
   gap: 0;
   margin-left: $sidebar-width;
   margin-top: $header-height;
@@ -21,9 +21,9 @@
 }
 
 .main-content {
-  border-right: 1px solid $border-color;
   min-height: calc(100vh - $header-height);
   box-sizing: border-box;
+  border-right: 1px solid $border-color;
 }
 
 /* Cuando el sidebar está colapsado */

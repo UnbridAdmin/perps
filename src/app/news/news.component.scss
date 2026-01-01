@@ -8,6 +8,7 @@
   overflow-y: auto;
   width: 100%;
   max-width: 350px;
+  box-sizing: border-box;
 }
 
 .news-sidebar::-webkit-scrollbar {

@@ -154,14 +154,17 @@
 /* Segunda fila: 2 Columnas (Tabs | Search) */
 .header-row-2 {
     display: grid;
-    grid-template-columns: 1fr 350px;
+    grid-template-columns: calc(100% - 362px) 362px;
     gap: 0;
     height: 50px;
 }
 
+.header-row-2 > *:first-child {
+    border-right: 1px solid $border-color;
+}
+
 .feed-tabs {
     display: flex;
-    border-right: 1px solid $border-color;
     box-sizing: border-box;
 }
 
@@ -196,6 +199,7 @@
     padding: 0 18px;
     transition: all 0.2s;
     height: 100%;
+    box-sizing: border-box;
 }
 
 .search-predictions:focus-within {
