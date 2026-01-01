@@ -41,16 +41,10 @@
         <div class="result-option" [class.selected]="getUserVote(i) === 'yes'">
           <span class="result-label">SÍ</span>
           <span class="result-percentage">{{ prediction.yesPercentage }}%</span>
-          <div class="result-bar">
-            <div class="result-bar-fill" [style.width.%]="prediction.yesPercentage"></div>
-          </div>
         </div>
         <div class="result-option" [class.selected]="getUserVote(i) === 'no'">
           <span class="result-label">NO</span>
           <span class="result-percentage">{{ prediction.noPercentage }}%</span>
-          <div class="result-bar">
-            <div class="result-bar-fill" [style.width.%]="prediction.noPercentage"></div>
-          </div>
         </div>
       </div>
     </div>
