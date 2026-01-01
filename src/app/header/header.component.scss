@@ -21,7 +21,7 @@
     justify-content: space-between;
     padding: 12px 20px;
     border-bottom: 1px solid $border-color;
-    height: 56px;
+    height: 80px;
     box-sizing: border-box;
 }
 
@@ -156,6 +156,7 @@
     display: grid;
     grid-template-columns: 1fr 350px;
     gap: 0;
+    height: 50px;
 }
 
 .feed-tabs {
@@ -166,13 +167,17 @@
 
 .tab {
     flex: 1;
-    padding: 16px 20px;
+    padding: 0 20px;
     text-align: center;
     cursor: pointer;
     transition: all 0.2s;
     font-weight: 600;
     color: $text-muted;
     border-bottom: 2px solid transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
 }
 
 .tab:hover {
@@ -188,8 +193,9 @@
     display: flex;
     align-items: center;
     background: $background-light;
-    padding: 10px 18px;
+    padding: 0 18px;
     transition: all 0.2s;
+    height: 100%;
 }
 
 .search-predictions:focus-within {
