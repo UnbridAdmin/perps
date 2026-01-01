@@ -3,21 +3,36 @@
 .sidebar {
   position: fixed;
   top: 0;
-  left: 0;
-  height: 100%;
+  left: 50%;
+  transform: translateX(calc(-700px));
+  height: 100vh;
   width: 260px;
   background: #000428;
   background: -webkit-linear-gradient(to right, #004e92, #000428);
   background: linear-gradient(to right, #004e92, #000428);
-  z-index: 100;
+  z-index: 1001;
   transition: all 0.5s ease;
 }
 
 .sidebar .logo-details {
-  height: 60px;
+  height: 80px;
   width: 100%;
   display: flex;
   align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 0 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar .logo-details .logo-text {
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  background: linear-gradient(135deg, #1da1f2 0%, #0d8bd9 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .sidebar .logo-details i {
@@ -35,12 +50,30 @@
   font-weight: 600;
   transition: 0.3s ease;
   transition-delay: 0.1s;
+  white-space: nowrap;
+}
+
+.sidebar .logo-details .toggle-btn {
+  cursor: pointer;
+  font-size: 20px;
+  color: #fff;
+  transition: all 0.3s ease;
+}
+
+.sidebar .logo-details .toggle-btn:hover {
+  color: #1da1f2;
+}
+
+.sidebar.collapsed .logo-details .toggle-btn {
+  right: 12px;
 }
 
 .sidebar .nav-links {
-  height: 100%;
-  padding: 0 0 150px 0;
-  overflow: auto;
+  height: calc(100% - 160px);
+  padding: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 80px;
 }
 
 .sidebar .nav-links::-webkit-scrollbar {
@@ -89,6 +122,12 @@
   font-weight: 400;
   color: #fff;
   transition: all 0.4s ease;
+  white-space: nowrap;
+}
+
+.sidebar.collapsed .nav-links li a .link_name {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .sidebar .nav-links li .sub-menu {
@@ -96,6 +135,31 @@
   margin-top: -10px;
   background: #1d1b31;
   display: none;
+}
+
+.sidebar.collapsed .nav-links li .sub-menu {
+  position: absolute;
+  left: 100%;
+  top: -10px;
+  margin-top: 0;
+  padding: 10px 20px;
+  border-radius: 0 6px 6px 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0s;
+}
+
+.sidebar.collapsed .nav-links li:hover .sub-menu {
+  top: 0;
+  opacity: 1;
+  pointer-events: auto;
+  transition: all 0.4s ease;
+}
+
+.sidebar.collapsed .nav-links li .sub-menu .link_name {
+  font-size: 18px;
+  opacity: 1;
+  display: block;
 }
 
 .sidebar .nav-links li.showMenu .sub-menu {
@@ -122,6 +186,7 @@
 .sidebar .profile-details {
   position: fixed;
   bottom: 0;
+  left: inherit;
   width: 260px;
   display: flex;
   align-items: center;
@@ -129,6 +194,11 @@
   background: #1d1b31;
   padding: 12px 0;
   transition: all 0.5s ease;
+  z-index: 1002;
+}
+
+.sidebar.collapsed .profile-details {
+  width: 78px;
 }
 
 .sidebar .profile-details .profile-content {
@@ -146,6 +216,11 @@
   transition: all 0.5s ease;
 }
 
+.sidebar.collapsed .profile-details img {
+  margin: 0 auto;
+  padding: 10px 0;
+}
+
 .sidebar .profile-details .profile_name,
 .sidebar .profile-details .job {
   color: #fff;
@@ -158,23 +233,33 @@
   font-size: 12px;
 }
 
+.sidebar.collapsed .profile-details .profile_name,
+.sidebar.collapsed .profile-details .job,
+.sidebar.collapsed .profile-details i {
+  display: none;
+}
+
 /* Automatic responsive - collapse on smaller screens */
+@media (max-width: 1400px) {
+  .sidebar {
+    left: 0;
+    transform: none;
+  }
+}
+
 @media (max-width: 768px) {
   .sidebar {
     width: 78px;
+    left: 0;
+    transform: none;
   }
 
-  .sidebar .logo-details .logo_name {
-    transition-delay: 0s;
+  .sidebar .logo-details .logo-text {
     opacity: 0;
     pointer-events: none;
   }
 
-  .sidebar .nav-links li .icon-link {
-    display: block;
-  }
-
-  .sidebar .nav-links i.arrow {
+  .sidebar .logo-details .toggle-btn {
     display: none;
   }
 
@@ -210,9 +295,6 @@
   }
 
   .sidebar .nav-links li .sub-menu.blank {
-    opacity: 1;
-    pointer-events: auto;
-    padding: 3px 20px 6px 16px;
     opacity: 0;
     pointer-events: none;
   }
@@ -220,10 +302,13 @@
   .sidebar .nav-links li:hover .sub-menu.blank {
     top: 50%;
     transform: translateY(-50%);
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .sidebar .profile-details {
     width: 78px;
+    background: none;
   }
 
   .sidebar .profile-details i,
@@ -234,6 +319,7 @@
 
   .sidebar .profile-details img {
     padding: 10px;
+    margin: 0 auto;
   }
 }
 

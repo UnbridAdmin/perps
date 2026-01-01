@@ -10,6 +10,9 @@ import { SidebarMenuComponent } from './sidebar-menu/sidebar-menu.component';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   standalone: true,
+  host: {
+    'class': 'app-container'
+  }
 })
 export class AppComponent {
   title = 'perps';

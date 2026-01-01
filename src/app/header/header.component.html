@@ -1,35 +1,44 @@
 <!-- Header principal de 2 filas -->
 <header class="main-header">
-    <!-- Fila 1: Logo, Categorías, Login -->
+    <!-- Fila 1: Categorías, Login -->
     <div class="header-row-1">
         <div class="logo-section">
-            <div class="logo-text">LOGO</div>
             <nav class="categories">
-                <div class="category active">Politics</div>
-                <div class="category">Sports</div>
-                <div class="category">Crypto</div>
-                <div class="category">Finance</div>
-                <div class="category">Tech</div>
-                <div class="category">Culture</div>
+                <div *ngFor="let cat of categories.slice(0, 4); let i = index" 
+                     class="category" 
+                     [class.active]="cat.active"
+                     (click)="selectCategory(i)">
+                    {{cat.name}}
+                </div>
             </nav>
         </div>
         <div class="header-actions">
-            <button class="more-btn">
-                More <i class="fas fa-chevron-down"></i>
-            </button>
+            <div class="more-dropdown">
+                <button class="more-btn" (click)="toggleMoreCategories()">
+                    More <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="more-menu" *ngIf="showMoreCategories">
+                    <div *ngFor="let cat of categories.slice(4); let i = index" 
+                         class="more-item"
+                         [class.active]="cat.active"
+                         (click)="selectCategory(i + 4); toggleMoreCategories()">
+                        {{cat.name}}
+                    </div>
+                </div>
+            </div>
             <button class="login-btn">Login</button>
         </div>
     </div>
 
-    <!-- Fila 2: Tabs (For you, Trending) y Búsqueda -->
+    <!-- Fila 2: Búsqueda y Tabs (For you, Trending) -->
     <div class="header-row-2">
-        <div class="feed-tabs">
-            <div class="tab active">For you</div>
-            <div class="tab">Trending</div>
-        </div>
         <div class="search-predictions">
             <i class="fas fa-search"></i>
             <input type="text" placeholder="Search predictions">
+        </div>
+        <div class="feed-tabs">
+            <div class="tab active">For you</div>
+            <div class="tab">Trending</div>
         </div>
     </div>
 </header>

@@ -1,13 +1,49 @@
+.app-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  background: #000;
+}
+
 .container {
   text-align: center;
   padding: 20px;
   margin-left: 260px;
   margin-top: 130px;
+  transition: all 0.5s ease;
+  min-height: calc(100vh - 130px);
+}
+
+/* Cuando el sidebar está colapsado */
+:global(.sidebar-collapsed) .container {
+  margin-left: 78px;
+}
+
+@media (max-width: 1400px) {
+  .app-wrapper {
+    max-width: 100%;
+  }
 }
 
 @media (max-width: 768px) {
   .container {
     margin-left: 78px;
-    margin-top: 140px;
+    margin-top: 130px;
+  }
+  
+  :global(.sidebar-collapsed) .container {
+    margin-left: 78px;
+  }
+}
+
+@media (max-width: 420px) {
+  .container {
+    margin-left: 78px;
+    padding: 15px;
+    margin-top: 130px;
+  }
+  
+  :global(.sidebar-collapsed) .container {
+    margin-left: 78px;
   }
 }
