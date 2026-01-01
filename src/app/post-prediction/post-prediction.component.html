@@ -1,5 +1,8 @@
 <div class="prediction-list">
-  <div class="prediction-card" *ngFor="let prediction of predictions">
+  <!-- Popover Backdrop -->
+  <div class="popover-backdrop" *ngIf="activeMarketPopover !== null" (click)="closePopover()"></div>
+
+  <div class="prediction-card" *ngFor="let prediction of predictions; let i = index">
     <div class="prediction-header">
       <div class="prediction-avatar"></div>
       <div class="prediction-info">
@@ -10,9 +13,84 @@
     <div class="prediction-question">
       {{ prediction.question }}
     </div>
+
+    <!-- Image (optional) -->
+    <div class="prediction-image" *ngIf="prediction.imageUrl">
+      <img [src]="prediction.imageUrl" alt="Prediction image" />
+    </div>
+
+    <!-- Sentiment Voting Section -->
+    <div class="sentiment-section" *ngIf="prediction.sentimentVotes">
+      <div class="sentiment-header">
+        <span class="sentiment-title">🔥 Sentimiento Fierce</span>
+        <span class="sentiment-total">{{ prediction.sentimentVotes.total | number:'1.0-0' }} votos</span>
+      </div>
+
+      <!-- Voting Options - Not Voted State -->
+      <div class="sentiment-options" *ngIf="!hasUserVoted(i)">
+        <button class="sentiment-vote-btn" (click)="vote(i, 'yes')">
+          <span class="vote-btn-text">SÍ</span>
+        </button>
+        <button class="sentiment-vote-btn" (click)="vote(i, 'no')">
+          <span class="vote-btn-text">NO</span>
+        </button>
+      </div>
+
+      <!-- Results - Voted State -->
+      <div class="sentiment-results" *ngIf="hasUserVoted(i)">
+        <div class="result-option" [class.selected]="getUserVote(i) === 'yes'">
+          <span class="result-label">SÍ</span>
+          <span class="result-percentage">{{ prediction.yesPercentage }}%</span>
+          <div class="result-bar">
+            <div class="result-bar-fill" [style.width.%]="prediction.yesPercentage"></div>
+          </div>
+        </div>
+        <div class="result-option" [class.selected]="getUserVote(i) === 'no'">
+          <span class="result-label">NO</span>
+          <span class="result-percentage">{{ prediction.noPercentage }}%</span>
+          <div class="result-bar">
+            <div class="result-bar-fill" [style.width.%]="prediction.noPercentage"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="prediction-options">
       <button class="option-btn yes">SÍ {{ prediction.yesPercentage }}%</button>
       <button class="option-btn no">NO {{ prediction.noPercentage }}%</button>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="prediction-actions" *ngIf="prediction.actions">
+      <button class="action-btn">
+        💬 {{ prediction.actions.comments | number:'1.0-0' }}
+      </button>
+      <button class="action-btn">
+        ❤️ {{ prediction.actions.likes | number:'1.0-0' }}
+      </button>
+      <button class="action-btn market-btn" (click)="toggleMarketPopover(i)" [class.active]="activeMarketPopover === i">
+        📊 Mercado
+      </button>
+      <button class="action-btn volume-btn">
+        📈 {{ prediction.actions.volume }}
+      </button>
+    </div>
+
+    <!-- Market Popover -->
+    <div class="market-popover" *ngIf="activeMarketPopover === i && prediction.marketInfo">
+      <div class="popover-header">
+        <span class="popover-title">💰 Mercado Oficial</span>
+        <span class="popover-participants">{{ prediction.marketInfo.participants | number:'1.0-0' }} participantes</span>
+      </div>
+      <div class="popover-pool">{{ prediction.marketInfo.poolAmount }}</div>
+      <div class="popover-distribution">
+        <div class="distribution-item" *ngFor="let option of prediction.marketInfo.options">
+          <span class="distribution-label">{{ option.label }}</span>
+          <span class="distribution-arrow">→</span>
+          <span class="distribution-amount">{{ option.amount }} ({{ option.percentage }}%)</span>
+        </div>
+      </div>
+      <button class="popover-bet-btn">🎯 Apostar Ahora</button>
     </div>
   </div>
 </div>

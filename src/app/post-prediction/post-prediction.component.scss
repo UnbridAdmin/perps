@@ -51,9 +51,240 @@
   color: #e7e9ea;
 }
 
+// Image styles
+.prediction-image {
+  margin-bottom: 16px;
+
+  img {
+    width: 100%;
+    max-height: 300px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 1px solid #2f3336;
+  }
+}
+
+// Sentiment section styles
+.sentiment-section {
+  background: rgba(255, 107, 53, 0.05);
+  border: 1px solid rgba(255, 107, 53, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.sentiment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.sentiment-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ff6b35;
+}
+
+.sentiment-total {
+  font-size: 12px;
+  color: #71767b;
+}
+
+.sentiment-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.sentiment-vote-btn {
+  background: #0a0e27;
+  border: 2px solid #2f3336;
+  border-radius: 10px;
+  padding: 16px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+
+  &:hover {
+    border-color: #ff6b35;
+    background: rgba(255, 107, 53, 0.05);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.vote-btn-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: #e7e9ea;
+  text-align: center;
+}
+
+.sentiment-results {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.result-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  position: relative;
+
+  &.selected {
+    background: rgba(255, 107, 53, 0.1);
+    border: 2px solid #ff6b35;
+  }
+
+  &.selected::before {
+    content: '✓';
+    position: absolute;
+    left: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #ff6b35;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+  }
+}
+
+.result-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #e7e9ea;
+  min-width: 30px;
+}
+
+.result-percentage {
+  font-size: 16px;
+  font-weight: bold;
+  color: #ff6b35;
+  margin-left: auto;
+}
+
+.result-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  background: #2f3336;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.result-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff6b35 0%, #ff8c42 100%);
+  border-radius: 2px;
+  transition: width 0.8s ease-out;
+}
+
+.sentiment-bar {
+  width: 100%;
+  height: 6px;
+  background: #2f3336;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.sentiment-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff6b35 0%, #ff8c42 100%);
+  border-radius: 3px;
+}
+
+.sentiment-stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #71767b;
+}
+
+// Market section styles
+.market-section {
+  background: rgba(74, 222, 128, 0.05);
+  border: 1px solid rgba(74, 222, 128, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.market-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.market-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4ade80;
+}
+
+.market-participants {
+  font-size: 12px;
+  color: #71767b;
+}
+
+.market-pool {
+  font-size: 22px;
+  font-weight: bold;
+  color: #4ade80;
+  text-align: center;
+  margin: 8px 0;
+}
+
+.market-distribution {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  font-size: 12px;
+  color: #71767b;
+  margin-bottom: 12px;
+}
+
+.market-bet-btn {
+  width: 100%;
+  background: transparent;
+  border: 1px solid #4ade80;
+  color: #4ade80;
+  border-radius: 20px;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+
+  &:hover {
+    background: rgba(74, 222, 128, 0.1);
+  }
+}
+
 .prediction-options {
   display: flex;
   gap: 8px;
+  margin-bottom: 16px;
 }
 
 .option-btn {
@@ -79,5 +310,242 @@
 
   &.no {
     color: #f91880;
+  }
+}
+
+// Action buttons styles
+.prediction-actions {
+  display: flex;
+  justify-content: space-around;
+  padding-top: 12px;
+  border-top: 1px solid #2f3336;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  color: #71767b;
+  cursor: pointer;
+  border-radius: 20px;
+  transition: all 0.2s;
+  font-size: 14px;
+
+  &:hover {
+    color: #ff6b35;
+    background: rgba(255, 107, 53, 0.1);
+  }
+
+  &.volume-btn {
+    font-weight: 600;
+    color: #4ade80;
+    font-size: 15px;
+
+    &:hover {
+      color: #22c55e;
+      background: rgba(74, 222, 128, 0.1);
+    }
+  }
+}
+
+// Popover styles
+.popover-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+}
+
+.market-popover {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #16181c;
+  border: 1px solid #2f3336;
+  border-radius: 12px;
+  padding: 24px;
+  min-width: 320px;
+  max-width: 400px;
+  z-index: 1001;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
+  animation: popoverFadeIn 0.2s ease-out;
+}
+
+.popover-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.popover-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #4ade80;
+}
+
+.popover-participants {
+  font-size: 12px;
+  color: #71767b;
+}
+
+.popover-pool {
+  font-size: 24px;
+  font-weight: bold;
+  color: #4ade80;
+  text-align: center;
+  margin: 12px 0 16px 0;
+}
+
+.popover-distribution {
+  margin-bottom: 16px;
+}
+
+.distribution-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(47, 51, 54, 0.3);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.distribution-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ff6b35;
+  min-width: 40px;
+}
+
+.distribution-arrow {
+  font-size: 14px;
+  color: #71767b;
+  font-weight: 400;
+}
+
+.distribution-amount {
+  font-size: 14px;
+  font-weight: 500;
+  color: #4ade80;
+  margin-left: auto;
+}
+
+.popover-bet-btn {
+  width: 100%;
+  background: transparent;
+  border: 1px solid #4ade80;
+  color: #4ade80;
+  border-radius: 20px;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+  font-weight: 600;
+
+  &:hover {
+    background: rgba(74, 222, 128, 0.1);
+    transform: translateY(-1px);
+  }
+}
+
+// Market button active state
+.market-btn.active {
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.1);
+}
+
+// Animations
+@keyframes popoverFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .prediction-list {
+    padding: 10px;
+  }
+
+  .prediction-card {
+    padding: 12px;
+  }
+
+  .sentiment-options {
+    grid-template-columns: 1fr;
+  }
+
+  .sentiment-vote-btn {
+    min-height: 60px;
+    padding: 20px 12px;
+
+    .vote-btn-text {
+      font-size: 18px;
+    }
+  }
+
+  .sentiment-results {
+    gap: 12px;
+  }
+
+  .result-option {
+    padding: 16px;
+    gap: 16px;
+
+    &.selected::before {
+      left: -16px;
+      width: 24px;
+      height: 24px;
+      font-size: 14px;
+    }
+  }
+
+  .result-label {
+    font-size: 16px;
+    min-width: 35px;
+  }
+
+  .result-percentage {
+    font-size: 18px;
+  }
+
+  .market-distribution {
+    grid-template-columns: 1fr;
+  }
+
+  .prediction-actions {
+    justify-content: space-between;
+  }
+
+  .action-btn {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+
+  .market-popover {
+    min-width: 280px;
+    max-width: 320px;
+    padding: 20px;
+    margin: 20px;
+
+    .popover-pool {
+      font-size: 20px;
+    }
   }
 }

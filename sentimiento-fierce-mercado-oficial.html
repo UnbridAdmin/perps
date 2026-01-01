@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fierce - Social Prediction Markets</title>
+    <style>
+        /* ... (estilos previos se mantienen igual hasta .main-feed) ... */
+
+        /* Main Feed - Estilos actualizados */
+        .main-feed {
+            border-left: 1px solid #2f3336;
+            border-right: 1px solid #2f3336;
+        }
+
+        .create-post {
+            background: #16181c;
+            padding: 16px;
+            border-bottom: 1px solid #2f3336;
+        }
+
+        .post-input-wrapper {
+            display: flex;
+            gap: 12px;
+        }
+
+        .post-avatar-small {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            flex-shrink: 0;
+        }
+
+        .post-input-content {
+            flex: 1;
+        }
+
+        .post-input-content textarea {
+            width: 100%;
+            background: #0a0e27;
+            border: 1px solid #2f3336;
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: #e1e8ed;
+            font-size: 15px;
+            resize: none;
+            font-family: inherit;
+            min-height: 60px;
+        }
+
+        .post-input-content textarea::placeholder {
+            color: #8b98a5;
+        }
+
+        .post-actions-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+        }
+
+        .post-actions-icons {
+            display: flex;
+            gap: 16px;
+        }
+
+        .action-icon {
+            color: #8b98a5;
+            cursor: pointer;
+            font-size: 18px;
+            transition: color 0.2s;
+        }
+
+        .action-icon:hover {
+            color: #ff6b35;
+        }
+
+        .post-submit {
+            background: #ff6b35;
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .post-submit:hover {
+            background: #ff8c42;
+            transform: translateY(-1px);
+        }
+
+        /* Post Card - Nuevo diseño */
+        .post-card {
+            background: #16181c;
+            border-bottom: 1px solid #2f3336;
+            padding: 16px 16px 0 16px;
+            transition: background 0.2s;
+        }
+
+        .post-card:hover {
+            background: #1a1d23;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .post-header-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            flex-shrink: 0;
+        }
+
+        .post-header-info {
+            flex: 1;
+        }
+
+        .post-header-name {
+            font-weight: 600;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .post-header-username {
+            color: #8b98a5;
+            font-size: 14px;
+        }
+
+        .post-header-time {
+            color: #8b98a5;
+            font-size: 13px;
+        }
+
+        .post-header-badge {
+            background: #ff6b35;
+            color: #fff;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .post-header-badge.community {
+            background: #4ade80;
+        }
+
+        .post-content-main {
+            margin-left: 52px; /* Alineado con avatar */
+            margin-bottom: 12px;
+        }
+
+        .post-text {
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .post-image {
+            width: 100%;
+            max-height: 400px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            border: 1px solid #2f3336;
+        }
+
+        .post-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Voting Section - Minimalista */
+        .post-voting-section {
+            background: rgba(255, 107, 53, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+            border: 1px solid rgba(255, 107, 53, 0.2);
+        }
+
+        .voting-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .voting-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #ff6b35;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .info-icon {
+            color: #8b98a5;
+            cursor: help;
+            font-size: 14px;
+        }
+
+        .voting-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .voting-option {
+            background: #0a0e27;
+            border: 2px solid #2f3336;
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .voting-option:hover {
+            border-color: #ff6b35;
+        }
+
+        .voting-option.selected {
+            border-color: #ff6b35;
+            background: rgba(255, 107, 53, 0.1);
+        }
+
+        .option-label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .option-percentage {
+            font-size: 16px;
+            font-weight: bold;
+            color: #ff6b35;
+        }
+
+        .voting-bar {
+            width: 100%;
+            height: 6px;
+            background: #2f3336;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+
+        .voting-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b35 0%, #ff8c42 100%);
+        }
+
+        .voting-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #8b98a5;
+        }
+
+        /* Market Info Compact */
+        .market-info-compact {
+            background: rgba(74, 222, 128, 0.05);
+            border: 1px solid rgba(74, 222, 128, 0.2);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-top: 12px;
+        }
+
+        .market-info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .market-info-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #4ade80;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .market-info-pool {
+            font-size: 22px;
+            font-weight: bold;
+            color: #4ade80;
+            text-align: center;
+            margin: 8px 0;
+        }
+
+        .market-info-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 12px;
+            color: #8b98a5;
+        }
+
+        .market-info-action {
+            width: 100%;
+            background: transparent;
+            border: 1px solid #4ade80;
+            color: #4ade80;
+            border-radius: 20px;
+            padding: 8px;
+            margin-top: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .market-info-action:hover {
+            background: rgba(74, 222, 128, 0.1);
+        }
+
+        /* Post Actions Bottom */
+        .post-actions-bottom {
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            margin: 0 16px;
+            border-top: 1px solid #2f3336;
+        }
+
+        .post-action-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            background: transparent;
+            border: none;
+            color: #8b98a5;
+            cursor: pointer;
+            border-radius: 20px;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .post-action-btn:hover {
+            color: #ff6b35;
+            background: rgba(255, 107, 53, 0.1);
+        }
+
+        .post-action-btn.active {
+            color: #ff6b35;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .post-content-main {
+                margin-left: 0;
+            }
+            
+            .voting-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header (se mantiene igual) -->
+    <header class="header">
+        <nav class="nav-main">
+            <div class="logo">🔥 FIERCE</div>
+            <a href="#" class="nav-item active">📈 Trending</a>
+            <a href="#" class="nav-item">⚡ Breaking</a>
+            <a href="#" class="nav-item">🆕 New</a>
+            <a href="#" class="nav-item">🏛️ Politics</a>
+            <a href="#" class="nav-item">⚽ Sports</a>
+            <a href="#" class="nav-item">₿ Crypto</a>
+            <a href="#" class="nav-item">💰 Finance</a>
+            <a href="#" class="nav-item">🌍 Geopolitics</a>
+            <a href="#" class="nav-item">📊 Earnings</a>
+            <a href="#" class="nav-item">💻 Tech</a>
+            <a href="#" class="nav-item">🎭 Culture</a>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar Left (se mantiene igual) -->
+        <aside class="sidebar-left">
+            <!-- ... mismo contenido del sidebar ... -->
+        </aside>
+
+        <!-- Main Feed Actualizado -->
+        <main class="main-feed">
+            <!-- Create Post -->
+            <div class="create-post">
+                <div class="post-input-wrapper">
+                    <div class="post-avatar-small"></div>
+                    <div class="post-input-content">
+                        <textarea placeholder="¿Qué predicción quieres proponer? 🔮"></textarea>
+                        <div class="post-actions-bottom">
+                            <div class="post-actions-icons">
+                                <span class="action-icon">📷</span>
+                                <span class="action-icon">📊</span>
+                                <span class="action-icon">🎯</span>
+                            </div>
+                            <button class="post-submit">Publicar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Post 1: Twitter-style con imagen -->
+            <article class="post-card">
+                <div class="post-header">
+                    <div class="post-header-avatar"></div>
+                    <div class="post-header-info">
+                        <div class="post-header-name">
+                            Fierce Official
+                            <span class="post-header-username">@fierce_markets • 2h</span>
+                            <span class="post-header-badge">OFICIAL</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="post-content-main">
+                    <div class="post-text">
+                        ¿Argentina será campeón del Mundial 2026? 
+                        Analistas coinciden en 73% de probabilidad. 
+                        #Mundial2026 #Predicciones #Fierce
+                    </div>
+
+                    <div class="post-image">
+                        <!-- Imagen placeholder -->
+                        <div style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); height: 300px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; font-weight: bold;">
+                            🇦🇷 ARG 2026 🏆
+                        </div>
+                    </div>
+
+                    <!-- Voting Section Minimalista -->
+                    <div class="post-voting-section">
+                        <div class="voting-title-row">
+                            <div class="voting-title">
+                                🔥 Sentimiento Fierce
+                                <span class="info-icon" title="Votación solo para holders">ℹ️</span>
+                            </div>
+                            <span style="font-size: 12px; color: #8b98a5;">12.5K votos</span>
+                        </div>
+
+                        <div class="voting-options">
+                            <div class="voting-option selected">
+                                <span class="option-label">SÍ</span>
+                                <span class="option-percentage">73%</span>
+                            </div>
+                            <div class="voting-option">
+                                <span class="option-label">NO</span>
+                                <span class="option-percentage">27%</span>
+                            </div>
+                        </div>
+
+                        <div class="voting-bar">
+                            <div class="voting-bar-fill" style="width: 73%"></div>
+                        </div>
+
+                        <div class="voting-stats">
+                            <span>9,179 votos SÍ</span>
+                            <span>3,368 votos NO</span>
+                        </div>
+                    </div>
+
+                    <!-- Market Info Compact -->
+                    <div class="market-info-compact">
+                        <div class="market-info-header">
+                            <div class="market-info-title">
+                                💰 Mercado Oficial
+                                <span class="info-icon" title="Pool real con apuestas en USDT">ℹ️</span>
+                            </div>
+                            <span style="font-size: 12px; color: #8b98a5;">1,000 participantes</span>
+                        </div>
+
+                        <div class="market-info-pool">$138,000 USDT</div>
+
+                        <div class="market-info-stats">
+                            <div>$101K (73%) → SÍ</div>
+                            <div>$37K (27%) → NO</div>
+                        </div>
+
+                        <button class="market-info-action">🎯 Apostar Ahora</button>
+                    </div>
+                </div>
+
+                <div class="post-actions-bottom">
+                    <button class="post-action-btn active">💬 234</button>
+                    <button class="post-action-btn">🔄 89</button>
+                    <button class="post-action-btn">🔥 1.2K</button>
+                    <button class="post-action-btn">📊 Más</button>
+                </div>
+            </article>
+
+            <!-- Post 2: Community Proposal Minimalista -->
+            <article class="post-card">
+                <div class="post-header">
+                    <div class="post-header-avatar"></div>
+                    <div class="post-header-info">
+                        <div class="post-header-name">
+                            María González
+                            <span class="post-header-username">@maria_crypto • 5h</span>
+                            <span class="post-header-badge community">PROPUESTA</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="post-content-main">
+                    <div class="post-text">
+                        Propongo mercado: ¿Bitcoin superará $100,000 antes de marzo 2025?
+                        Si alcanza 1,000 votos, se convierte en mercado oficial y gano 2% del fee en Fierce 🚀
+                        #Bitcoin #BTC #Crypto
+                    </div>
+
+                    <div class="post-voting-section">
+                        <div class="voting-title-row">
+                            <div class="voting-title" style="color: #4ade80;">
+                                ⭐ Vota para aprobar
+                                <span class="info-icon" title="Necesita 10 Fierce para votar">ℹ️</span>
+                            </div>
+                            <span style="font-size: 12px; color: #8b98a5;">847/1,000 votos</span>
+                        </div>
+
+                        <div class="voting-options">
+                            <div class="voting-option selected">
+                                <span class="option-label">APROBAR</span>
+                                <span class="option-percentage" style="color: #4ade80;">91%</span>
+                            </div>
+                            <div class="voting-option">
+                                <span class="option-label">RECHAZAR</span>
+                                <span class="option-percentage" style="color: #8b98a5;">9%</span>
+                            </div>
+                        </div>
+
+                        <div class="voting-bar">
+                            <div class="voting-bar-fill" style="width: 91%; background: linear-gradient(90deg, #4ade80 0%, #22c55e 100%);"></div>
+                        </div>
+
+                        <div class="voting-stats">
+                            <span>771 votos APROBAR</span>
+                            <span>76 votos RECHAZAR</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="post-actions-bottom">
+                    <button class="post-action-btn">💬 124</button>
+                    <button class="post-action-btn">🔄 45</button>
+                    <button class="post-action-btn">⭐ 892</button>
+                    <button class="post-action-btn">⚡ Apoyar</button>
+                </div>
+            </article>
+        </main>
+
+        <!-- Sidebar Right (se mantiene igual) -->
+        <aside class="sidebar-right">
+            <!-- ... mismo contenido del sidebar derecho ... -->
+        </aside>
+    </div>
+</body>
+</html>
