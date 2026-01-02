@@ -8,6 +8,98 @@
   margin-bottom: 20px;
 }
 
+.tabs {
+  display: flex;
+  background: $background-color;
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 16px;
+  gap: 4px;
+}
+
+.tab {
+  flex: 1;
+  padding: 12px 24px;
+  border-radius: 8px;
+  background: transparent;
+  color: $text-muted;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  border: none;
+}
+
+.tab.active {
+  background: $primary-color;
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+.tab:hover:not(.active) {
+  background: rgba(0, 123, 255, 0.1);
+  color: $text-primary;
+}
+
+.trade-options {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.option-btn {
+  flex: 1;
+  padding: 16px 20px;
+  border: 2px solid transparent;
+  border-radius: 16px;
+  background: transparent;
+  color: $text-primary;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.option-btn.selected {
+  background: linear-gradient(135deg, #00BA7C, #00A569);
+  color: white;
+  border-color: #00BA7C;
+}
+
+.option-btn:hover:not(.selected) {
+  background: rgba(0, 186, 124, 0.1);
+  border-color: #00BA7C;
+}
+
+.option-label {
+  font-weight: 700;
+}
+
+.option-price {
+  font-size: 20px;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+.option-btn-no {
+  background: linear-gradient(135deg, #F4212E, #D91B29);
+  color: white;
+}
+
+.option-btn-no.selected {
+  background: linear-gradient(135deg, #E01A26, #C01723);
+  box-shadow: 0 4px 12px rgba(244, 33, 46, 0.4);
+}
+
+.option-btn-no:hover:not(.selected) {
+  background: linear-gradient(135deg, #E01A26, #C01723);
+}
+
 .trading-header {
   margin-bottom: 20px;
 }
@@ -140,22 +232,46 @@
   background: rgba(255, 255, 255, 0.15);
 }
 
+.amount-display {
+  font-size: 24px;
+  font-weight: 700;
+  color: $text-primary;
+  margin-bottom: 12px;
+}
+
 .trade-info {
-  display: flex;
-  justify-content: space-between;
-  padding: 12px 0;
-  font-size: 14px;
   border-top: 1px solid $border-color;
+  padding-top: 16px;
   margin-top: 16px;
 }
 
-.trade-info-label {
-  color: $text-muted;
+.info-row, .avg-price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
-.trade-info-value {
-  font-weight: 600;
+.info-row:last-child, .avg-price-row:last-child {
+  margin-bottom: 0;
+}
+
+.info-label, .avg-label {
+  font-size: 14px;
+  color: $text-muted;
+  font-weight: 500;
+}
+
+.info-amount {
+  font-size: 24px;
+  font-weight: 700;
   color: #00BA7C;
+}
+
+.avg-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: $text-primary;
 }
 
 .btn-trade {
