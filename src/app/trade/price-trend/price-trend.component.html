@@ -1,0 +1,77 @@
+<div class="sentiment-widget" *ngIf="predictionData">
+  <!-- Binary Prediction (Yes/No) -->
+  <div class="binary-view" *ngIf="predictionData.type === 'binary'">
+    <div class="widget-header">
+      <h3>🔥 Intuición Fierce vs Mercado</h3>
+    </div>
+
+    <div class="binary-comparison">
+      <div class="comparison-row" *ngFor="let option of predictionData.options">
+        <div class="option-name">{{ option.name }}</div>
+        <div class="metrics">
+          <div class="metric fierce">
+            <span class="label">Intuición</span>
+            <span class="value">{{ option.fierceIntuition }}%</span>
+          </div>
+          <div class="metric market">
+            <span class="label">Mercado</span>
+            <span class="value">{{ option.marketPrice }}%</span>
+          </div>
+          <div class="gap" [class.positive]="getGap(option) > 0" [class.negative]="getGap(option) < 0">
+            {{ getGap(option) > 0 ? '+' : '' }}{{ getGap(option) }}%
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-box">
+      <span class="insight-icon">💡</span>
+      <span class="insight-text">
+        La comunidad está {{ getGap(predictionData.options[0]) > 0 ? 'más optimista' : 'más pesimista' }} que el mercado
+      </span>
+    </div>
+  </div>
+
+  <!-- Multiple Options Prediction -->
+  <div class="multiple-view" *ngIf="predictionData.type === 'multiple'">
+    <div class="widget-header">
+      <h3>🔥 Intuición Fierce</h3>
+    </div>
+
+    <div class="options-ranking">
+      <div class="ranking-item" *ngFor="let option of predictionData.options; let i = index">
+        <div class="rank-number">{{ i + 1 }}</div>
+        <div class="option-info">
+          <div class="option-header">
+            <span class="option-name">{{ option.name }}</span>
+            <span class="fierce-percentage">{{ option.fierceIntuition }}%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill fierce" [style.width]="getBarWidth(option.fierceIntuition)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="widget-header market-header">
+      <h3>💰 Mercado Real</h3>
+    </div>
+
+    <div class="market-ranking">
+      <div class="market-item" *ngFor="let option of predictionData.options; let i = index">
+        <div class="market-row">
+          <span class="option-name">{{ option.name }}</span>
+          <div class="market-stats">
+            <span class="market-percentage">{{ option.marketPrice }}%</span>
+            <span class="volume">{{ option.volume }}</span>
+          </div>
+        </div>
+        <div class="gap-indicator" [class.positive]="getGap(option) > 0" [class.negative]="getGap(option) < 0">
+          {{ getGap(option) > 0 ? '↑' : '↓' }} {{ Math.abs(getGap(option)) }}% gap
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
