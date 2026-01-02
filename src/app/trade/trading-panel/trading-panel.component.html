@@ -1,42 +1,44 @@
-<div class="trading-header">
-  <div class="section-title">OUTCOME</div>
-  <div class="current-price">7% <span class="price-change negative">▼ 12%</span></div>
-</div>
+<div class="trading-panel">
+  <div class="trading-header">
+    <div class="section-title">OUTCOME</div>
+    <div class="current-price">7% <span class="price-change negative">▼ 12%</span></div>
+  </div>
 
-<div class="trade-buttons">
-  <button class="btn btn-yes">Buy Yes 8¢</button>
-  <button class="btn btn-no">Buy No 94¢</button>
-</div>
+  <div class="trade-buttons">
+    <button class="btn btn-yes">Buy Yes 8¢</button>
+    <button class="btn btn-no">Buy No 94¢</button>
+  </div>
 
-<div class="trade-section">
-  <div class="section-title">Precio Límite</div>
-  <div class="input-group">
-    <div class="price-controls">
-      <button class="price-btn" (click)="decreasePrice()">−</button>
-      <input type="text" class="input-field" [(ngModel)]="limitPrice" style="text-align: center;">
-      <button class="price-btn" (click)="increasePrice()">+</button>
+  <div class="trade-section">
+    <div class="section-title">Precio Límite</div>
+    <div class="input-group">
+      <div class="price-controls">
+        <button class="price-btn" (click)="decreasePrice()">−</button>
+        <input type="text" class="input-field" [(ngModel)]="limitPrice" style="text-align: center;">
+        <button class="price-btn" (click)="increasePrice()">+</button>
+      </div>
     </div>
-  </div>
 
-  <div class="section-title" style="margin-top: 20px;">Shares</div>
-  <div class="input-group">
-    <input type="number" class="input-field" [(ngModel)]="shares" placeholder="0">
-    <div class="quick-amounts">
-      <button class="quick-btn" (click)="adjustShares(-100)">-100</button>
-      <button class="quick-btn" (click)="adjustShares(-10)">-10</button>
-      <button class="quick-btn" (click)="adjustShares(10)">+10</button>
-      <button class="quick-btn" (click)="adjustShares(100)">+100</button>
+    <div class="section-title" style="margin-top: 20px;">Shares</div>
+    <div class="input-group">
+      <input type="number" class="input-field" [(ngModel)]="shares" placeholder="0">
+      <div class="quick-amounts">
+        <button class="quick-btn" (click)="adjustShares(-100)">-100</button>
+        <button class="quick-btn" (click)="adjustShares(-10)">-10</button>
+        <button class="quick-btn" (click)="adjustShares(10)">+10</button>
+        <button class="quick-btn" (click)="adjustShares(100)">+100</button>
+      </div>
     </div>
-  </div>
 
-  <div class="trade-info">
-    <span class="trade-info-label">Total</span>
-    <span class="trade-info-value">${{ total }}</span>
-  </div>
-  <div class="trade-info">
-    <span class="trade-info-label">To Win 🎯</span>
-    <span class="trade-info-value">${{ toWin }}</span>
-  </div>
+    <div class="trade-info">
+      <span class="trade-info-label">Total</span>
+      <span class="trade-info-value">${{ total }}</span>
+    </div>
+    <div class="trade-info">
+      <span class="trade-info-label">To Win 🎯</span>
+      <span class="trade-info-value">${{ toWin }}</span>
+    </div>
 
-  <button class="btn-trade">Trade</button>
+    <button class="btn-trade">Trade</button>
+  </div>
 </div>

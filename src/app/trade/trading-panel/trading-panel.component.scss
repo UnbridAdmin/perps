@@ -1,5 +1,13 @@
 @use '../../../styles/variables' as *;
 
+.trading-panel {
+  background: $background-light;
+  border: 1px solid $border-color;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
 .trading-header {
   margin-bottom: 20px;
 }
