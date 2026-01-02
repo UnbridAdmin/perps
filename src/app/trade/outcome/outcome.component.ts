@@ -12,6 +12,8 @@ import { ResolutionComponent } from '../resolution/resolution.component';
   styleUrl: './outcome.component.scss',
 })
 export class OutcomeComponent {
+  Math = Math;
+
   outcomes = [
     { id: 'jan9', date: 'January 9', volume: '$14,832 Vol.', percentage: 7, change: -12, expanded: true },
     { id: 'jan15', date: 'January 15', volume: '$42,404 Vol.', percentage: 25, change: -42, expanded: false },
