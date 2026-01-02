@@ -1,5 +1,6 @@
+@use '../../styles/variables' as *;
 .prediction-list {
-  max-width: 600px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 20px;
 }
@@ -39,13 +40,13 @@
 }
 
 .prediction-info p {
-  font-size: 13px;
+  font-size: 1rem;
   color: #71767b;
   margin: 4px 0 0 0;
 }
 
 .prediction-question {
-  font-size: 15px;
+  font-size: 30px;
   margin-bottom: 16px;
   line-height: 1.4;
   color: #e7e9ea;
@@ -66,8 +67,8 @@
 
 // Sentiment section styles
 .sentiment-section {
-  background: rgba(156, 39, 176, 0.05);
-  border: 1px solid rgba(156, 39, 176, 0.2);
+  //background: rgba(156, 39, 176, 0.05);
+  border: 1px solid $border-color;
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 16px;
@@ -80,10 +81,30 @@
   margin-bottom: 16px;
 }
 
+.sentiment-title-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .sentiment-title {
   font-size: 14px;
   font-weight: 600;
   color: #9c27b0;
+}
+
+.how-it-works-link {
+  font-size: 12px;
+  color: #9c27b0;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: underline;
+  font-weight: 500;
+
+  &:hover {
+    color: #ba68c8;
+    text-decoration: none;
+  }
 }
 
 .sentiment-total {
@@ -148,7 +169,7 @@
 
   &.selected {
     background: rgba(156, 39, 176, 0.1);
-    border: 2px solid #9c27b0;
+    border: 2px solid $border-color;
   }
 
   &.selected::before {
@@ -272,35 +293,36 @@
   }
 }
 
-.prediction-options {
-  display: flex;
-  gap: 8px;
+.prediction-predict {
   margin-bottom: 16px;
 }
 
-.option-btn {
-  flex: 1;
-  padding: 10px;
-  border: 1px solid #2f3336;
-  border-radius: 9999px;
-  background-color: transparent;
-  color: #e7e9ea;
-  font-size: 14px;
-  font-weight: 700;
+.predict-btn {
+  width: 100%;
+  /*padding: 12px 20px;
+  background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
+  border: none;
+  border-radius: 25px;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
 
   &:hover {
-    background-color: rgba(29, 155, 240, 0.1);
-    border-color: #1d9bf0;
-  }
+    background: linear-gradient(135deg, #ff8c42 0%, #ffa366 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+  }*/
 
-  &.yes {
-    color: #00ba7c;
-  }
-
-  &.no {
-    color: #f91880;
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(255, 107, 53, 0.3);
   }
 }
 
@@ -308,8 +330,8 @@
 .prediction-actions {
   display: flex;
   justify-content: space-around;
-  padding-top: 12px;
-  border-top: 1px solid #2f3336;
+  //padding-top: 10px;
+  //border-top: 1px solid #2f3336;
 }
 
 .action-btn {
@@ -450,6 +472,75 @@
   }
 }
 
+.sentiment-popover {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #16181c;
+  border: 1px solid #2f3336;
+  border-radius: 12px;
+  padding: 24px;
+  min-width: 320px;
+  max-width: 500px;
+  z-index: 1001;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
+  animation: popoverFadeIn 0.2s ease-out;
+}
+
+.sentiment-popover .popover-title {
+  color: #9c27b0;
+}
+
+.popover-content {
+  color: #e7e9ea;
+  line-height: 1.6;
+
+  p {
+    margin: 12px 0;
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  strong {
+    color: #9c27b0;
+    font-weight: 600;
+  }
+
+  ul {
+    margin: 8px 0;
+    padding-left: 20px;
+
+    li {
+      margin: 6px 0;
+      list-style-type: none;
+      position: relative;
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: -20px;
+        top: 8px;
+        width: 6px;
+        height: 6px;
+        background: #9c27b0;
+        border-radius: 50%;
+      }
+    }
+  }
+
+  em {
+    color: #ba68c8;
+    font-style: italic;
+  }
+}
+
 // Market button active state
 .market-btn.active {
   color: #4ade80;
@@ -520,6 +611,12 @@
     font-size: 18px;
   }
 
+  .info-icon {
+    width: 22px;
+    height: 22px;
+    font-size: 16px;
+  }
+
   .market-distribution {
     grid-template-columns: 1fr;
   }
@@ -531,6 +628,11 @@
   .action-btn {
     padding: 6px 8px;
     font-size: 12px;
+  }
+
+  .predict-btn {
+    padding: 14px 20px;
+    font-size: 18px;
   }
 
   .market-popover {

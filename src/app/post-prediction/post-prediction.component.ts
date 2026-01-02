@@ -43,6 +43,7 @@ export class PostPredictionComponent {
 
   // Popover state
   activeMarketPopover: number | null = null;
+  activeSentimentPopover: number | null = null;
 
   // Voting state - for demonstration, we'll simulate different voting states
   userVotes: { [predictionIndex: number]: 'yes' | 'no' | null } = {
@@ -59,8 +60,8 @@ export class PostPredictionComponent {
       timeAgo: '2h ago',
       participants: '1.2K',
       question: '¿Donald Trump ganará las elecciones de 2028?',
-      yesPercentage: 48,
-      noPercentage: 52,
+      yesPercentage: 25,
+      noPercentage: 75,
       imageUrl: 'https://picsum.photos/600/300?random=1',
       sentimentVotes: {
         yes: 9179,
@@ -235,9 +236,15 @@ export class PostPredictionComponent {
     this.activeMarketPopover = this.activeMarketPopover === index ? null : index;
   }
 
+  // Toggle sentiment popover
+  toggleSentimentPopover(index: number): void {
+    this.activeSentimentPopover = this.activeSentimentPopover === index ? null : index;
+  }
+
   // Close popover when clicking outside
   closePopover(): void {
     this.activeMarketPopover = null;
+    this.activeSentimentPopover = null;
   }
 
   // Vote on sentiment poll

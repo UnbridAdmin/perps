@@ -1,6 +1,6 @@
 <div class="prediction-list">
   <!-- Popover Backdrop -->
-  <div class="popover-backdrop" *ngIf="activeMarketPopover !== null" (click)="closePopover()"></div>
+  <div class="popover-backdrop" *ngIf="activeMarketPopover !== null || activeSentimentPopover !== null" (click)="closePopover()"></div>
 
   <div class="prediction-card" *ngFor="let prediction of predictions; let i = index">
     <div class="prediction-header">
@@ -22,7 +22,10 @@
     <!-- Sentiment Voting Section -->
     <div class="sentiment-section" *ngIf="prediction.sentimentVotes">
       <div class="sentiment-header">
-        <span class="sentiment-title">🔥 Sentimiento Fierce</span>
+        <div class="sentiment-title-section">
+          <span class="sentiment-title">🔥 Intuición Fierce</span>
+          <a class="how-it-works-link" (click)="toggleSentimentPopover(i)">How it works?</a>
+        </div>
         <span class="sentiment-total">{{ prediction.sentimentVotes.total | number:'1.0-0' }} votos</span>
       </div>
 
@@ -49,9 +52,8 @@
       </div>
     </div>
 
-    <div class="prediction-options">
-      <button class="option-btn yes">SÍ {{ prediction.yesPercentage }}%</button>
-      <button class="option-btn no">NO {{ prediction.noPercentage }}%</button>
+    <div class="prediction-predict">
+      <button class="predict-btn btn-primary">🎯 Trade</button>
     </div>
 
     <!-- Action Buttons -->
@@ -84,7 +86,34 @@
           <span class="distribution-amount">{{ option.amount }} ({{ option.percentage }}%)</span>
         </div>
       </div>
-      <button class="popover-bet-btn">🎯 Apostar Ahora</button>
+      <button class="popover-bet-btn btn-primary">🎯 Trade</button>
+    </div>
+
+    <!-- Sentiment Popover -->
+    <div class="sentiment-popover" *ngIf="activeSentimentPopover === i">
+      <div class="popover-header">
+        <span class="popover-title">🔥 Cómo Funciona Intuición Fierce</span>
+      </div>
+      <div class="popover-content">
+        <p><strong>¿Qué es Intuición Fierce?</strong></p>
+        <p>Es una votación popular exclusiva para holders de tokens Fierce. Los holders predicen el futuro simplemente manteniendo sus tokens en la wallet.</p>
+
+        <p><strong>¿Cómo funciona?</strong></p>
+        <ul>
+          <li>🔮 Tu intuición se registra automáticamente</li>
+          <li>🆓 No requiere apostar dinero real</li>
+          <li>🎯 No afecta los resultados del mercado oficial</li>
+        </ul>
+
+        <p><strong>Beneficios:</strong></p>
+        <ul>
+          <li>🎁 Participa en predicciones comunitarias</li>
+          <li>💰 Gana xp por intuición acertada</li>
+          <li>🌐 Forma parte del futuro del protocolo</li>
+        </ul>
+
+        <p><em>¡Tu intuición vale oro! Cada token cuenta.</em></p>
+      </div>
     </div>
   </div>
 </div>
