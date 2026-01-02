@@ -1,0 +1,36 @@
+<div class="comments-section">
+  <div class="comment-input">
+    <div class="avatar"></div>
+    <input type="text" placeholder="Post your reply" class="comment-field">
+  </div>
+
+  <div class="comments-list">
+    <div class="comment-item" *ngFor="let comment of comments">
+      <div class="comment-avatar"></div>
+      <div class="comment-content">
+        <div class="comment-header">
+          <span class="comment-author">{{ comment.author }}</span>
+          <span class="comment-username">{{ comment.username }}</span>
+          <span class="comment-time">· {{ comment.timeAgo }}</span>
+        </div>
+        <div class="comment-text">{{ comment.content }}</div>
+        <div class="comment-actions">
+          <button class="action-btn">
+            <span>💬</span>
+            <span>{{ comment.replies }}</span>
+          </button>
+          <button class="action-btn">
+            <span>❤️</span>
+            <span>{{ comment.likes }}</span>
+          </button>
+          <button class="action-btn">
+            <span>🔄</span>
+          </button>
+          <button class="action-btn">
+            <span>📤</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

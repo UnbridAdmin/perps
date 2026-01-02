@@ -1,10 +1,12 @@
+@use '../../../styles/variables' as *;
+
 .outcomes-list {
   display: flex;
   flex-direction: column;
 }
 
 .outcome-section {
-  border-bottom: 1px solid #2F3336;
+  border-bottom: 1px solid $border-color;
 }
 
 .outcome-section:last-child {
@@ -21,11 +23,11 @@
 }
 
 .outcome-header:hover {
-  background: rgba(29, 155, 240, 0.05);
+  background: rgba(156, 39, 176, 0.05);
 }
 
 .outcome-header.active {
-  background: rgba(29, 155, 240, 0.1);
+  background: rgba(156, 39, 176, 0.1);
 }
 
 .outcome-info {
@@ -39,7 +41,7 @@
 }
 
 .outcome-volume {
-  color: #71767B;
+  color: $text-muted;
   font-size: 13px;
 }
 
@@ -69,7 +71,7 @@
 
 .expand-icon {
   font-size: 20px;
-  color: #71767B;
+  color: $text-muted;
   transition: transform 0.3s;
 }
 
@@ -89,7 +91,7 @@
 
 .tabs {
   display: flex;
-  border-bottom: 1px solid #2F3336;
+  border-bottom: 1px solid $border-color;
   padding: 0 20px;
 }
 
@@ -97,18 +99,18 @@
   padding: 16px 24px;
   cursor: pointer;
   border-bottom: 2px solid transparent;
-  color: #71767B;
+  color: $text-muted;
   font-weight: 500;
   transition: all 0.2s;
 }
 
 .tab.active {
-  color: #1D9BF0;
-  border-bottom-color: #1D9BF0;
+  color: $primary-color;
+  border-bottom-color: $primary-color;
 }
 
 .tab:hover {
-  background-color: rgba(29, 155, 240, 0.1);
+  background-color: $primary-light;
 }
 
 .tab-content {

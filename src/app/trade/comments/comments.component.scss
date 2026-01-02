@@ -1,0 +1,122 @@
+@use '../../../styles/variables' as *;
+
+.comments-section {
+  border-top: 1px solid $border-color;
+  padding-top: 16px;
+}
+
+.comment-input {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid $border-color;
+}
+
+.comment-input .avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
+  flex-shrink: 0;
+}
+
+.comment-field {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: $text-primary;
+  font-size: 15px;
+  outline: none;
+  padding: 8px 0;
+}
+
+.comment-field::placeholder {
+  color: $text-muted;
+}
+
+.comments-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.comment-item {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid $border-color;
+  transition: background 0.2s;
+}
+
+.comment-item:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.comment-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  flex-shrink: 0;
+}
+
+.comment-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.comment-author {
+  font-weight: 700;
+  color: $text-primary;
+  font-size: 15px;
+}
+
+.comment-username {
+  color: $text-muted;
+  font-size: 15px;
+}
+
+.comment-time {
+  color: $text-muted;
+  font-size: 15px;
+}
+
+.comment-text {
+  color: $text-primary;
+  font-size: 15px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.comment-actions {
+  display: flex;
+  gap: 40px;
+  margin-top: 8px;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: $text-muted;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.action-btn:hover {
+  color: $primary-color;
+}
+
+.action-btn span:first-child {
+  font-size: 16px;
+}

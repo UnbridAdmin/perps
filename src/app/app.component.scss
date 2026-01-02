@@ -6,6 +6,7 @@
   position: relative;
   background: $background-color;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 .container {
@@ -20,11 +21,17 @@
   max-width: calc($container-max-width - $sidebar-width);
 }
 
+.container.full-width {
+  grid-template-columns: 1fr;
+  max-width: calc(100% - $sidebar-width);
+}
+
 .main-content {
-  //min-height: calc(100vh - $header-height);
   box-sizing: border-box;
-  border-right: 1px solid $border-color;
+  border-right: none;
   min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 /* Cuando el sidebar está colapsado */
