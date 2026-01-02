@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 })
 export class HeaderComponent {
   @Output() tabChange = new EventEmitter<'for-you' | 'trending'>();
+  @Input() isHomePage = true;
 
   showMoreCategories = false;
   activeTab: 'for-you' | 'trending' = 'for-you';

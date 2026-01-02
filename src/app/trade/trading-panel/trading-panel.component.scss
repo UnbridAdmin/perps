@@ -1,0 +1,166 @@
+.trading-header {
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 14px;
+  color: #71767B;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.current-price {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.price-change {
+  font-size: 14px;
+}
+
+.price-change.positive {
+  color: #00BA7C;
+}
+
+.price-change.negative {
+  color: #F4212E;
+}
+
+.trade-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.btn {
+  padding: 14px 20px;
+  border-radius: 24px;
+  border: none;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-yes {
+  background: #00BA7C;
+  color: white;
+}
+
+.btn-yes:hover {
+  background: #00A569;
+}
+
+.btn-no {
+  background: #F4212E;
+  color: white;
+}
+
+.btn-no:hover {
+  background: #D91B29;
+}
+
+.trade-section {
+  background: #15202B;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 20px;
+}
+
+.input-group {
+  margin-bottom: 16px;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #2F3336;
+  background: #192734;
+  color: #E7E9EA;
+  font-size: 16px;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #1D9BF0;
+}
+
+.quick-amounts {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.quick-btn {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #2F3336;
+  background: transparent;
+  color: #E7E9EA;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.quick-btn:hover {
+  background: #2F3336;
+}
+
+.price-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.price-btn {
+  padding: 8px 16px;
+  background: #2F3336;
+  border: none;
+  border-radius: 6px;
+  color: #E7E9EA;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.price-btn:hover {
+  background: #3F4347;
+}
+
+.trade-info {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  font-size: 14px;
+  border-top: 1px solid #2F3336;
+  margin-top: 16px;
+}
+
+.trade-info-label {
+  color: #71767B;
+}
+
+.trade-info-value {
+  font-weight: 600;
+  color: #00BA7C;
+}
+
+.btn-trade {
+  width: 100%;
+  padding: 16px;
+  border-radius: 24px;
+  border: none;
+  background: #1D9BF0;
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 16px;
+}
+
+.btn-trade:hover {
+  background: #1A8CD8;
+}

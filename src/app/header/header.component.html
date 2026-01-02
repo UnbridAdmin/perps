@@ -31,7 +31,7 @@
     </div>
 
     <!-- Fila 2: 2 Columnas (Tabs izquierda | Search derecha) -->
-    <div class="header-row-2">
+    <div class="header-row-2" *ngIf="isHomePage">
         <!-- Columna izquierda: Tabs -->
         <div class="feed-tabs">
             <div class="tab" [class.active]="activeTab === 'for-you'" (click)="setActiveTab('for-you')">For you</div>

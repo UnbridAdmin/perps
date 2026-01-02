@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { HeaderComponent } from './header/header.component';
 import { SidebarMenuComponent } from './sidebar-menu/sidebar-menu.component';
 import { PostPredictionComponent } from './post-prediction/post-prediction.component';
@@ -19,6 +19,15 @@ import { NewsComponent } from './news/news.component';
 export class AppComponent {
   title = 'perps';
   activeTab: 'for-you' | 'trending' = 'for-you';
+  isHomePage = true;
+
+  constructor(private router: Router) {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.isHomePage = event.url === '/' || event.url === '/home';
+      }
+    });
+  }
 
   onTabChange(tab: 'for-you' | 'trending') {
     this.activeTab = tab;

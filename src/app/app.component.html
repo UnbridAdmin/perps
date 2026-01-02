@@ -1,11 +1,11 @@
 <div class="app-wrapper">
   <app-sidebar-menu></app-sidebar-menu>
-  <app-header (tabChange)="onTabChange($event)"></app-header>
+  <app-header [isHomePage]="isHomePage" (tabChange)="onTabChange($event)"></app-header>
   <div class="container">
     <div class="main-content">
-      <app-post-prediction [tab]="activeTab"></app-post-prediction>
+      <app-post-prediction *ngIf="isHomePage" [tab]="activeTab"></app-post-prediction>
       <router-outlet></router-outlet>
     </div>
-    <app-news></app-news>
+    <app-news *ngIf="isHomePage"></app-news>
   </div>
 </div>

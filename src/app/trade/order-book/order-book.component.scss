@@ -1,0 +1,43 @@
+.order-book-table {
+  width: 100%;
+}
+
+.order-book-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 12px 0;
+  font-size: 12px;
+  color: #71767B;
+  text-transform: uppercase;
+  border-bottom: 1px solid #2F3336;
+  margin-bottom: 8px;
+}
+
+.order-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 8px 0;
+  font-size: 14px;
+}
+
+.order-row.ask {
+  color: #F4212E;
+}
+
+.order-row.bid {
+  color: #00BA7C;
+}
+
+.price {
+  font-weight: 600;
+}
+
+.spread {
+  text-align: center;
+  padding: 12px 0;
+  color: #71767B;
+  font-size: 13px;
+  border-top: 1px solid #2F3336;
+  border-bottom: 1px solid #2F3336;
+  margin: 12px 0;
+}

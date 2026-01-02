@@ -1,1 +1,18 @@
-<p>order-book works!</p>
+<div class="order-book-table">
+  <div class="order-book-header">
+    <div>PRECIO</div>
+    <div>SHARES</div>
+    <div>TOTAL</div>
+  </div>
+  <div class="order-row ask" *ngFor="let ask of asks">
+    <div class="price">{{ ask.price }}¢</div>
+    <div>{{ ask.shares }}</div>
+    <div>${{ ask.total }}</div>
+  </div>
+  <div class="spread">Spread {{ spread }}¢</div>
+  <div class="order-row bid" *ngFor="let bid of bids">
+    <div class="price">{{ bid.price }}¢</div>
+    <div>{{ bid.shares }}</div>
+    <div>${{ bid.total }}</div>
+  </div>
+</div>

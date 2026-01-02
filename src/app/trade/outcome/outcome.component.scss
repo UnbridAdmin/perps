@@ -1,0 +1,116 @@
+.outcomes-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.outcome-section {
+  border-bottom: 1px solid #2F3336;
+}
+
+.outcome-section:last-child {
+  border-bottom: none;
+}
+
+.outcome-header {
+  padding: 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.outcome-header:hover {
+  background: rgba(29, 155, 240, 0.05);
+}
+
+.outcome-header.active {
+  background: rgba(29, 155, 240, 0.1);
+}
+
+.outcome-info {
+  flex: 1;
+}
+
+.outcome-date {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.outcome-volume {
+  color: #71767B;
+  font-size: 13px;
+}
+
+.outcome-stats {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.outcome-percentage {
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.percentage-change {
+  font-size: 13px;
+  margin-left: 8px;
+}
+
+.percentage-change.positive {
+  color: #00BA7C;
+}
+
+.percentage-change.negative {
+  color: #F4212E;
+}
+
+.expand-icon {
+  font-size: 20px;
+  color: #71767B;
+  transition: transform 0.3s;
+}
+
+.outcome-header.active .expand-icon {
+  transform: rotate(180deg);
+}
+
+.outcome-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.outcome-content.expanded {
+  max-height: 2000px;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #2F3336;
+  padding: 0 20px;
+}
+
+.tab {
+  padding: 16px 24px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  color: #71767B;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.tab.active {
+  color: #1D9BF0;
+  border-bottom-color: #1D9BF0;
+}
+
+.tab:hover {
+  background-color: rgba(29, 155, 240, 0.1);
+}
+
+.tab-content {
+  padding: 20px;
+}

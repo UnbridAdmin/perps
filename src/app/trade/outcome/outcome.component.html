@@ -1,1 +1,38 @@
-<p>outcome works!</p>
+<div class="outcomes-list">
+  <div class="outcome-section" *ngFor="let outcome of outcomes">
+    <div class="outcome-header" [class.active]="outcome.expanded" (click)="toggleOutcome(outcome.id)">
+      <div class="outcome-info">
+        <div class="outcome-date">{{ outcome.date }}</div>
+        <div class="outcome-volume">{{ outcome.volume }}</div>
+      </div>
+      <div class="outcome-stats">
+        <div>
+          <span class="outcome-percentage">{{ outcome.percentage }}%</span>
+          <span class="percentage-change" [class.positive]="outcome.change > 0" [class.negative]="outcome.change < 0" *ngIf="outcome.change !== 0">
+            {{ outcome.change > 0 ? '▲' : '▼' }} {{ Math.abs(outcome.change) }}%
+          </span>
+        </div>
+        <span class="expand-icon">▼</span>
+      </div>
+    </div>
+    <div class="outcome-content" [class.expanded]="outcome.expanded">
+      <div class="tabs">
+        <div class="tab" [class.active]="activeTab[outcome.id] === 'orderbook'" (click)="switchTab(outcome.id, 'orderbook')">Order Book</div>
+        <div class="tab" [class.active]="activeTab[outcome.id] === 'graph'" (click)="switchTab(outcome.id, 'graph')">Graph</div>
+        <div class="tab" [class.active]="activeTab[outcome.id] === 'resolution'" (click)="switchTab(outcome.id, 'resolution')">Resolución</div>
+      </div>
+
+      <div class="tab-content" *ngIf="activeTab[outcome.id] === 'orderbook'">
+        <app-order-book></app-order-book>
+      </div>
+
+      <div class="tab-content" *ngIf="activeTab[outcome.id] === 'graph'">
+        <app-graph [percentage]="outcome.percentage" [change]="outcome.change"></app-graph>
+      </div>
+
+      <div class="tab-content" *ngIf="activeTab[outcome.id] === 'resolution'">
+        <app-resolution [date]="outcome.date"></app-resolution>
+      </div>
+    </div>
+  </div>
+</div>
