@@ -53,7 +53,7 @@
     </div>
 
     <div class="prediction-predict">
-      <button class="predict-btn btn-primary">🎯 Trade</button>
+      <button class="predict-btn btn-primary" (click)="navigateToTrade()">🎯 Trade</button>
     </div>
 
     <!-- Action Buttons -->
@@ -86,7 +86,7 @@
           <span class="distribution-amount">{{ option.amount }} ({{ option.percentage }}%)</span>
         </div>
       </div>
-      <button class="popover-bet-btn btn-primary">🎯 Trade</button>
+      <button class="popover-bet-btn btn-primary" (click)="navigateToTrade()">🎯 Trade</button>
     </div>
 
     <!-- Sentiment Popover -->

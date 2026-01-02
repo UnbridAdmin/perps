@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 interface Prediction {
   creator: string;
@@ -40,6 +41,8 @@ interface Prediction {
 })
 export class PostPredictionComponent {
   @Input() tab: 'for-you' | 'trending' = 'for-you';
+
+  constructor(private router: Router) {}
 
   // Popover state
   activeMarketPopover: number | null = null;
@@ -260,5 +263,10 @@ export class PostPredictionComponent {
   // Get user's vote for a prediction
   getUserVote(predictionIndex: number): 'yes' | 'no' | null {
     return this.userVotes[predictionIndex] || null;
+  }
+
+  // Navigate to trade detail page
+  navigateToTrade(): void {
+    this.router.navigate(['/trade']);
   }
 }
