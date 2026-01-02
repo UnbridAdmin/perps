@@ -24,11 +24,20 @@ interface PredictionData {
 })
 export class PriceTrendComponent implements OnInit {
   predictionData: PredictionData | null = null;
+  showInfoPopover = false;
 
   ngOnInit() {
     // TODO: Replace with actual service call
     // Example: this.predictionService.getPredictionData(predictionId).subscribe(...)
     this.loadMockData();
+  }
+
+  toggleInfoPopover() {
+    this.showInfoPopover = !this.showInfoPopover;
+  }
+
+  closeInfoPopover() {
+    this.showInfoPopover = false;
   }
 
   private loadMockData() {

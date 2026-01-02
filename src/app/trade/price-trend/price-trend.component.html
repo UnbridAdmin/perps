@@ -1,9 +1,17 @@
 <div class="sentiment-widget" *ngIf="predictionData">
+  <!-- Info Popover Backdrop -->
+  <div class="popover-backdrop" *ngIf="showInfoPopover" (click)="closeInfoPopover()"></div>
+
   <!-- Binary Prediction (Yes/No) -->
   <!-- <div class="binary-view" *ngIf="predictionData.type === 'binary'"> -->
   <div class="binary-view" *ngIf="predictionData.type === 'binary'">
     <div class="widget-header">
-      <h3>🔥 Intuición Fierce vs Mercado</h3>
+      <div class="header-title">
+        <h3>🔥 Intuición Fierce vs Mercado</h3>
+        <button class="info-btn" (click)="toggleInfoPopover()">
+          <span class="info-icon">ⓘ</span>
+        </button>
+      </div>
     </div>
 
     <div class="binary-comparison">
@@ -36,7 +44,12 @@
   <!-- Multiple Options Prediction -->
   <div class="multiple-view" *ngIf="predictionData.type === 'multiple'">
     <div class="widget-header">
-      <h3>🔥 Intuición Fierce</h3>
+      <div class="header-title">
+        <h3>🔥 Intuición Fierce</h3>
+        <button class="info-btn" (click)="toggleInfoPopover()">
+          <span class="info-icon">ⓘ</span>
+        </button>
+      </div>
     </div>
 
     <div class="options-ranking">
@@ -73,6 +86,25 @@
           {{ getGap(option) > 0 ? '↑' : '↓' }} {{ Math.abs(getGap(option)) }}% gap
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Info Popover -->
+  <div class="info-popover" *ngIf="showInfoPopover">
+    <div class="popover-header">
+      <span class="popover-title">💡 ¿Qué significa esto?</span>
+    </div>
+    <div class="popover-content">
+      <p>La <strong>Intuición Fierce</strong> muestra cómo votó la comunidad de holders.</p>
+      
+      <p>Cuando hay un <strong>GAP grande</strong> entre intuición y mercado, puede ser una <strong>oportunidad de trading</strong>.</p>
+      
+      <div class="example-box">
+        <p class="example-title">Ejemplo:</p>
+        <p>Si comunidad dice <span class="highlight">78%</span> pero mercado solo <span class="highlight">45%</span>, el mercado podría estar subvaluando esta opción.</p>
+      </div>
+      
+      <!-- <p class="reward-text">🎁 Holders que aciertan ganan XP</p> -->
     </div>
   </div>
 </div>
