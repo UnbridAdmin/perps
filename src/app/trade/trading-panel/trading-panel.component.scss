@@ -239,6 +239,25 @@
   margin-bottom: 12px;
 }
 
+.amount-input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid $border-color;
+  background: $background-light;
+  color: $text-primary;
+  font-size: 20px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.amount-input:focus {
+  outline: none;
+  border-color: $primary-color;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+}
+
 .trade-info {
   border-top: 1px solid $border-color;
   padding-top: 16px;
