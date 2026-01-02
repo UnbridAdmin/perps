@@ -10,31 +10,26 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './trading-panel.component.scss',
 })
 export class TradingPanelComponent {
-  limitPrice = '8¢';
-  shares = 0;
+  isBuyMode = true;
+  selectedOption: 'yes' | 'no' = 'yes';
+  amount = 2;
+  maxAmount = 100;
 
-  get total(): number {
-    const price = parseInt(this.limitPrice) || 0;
-    return (price * this.shares) / 100;
-  }
+  yesPrice = 97.4;
+  noPrice = 3.7;
+  avgPrice = 97.4;
 
   get toWin(): number {
-    return this.shares - this.total;
+    // If buying at yesPrice, potential win = amount / (yesPrice/100)
+    const price = this.selectedOption === 'yes' ? this.yesPrice : this.noPrice;
+    return parseFloat(((this.amount / (price / 100)) - this.amount).toFixed(2));
   }
 
-  increasePrice() {
-    const current = parseInt(this.limitPrice) || 0;
-    this.limitPrice = `${current + 1}¢`;
+  setAmount(value: number) {
+    this.amount = Math.min(this.amount + value, this.maxAmount);
   }
 
-  decreasePrice() {
-    const current = parseInt(this.limitPrice) || 0;
-    if (current > 0) {
-      this.limitPrice = `${current - 1}¢`;
-    }
-  }
-
-  adjustShares(amount: number) {
-    this.shares = Math.max(0, this.shares + amount);
+  setMaxAmount() {
+    this.amount = this.maxAmount;
   }
 }
