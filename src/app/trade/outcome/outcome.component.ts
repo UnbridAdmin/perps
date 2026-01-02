@@ -15,17 +15,17 @@ export class OutcomeComponent {
   Math = Math;
 
   outcomes = [
-    { id: 'jan9', date: 'January 9', volume: '$14,832 Vol.', percentage: 7, change: -12, expanded: true },
-    { id: 'jan15', date: 'January 15', volume: '$42,404 Vol.', percentage: 25, change: -42, expanded: false },
-    { id: 'jan31', date: 'January 31', volume: '$12,399 Vol.', percentage: 87, change: 6, expanded: false },
-    { id: 'apr20', date: 'April 20', volume: '$3,841 Vol.', percentage: 98, change: 0, expanded: false }
+    { id: 'camila', date: 'Camila', volume: '$120,832 Vol.', percentage: 45, change: -3, expanded: true },
+    { id: 'andres', date: 'Andrés', volume: '$80,404 Vol.', percentage: 30, change: 5, expanded: false },
+    { id: 'alexandra', date: 'Alexandra', volume: '$45,399 Vol.', percentage: 15, change: -2, expanded: false },
+    { id: 'samuel', date: 'Samuel', volume: '$20,841 Vol.', percentage: 10, change: 0, expanded: false }
   ];
 
   activeTab: { [key: string]: string } = {
-    jan9: 'orderbook',
-    jan15: 'orderbook',
-    jan31: 'orderbook',
-    apr20: 'orderbook'
+    camila: 'orderbook',
+    andres: 'orderbook',
+    alexandra: 'orderbook',
+    samuel: 'orderbook'
   };
 
   toggleOutcome(outcomeId: string) {

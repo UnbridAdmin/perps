@@ -22,28 +22,28 @@ export class CommentsComponent {
   comments: Comment[] = [
     {
       id: 1,
-      author: 'CryptoTrader',
-      username: '@cryptotrader',
+      author: 'RealityFan',
+      username: '@realityfan',
       timeAgo: '2h',
-      content: 'Creo que Grok 4.20 será lanzado antes de lo esperado. Elon siempre sorprende con sus anuncios.',
+      content: 'Camila ha tenido muchos conflictos esta semana. Creo que tiene altas probabilidades de ser eliminada.',
       likes: 24,
       replies: 3
     },
     {
       id: 2,
-      author: 'TechAnalyst',
-      username: '@techanalyst',
+      author: 'ShowAnalyst',
+      username: '@showanalyst',
       timeAgo: '4h',
-      content: 'Las probabilidades están muy bajas para January 9. Podría ser una buena oportunidad de compra.',
+      content: 'Andrés está jugando muy bien su estrategia. No creo que lo eliminen todavía.',
       likes: 18,
       replies: 5
     },
     {
       id: 3,
-      author: 'MarketWatch',
-      username: '@marketwatch',
+      author: 'TVWatcher',
+      username: '@tvwatcher',
       timeAgo: '6h',
-      content: 'El volumen de trading ha aumentado significativamente en las últimas 24h. Interesante movimiento.',
+      content: 'Alexandra y Samuel están volando bajo el radar. Podría ser una sorpresa.',
       likes: 42,
       replies: 8
     }
