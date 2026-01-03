@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { OutcomeComponent } from '../outcome/outcome.component';
 import { TradingPanelComponent } from '../trading-panel/trading-panel.component';
 import { CommentsComponent } from '../comments/comments.component';
@@ -12,5 +13,11 @@ import { PriceTrendComponent } from '../price-trend/price-trend.component';
   styleUrl: './trade-detail.component.scss',
 })
 export class TradeDetailComponent {
+
+  constructor(private router: Router) {}
+
+  goBack() {
+    this.router.navigate(['/home']);
+  }
 
 }

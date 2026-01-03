@@ -9,6 +9,23 @@
   overflow-x: hidden;
 }
 
+.back-button {
+  padding: 16px;
+  button {
+    background: none;
+    border: none;
+    color: $text-primary;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    &:hover {
+      color: $primary-color;
+    }
+  }
+}
+
 .prediction-header {
   border-bottom: 1px solid $border-color;
   padding: 16px;

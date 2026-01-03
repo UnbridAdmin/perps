@@ -1,4 +1,7 @@
 <div class="trade-detail-container">
+  <div class="back-button">
+    <button (click)="goBack()">&larr; Back</button>
+  </div>
   <div class="prediction-header">
     <div class="user-info">
       <div class="avatar"></div>
@@ -22,8 +25,8 @@
       <app-comments></app-comments>
     </div>
     <div class="right-column">
-      <app-price-trend></app-price-trend>
       <app-trading-panel></app-trading-panel>
+      <app-price-trend></app-price-trend>
     </div>
   </div>
 </div>
