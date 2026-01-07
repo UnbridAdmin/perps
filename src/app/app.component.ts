@@ -66,8 +66,81 @@ export class AppComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // Limpiar suscripción anterior si existe
     this.walletSubscription?.unsubscribe();
-    // Simplified event handling
+
+    // Suscribirse a eventos
+    if (web3Modal.subscribeEvents) {
+      web3Modal.subscribeEvents(this.handleWalletEvents.bind(this));
+    }
+    if (web3Modal.subscribeWalletInfo) {
+      web3Modal.subscribeWalletInfo(this.handleProviderChange.bind(this));
+    }
+  }
+
+  private handleWalletEvents(event: any): void {
+    console.log("Wallet event:", event);
+
+    if (event.data?.event === 'CONNECT_SUCCESS' &&
+      !this.isDisconnecting &&
+      (this.commonService.getAccountAddress() == '' || this.commonService.getAccountAddress() == null)) {
+      const account = this.walletConnectService.getWeb3Modal().getAccount();
+      this.signatureProcess(account);
+    }
+
+    if (event.data?.event === 'DISCONNECT_SUCCESS') {
+      this.handleCompleteDisconnect();
+    }
+  }
+
+  private handleCompleteDisconnect(): void {
+    console.log("Iniciando proceso completo de desconexión");
+    this.isDisconnecting = true;
+
+    sessionStorage.clear();
+    localStorage.clear();
+
+    this.commonService.saveAccountAddress('');
+    this.signing = true;
+    this.isProcessing = false;
+
+    this.walletConnectService.connectingWallet.next(false);
+    this.commonService.signatureProcessing?.next(false);
+
+    setTimeout(() => {
+      this.isDisconnecting = false;
+      console.log("Proceso de desconexión completado");
+      this.logout();
+    }, 100);
+  }
+
+  private async handleProviderChange(): Promise<void> {
+    if (this.isDisconnecting) {
+      console.log("Ignorando cambio de proveedor durante desconexión");
+      return;
+    }
+
+    this.walletConnectService.updateBalance.next(true);
+    this.walletConnectService.connectingWallet.next(false);
+
+    const account = this.walletConnectService.getWeb3Modal().getAccount();
+    console.log("Account from provider change:", account);
+
+    if (account) {
+      // Simplified: assume valid chain for now
+      await this.handleValidChain(account);
+    }
+  }
+
+  private async handleValidChain(info: any): Promise<void> {
+    if (this.isDisconnecting) return;
+
+    try {
+      await this.authorizationService.ping().toPromise();
+    } catch (error) {
+      // Ping failed, proceed with signature process
+    }
+    await this.signatureProcess(info);
   }
 
   private async signatureProcess(info: any): Promise<void> {
