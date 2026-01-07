@@ -26,7 +26,8 @@
                     </div>
                 </div>
             </div>
-            <button class="login-btn">Login</button>
+            <button class="login-btn" *ngIf="!userAddress" (click)="login()">Login</button>
+            <div class="user-address" *ngIf="userAddress">{{ truncateAddress(userAddress) }}</div>
         </div>
     </div>
 

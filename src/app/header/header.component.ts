@@ -1,12 +1,15 @@
 import { Component, EventEmitter, Output, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CommonService } from '../shared/commonService';
+import { WalletConnectService } from '../services/walletconnect.service';
 
 @Component({
   selector: 'app-header',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+  styleUrls: ['./header.component.scss'],
+  providers: [WalletConnectService]
 })
 export class HeaderComponent {
   @Output() tabChange = new EventEmitter<'for-you' | 'trending'>();
@@ -14,6 +17,7 @@ export class HeaderComponent {
 
   showMoreCategories = false;
   activeTab: 'for-you' | 'trending' = 'for-you';
+  userAddress: string = '';
 
   categories = [
     { name: 'Politics', active: true },
@@ -23,6 +27,12 @@ export class HeaderComponent {
     { name: 'Tech', active: false },
     { name: 'Culture', active: false }
   ];
+
+  constructor(private commonService: CommonService, private walletConnectService: WalletConnectService) {
+    this.commonService.updateUserAddress.subscribe(() => {
+      this.userAddress = this.commonService.getAccountAddress();
+    });
+  }
 
   toggleMoreCategories() {
     this.showMoreCategories = !this.showMoreCategories;
@@ -35,5 +45,15 @@ export class HeaderComponent {
   setActiveTab(tab: 'for-you' | 'trending') {
     this.activeTab = tab;
     this.tabChange.emit(tab);
+  }
+
+  truncateAddress(address: string): string {
+    if (!address) return '';
+    return address.slice(0, 6) + '...' + address.slice(-4);
+  }
+
+  async login() {
+    const web3Modal = this.walletConnectService.getWeb3Modal();
+    await web3Modal.open();
   }
 }
