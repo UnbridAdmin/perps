@@ -29,6 +29,7 @@ export class HeaderComponent {
   ];
 
   constructor(private commonService: CommonService, private walletConnectService: WalletConnectService) {
+    // Keep userAddress for login button logic
     this.commonService.updateUserAddress.subscribe(() => {
       this.userAddress = this.commonService.getAccountAddress();
     });

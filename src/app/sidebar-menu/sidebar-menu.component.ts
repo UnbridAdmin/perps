@@ -1,5 +1,6 @@
 import { Component, AfterViewInit, ElementRef, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CommonService } from '../shared/commonService';
 
 @Component({
   selector: 'app-sidebar-menu',
@@ -10,8 +11,13 @@ import { CommonModule } from '@angular/common';
 })
 export class SidebarMenuComponent implements AfterViewInit {
   isSidebarExpanded = true;
+  userAddress: string = '';
 
-  constructor(private el: ElementRef, private renderer: Renderer2) {}
+  constructor(private el: ElementRef, private renderer: Renderer2, private commonService: CommonService) {
+    this.commonService.updateUserAddress.subscribe(() => {
+      this.userAddress = this.commonService.getAccountAddress();
+    });
+  }
 
   ngAfterViewInit() {
     const arrows = this.el.nativeElement.querySelectorAll('.arrow');
@@ -35,5 +41,10 @@ export class SidebarMenuComponent implements AfterViewInit {
         this.renderer.removeClass(document.documentElement, 'sidebar-collapsed');
       }
     }
+  }
+
+  truncateAddress(address: string): string {
+    if (!address) return 'Not Connected';
+    return address.slice(0, 6) + '...' + address.slice(-4);
   }
 }
