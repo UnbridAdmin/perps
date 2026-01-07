@@ -1,7 +1,39 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { ApiServices } from '../services/api.service';
+import { HttpClientModule } from '@angular/common/http';
 
+// API Response interfaces
+interface ApiPredictionOption {
+  prediction_option_id: number;
+  prediction_option_title: string;
+  prediction_intuition_votes: number | null;
+  prediction_market_votes: number | null;
+  intuition_votes_count: number;
+}
+
+interface ApiPrediction {
+  prediction_id: number;
+  prediction_category_id: number;
+  prediction_title: string;
+  prediction_type: string;
+  prediction_image: string | null;
+  prediction_create_at: string;
+  options: ApiPredictionOption[];
+  userVotedOption: number | null;
+  totalParticipants: string;
+  createdAt: string;
+}
+
+interface GetPredictionsResponse {
+  recordsTotal: number;
+  recordsFiltered: number;
+  data: ApiPrediction[];
+}
+
+// Frontend interface
 interface Prediction {
   creator: string;
   category: string;
@@ -35,14 +67,127 @@ interface Prediction {
 @Component({
   selector: 'app-post-prediction',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, InfiniteScrollModule, HttpClientModule],
   templateUrl: './post-prediction.component.html',
   styleUrls: ['./post-prediction.component.scss']
 })
-export class PostPredictionComponent {
+export class PostPredictionComponent implements OnInit {
   @Input() tab: 'for-you' | 'trending' = 'for-you';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private apiService: ApiServices) {}
+
+  // API data properties
+  predictions: Prediction[] = [];
+  currentPage = 1;
+  pageSize = 10;
+  isLoading = false;
+  hasMoreData = true;
+
+  ngOnInit(): void {
+    this.loadPredictions();
+  }
+
+  loadPredictions(): void {
+    if (this.isLoading || !this.hasMoreData) return;
+
+    this.isLoading = true;
+    const params = {
+      page: this.currentPage,
+      limit: this.pageSize
+    };
+
+    this.apiService.apiCall('predictions/get-predictions', 'GET', params).subscribe({
+      next: (response: any) => {
+        const apiResponse: GetPredictionsResponse = response.data;
+        const mappedPredictions = this.mapApiPredictionsToFrontend(apiResponse.data);
+
+        if (this.currentPage === 1) {
+          this.predictions = mappedPredictions;
+        } else {
+          this.predictions = [...this.predictions, ...mappedPredictions];
+        }
+
+        this.hasMoreData = mappedPredictions.length === this.pageSize;
+        this.currentPage++;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading predictions:', error);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  onScroll(): void {
+    this.loadPredictions();
+  }
+
+  private mapApiPredictionsToFrontend(apiPredictions: ApiPrediction[]): Prediction[] {
+    return apiPredictions.map(apiPred => {
+      // Calculate percentages based on options (assuming first two options are YES/NO)
+      const yesOption = apiPred.options.find(opt => opt.prediction_option_title.toLowerCase().includes('sí') || opt.prediction_option_title.toLowerCase().includes('yes'));
+      const noOption = apiPred.options.find(opt => opt.prediction_option_title.toLowerCase().includes('no'));
+
+      const totalVotes = (yesOption?.prediction_intuition_votes || 0) + (noOption?.prediction_intuition_votes || 0);
+      const yesPercentage = totalVotes > 0 ? Math.round(((yesOption?.prediction_intuition_votes || 0) / totalVotes) * 100) : 0;
+      const noPercentage = 100 - yesPercentage;
+
+      // Map category ID to category name (this might need a separate API call for categories)
+      const categoryMap: { [key: number]: string } = {
+        1: 'Politics',
+        2: 'Crypto',
+        3: 'Sports',
+        4: 'Tech',
+        5: 'Finance',
+        6: 'Entertainment'
+      };
+
+      return {
+        creator: 'Prediction Market', // This could come from a separate user API
+        category: categoryMap[apiPred.prediction_category_id] || 'General',
+        timeAgo: this.calculateTimeAgo(new Date(apiPred.prediction_create_at)),
+        participants: apiPred.totalParticipants,
+        question: apiPred.prediction_title,
+        yesPercentage,
+        noPercentage,
+        imageUrl: apiPred.prediction_image || undefined,
+        sentimentVotes: {
+          yes: yesOption?.prediction_intuition_votes || 0,
+          no: noOption?.prediction_intuition_votes || 0,
+          total: totalVotes
+        },
+        marketInfo: {
+          poolAmount: '$0 USDT', // This would need market data API
+          participants: parseInt(apiPred.totalParticipants.replace('K', '000').replace('M', '000000')) || 0,
+          options: apiPred.options.map(opt => ({
+            label: opt.prediction_option_title,
+            amount: `$${opt.prediction_market_votes || 0}`,
+            percentage: totalVotes > 0 ? Math.round(((opt.prediction_market_votes || 0) / totalVotes) * 100) : 0
+          }))
+        },
+        actions: {
+          comments: 0, // This would need comments API
+          likes: 0,    // This would need likes API
+          volume: '$0'  // This would need volume API
+        }
+      };
+    });
+  }
+
+  private calculateTimeAgo(date: Date): string {
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffHours / 24);
+
+    if (diffDays > 0) {
+      return `${diffDays}d ago`;
+    } else if (diffHours > 0) {
+      return `${diffHours}h ago`;
+    } else {
+      return 'Just now';
+    }
+  }
 
   // Popover state
   activeMarketPopover: number | null = null;
@@ -54,185 +199,6 @@ export class PostPredictionComponent {
     2: 'no',  // Third prediction has voted NO
     // Others are null (not voted)
   };
-
-  // Sample data - in a real app, this would come from a service
-  private forYouPredictions: Prediction[] = [
-    {
-      creator: 'PredictMarket',
-      category: 'Politics',
-      timeAgo: '2h ago',
-      participants: '1.2K',
-      question: '¿Donald Trump ganará las elecciones de 2028?',
-      yesPercentage: 25,
-      noPercentage: 75,
-      imageUrl: 'https://picsum.photos/600/300?random=1',
-      sentimentVotes: {
-        yes: 9179,
-        no: 3368,
-        total: 12547
-      },
-      marketInfo: {
-        poolAmount: '$138,000 USDT',
-        participants: 1000,
-        options: [
-          { label: 'SÍ', amount: '$101K', percentage: 48 },
-          { label: 'NO', amount: '$37K', percentage: 52 }
-        ]
-      },
-      actions: {
-        comments: 234,
-        likes: 456,
-        volume: '$138K'
-      }
-    },
-    {
-      creator: 'CryptoPredict',
-      category: 'Crypto',
-      timeAgo: '5h ago',
-      participants: '3.4K',
-      question: '¿Bitcoin superará los $150K en 2025?',
-      yesPercentage: 67,
-      noPercentage: 33,
-      imageUrl: 'https://picsum.photos/600/300?random=2',
-      sentimentVotes: {
-        yes: 15420,
-        no: 7580,
-        total: 23000
-      },
-      marketInfo: {
-        poolAmount: '$250,000 USDT',
-        participants: 2300,
-        options: [
-          { label: 'SÍ', amount: '$167K', percentage: 67 },
-          { label: 'NO', amount: '$83K', percentage: 33 }
-        ]
-      },
-      actions: {
-        comments: 456,
-        likes: 892,
-        volume: '$250K'
-      }
-    },
-    {
-      creator: 'TechFuture',
-      category: 'Tech',
-      timeAgo: '8h ago',
-      participants: '890',
-      question: '¿Apple lanzará un iPhone plegable en 2026?',
-      yesPercentage: 34,
-      noPercentage: 66,
-      imageUrl: 'https://picsum.photos/600/300?random=3',
-      sentimentVotes: {
-        yes: 4520,
-        no: 8740,
-        total: 13260
-      },
-      marketInfo: {
-        poolAmount: '$95,000 USDT',
-        participants: 890,
-        options: [
-          { label: 'SÍ', amount: '$32K', percentage: 34 },
-          { label: 'NO', amount: '$63K', percentage: 66 }
-        ]
-      },
-      actions: {
-        comments: 89,
-        likes: 234,
-        volume: '$95K'
-      }
-    }
-  ];
-
-  private trendingPredictions: Prediction[] = [
-    {
-      creator: 'TrendingPredictions',
-      category: 'Sports',
-      timeAgo: '1h ago',
-      participants: '5.2K',
-      question: '¿Real Madrid ganará la Champions League 2026?',
-      yesPercentage: 72,
-      noPercentage: 28,
-      imageUrl: 'https://picsum.photos/600/300?random=4',
-      sentimentVotes: {
-        yes: 18750,
-        no: 7250,
-        total: 26000
-      },
-      marketInfo: {
-        poolAmount: '$320,000 USDT',
-        participants: 5200,
-        options: [
-          { label: 'SÍ', amount: '$230K', percentage: 72 },
-          { label: 'NO', amount: '$90K', percentage: 28 }
-        ]
-      },
-      actions: {
-        comments: 892,
-        likes: 1245,
-        volume: '$320K'
-      }
-    },
-    {
-      creator: 'HotTakes',
-      category: 'Entertainment',
-      timeAgo: '3h ago',
-      participants: '2.8K',
-      question: '¿Taylor Swift lanzará un nuevo álbum este año?',
-      yesPercentage: 89,
-      noPercentage: 11,
-      imageUrl: 'https://picsum.photos/600/300?random=5',
-      sentimentVotes: {
-        yes: 22320,
-        no: 2680,
-        total: 25000
-      },
-      marketInfo: {
-        poolAmount: '$180,000 USDT',
-        participants: 2800,
-        options: [
-          { label: 'SÍ', amount: '$160K', percentage: 89 },
-          { label: 'NO', amount: '$20K', percentage: 11 }
-        ]
-      },
-      actions: {
-        comments: 567,
-        likes: 945,
-        volume: '$180K'
-      }
-    },
-    {
-      creator: 'MarketWatch',
-      category: 'Finance',
-      timeAgo: '4h ago',
-      participants: '1.9K',
-      question: '¿El S&P 500 superará los 6,000 puntos en 2026?',
-      yesPercentage: 56,
-      noPercentage: 44,
-      imageUrl: 'https://picsum.photos/600/300?random=6',
-      sentimentVotes: {
-        yes: 10640,
-        no: 8360,
-        total: 19000
-      },
-      marketInfo: {
-        poolAmount: '$145,000 USDT',
-        participants: 1900,
-        options: [
-          { label: 'SÍ', amount: '$81K', percentage: 56 },
-          { label: 'NO', amount: '$64K', percentage: 44 }
-        ]
-      },
-      actions: {
-        comments: 334,
-        likes: 678,
-        volume: '$145K'
-      }
-    }
-  ];
-
-  get predictions(): Prediction[] {
-    return this.tab === 'for-you' ? this.forYouPredictions : this.trendingPredictions;
-  }
 
   // Toggle market popover
   toggleMarketPopover(index: number): void {

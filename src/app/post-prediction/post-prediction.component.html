@@ -1,6 +1,11 @@
-<div class="prediction-list">
+<div class="prediction-list" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScroll()">
   <!-- Popover Backdrop -->
   <div class="popover-backdrop" *ngIf="activeMarketPopover !== null || activeSentimentPopover !== null" (click)="closePopover()"></div>
+
+  <!-- Loading indicator -->
+  <div class="loading-indicator" *ngIf="isLoading && predictions.length === 0">
+    Loading predictions...
+  </div>
 
   <div class="prediction-card" *ngFor="let prediction of predictions; let i = index">
     <div class="prediction-header">
@@ -115,5 +120,15 @@
         <p><em>¡Tu intuición vale oro! Cada token cuenta.</em></p>
       </div>
     </div>
+  </div>
+
+  <!-- Loading more indicator -->
+  <div class="loading-more" *ngIf="isLoading && predictions.length > 0">
+    Loading more predictions...
+  </div>
+
+  <!-- No more data indicator -->
+  <div class="no-more-data" *ngIf="!hasMoreData && predictions.length > 0">
+    No more predictions to load
   </div>
 </div>
