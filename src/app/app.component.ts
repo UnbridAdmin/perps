@@ -34,6 +34,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private walletSubscription: Subscription = new Subscription();
   private isProcessing = false;
   private isDisconnecting: boolean = false;
+  private isLoggingIn = false;
 
   constructor(
     private router: Router,
@@ -81,6 +82,10 @@ export class AppComponent implements OnInit, OnDestroy {
   private handleWalletEvents(event: any): void {
     console.log("Wallet event:", event);
 
+    if (event.data?.event === 'MODAL_LOADED') {
+      this.signing = true;
+    }
+
     if (event.data?.event === 'CONNECT_SUCCESS' &&
       !this.isDisconnecting &&
       (this.commonService.getAccountAddress() == '' || this.commonService.getAccountAddress() == null)) {
@@ -127,9 +132,17 @@ export class AppComponent implements OnInit, OnDestroy {
     console.log("Account from provider change:", account);
 
     if (account) {
-      // Simplified: assume valid chain for now
-      await this.handleValidChain(account);
+      const chainId = await this.walletConnectService.getChainId();
+      if (this.commonService.validateChains(Number(chainId))) {
+        await this.handleValidChain(account);
+      } else {
+        await this.handleInvalidChain();
+      }
     }
+  }
+
+  private async handleInvalidChain(): Promise<void> {
+    await this.walletConnectService.switchNetwork();
   }
 
   private async handleValidChain(info: any): Promise<void> {
@@ -144,7 +157,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private async signatureProcess(info: any): Promise<void> {
-    if (this.isDisconnecting) return;
+    if (this.isDisconnecting || this.isLoggingIn) return;
 
     if (this.commonService.getAccountAddress() === info.address) {
       this.signing = true;
@@ -153,6 +166,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.walletConnectService.connectingWallet.next(true);
     this.signing = false;
+    this.isLoggingIn = true;
 
     try {
       const existResp = await this.authorizationService
@@ -162,12 +176,30 @@ export class AppComponent implements OnInit, OnDestroy {
       if (existResp.data[0] === 'true') {
         await this.handleExistingUser(info);
       } else {
-        this.commonService.saveAccountAddress(info.address);
-        this.commonService.updateUserAddress.next(true);
+        this.changeAccount();
+        await this.handleNewUser(info);
       }
     } catch (error) {
       console.error('Error en signatureProcess:', error);
       this.signing = true;
+    }
+  }
+
+  private async handleNewUser(info: any): Promise<void> {
+    if (this.isDisconnecting) return;
+
+    this.signing = true;
+
+    if (this.currentpath.includes('/category')) {
+      // Logic for categories if needed
+    } else {
+      // Default logic
+    }
+
+    // Save address if not disconnecting
+    if (!this.isDisconnecting) {
+      this.commonService.saveAccountAddress(info.address);
+      this.commonService.updateUserAddress.next(true);
     }
   }
 
@@ -222,6 +254,7 @@ export class AppComponent implements OnInit, OnDestroy {
     });
 
     this.signing = true;
+    this.isLoggingIn = false;
     this.commonService.saveAccountAddress(info.address);
     this.commonService.updateUserAddress.next(true);
     this.walletConnectService.updateBalance.next(true);
@@ -244,6 +277,16 @@ export class AppComponent implements OnInit, OnDestroy {
     this.commonService.updateUserAddress.next(true);
     this.walletConnectService.updateBalance.next(true);
     this.walletConnectService.connectingWallet.next(false);
+  }
+
+  changeAccount() {
+    this.logoutSubscription = this.authorizationService.logout().subscribe({
+      next: (pingResp: any) => {
+        sessionStorage.clear();
+      },
+      error: (error: any) => {
+      },
+    });
   }
 
   logout() {

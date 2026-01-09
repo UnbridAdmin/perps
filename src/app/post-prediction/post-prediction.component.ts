@@ -2,8 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
-import { ApiServices } from '../services/api.service';
 import { HttpClientModule } from '@angular/common/http';
+import { PostPredictionService } from './post-prediction.service';
 
 // API Response interfaces
 interface ApiPredictionOption {
@@ -74,7 +74,7 @@ interface Prediction {
 export class PostPredictionComponent implements OnInit {
   @Input() tab: 'for-you' | 'trending' = 'for-you';
 
-  constructor(private router: Router, private apiService: ApiServices) {}
+  constructor(private router: Router, private postPredictionService: PostPredictionService) {}
 
   // API data properties
   predictions: Prediction[] = [];
@@ -96,7 +96,7 @@ export class PostPredictionComponent implements OnInit {
       limit: this.pageSize
     };
 
-    this.apiService.apiCall('predictions/get-predictions', 'GET', params).subscribe({
+    this.postPredictionService.getPredictions(params).subscribe({
       next: (response: any) => {
         const apiResponse: GetPredictionsResponse = response.data;
         const mappedPredictions = this.mapApiPredictionsToFrontend(apiResponse.data);
