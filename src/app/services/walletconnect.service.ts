@@ -99,4 +99,56 @@ export class WalletConnectService {
       }
     }
   }
+
+  async getConnectedWalletAddress(): Promise<string> {
+    try {
+      const provider = await this.appKit.getWalletProvider();
+      if (!provider) {
+        throw new Error('No wallet connected');
+      }
+      const ethersProvider = new ethers.BrowserProvider(provider);
+      const signer = await ethersProvider.getSigner();
+      const address = await signer.getAddress();
+      return address;
+    } catch (error) {
+      console.error('Error getting connected wallet address:', error);
+      throw error;
+    }
+  }
+
+  async getWalletBalance(): Promise<string> {
+    try {
+      const provider = await this.appKit.getWalletProvider();
+      if (!provider) {
+        throw new Error('No wallet connected');
+      }
+      const ethersProvider = new ethers.BrowserProvider(provider);
+      const signer = await ethersProvider.getSigner();
+      const address = await signer.getAddress();
+      const balance = await ethersProvider.getBalance(address);
+      return ethers.formatEther(balance);
+    } catch (error) {
+      console.error('Error getting wallet balance:', error);
+      throw error;
+    }
+  }
+
+  async getERC20Balance(decimals: number, contractAddress: string, abi: any): Promise<string> {
+    try {
+      const provider = await this.appKit.getWalletProvider();
+      if (!provider) {
+        throw new Error('No wallet connected');
+      }
+      const ethersProvider = new ethers.BrowserProvider(provider);
+      const signer = await ethersProvider.getSigner();
+      const address = await signer.getAddress();
+
+      const contract = new ethers.Contract(contractAddress, abi, ethersProvider);
+      const balance = await contract['balanceOf'](address);
+      return ethers.formatUnits(balance, decimals);
+    } catch (error) {
+      console.error('Error getting ERC20 balance:', error);
+      throw error;
+    }
+  }
 }

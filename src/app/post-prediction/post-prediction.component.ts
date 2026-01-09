@@ -3,7 +3,12 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { HttpClientModule } from '@angular/common/http';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PostPredictionService } from './post-prediction.service';
+import { AuthorizationService } from '../services/authorization.service';
+import { WalletConnectService } from '../services/walletconnect.service';
+import { VotingConfirmationModalComponent } from '../shared/voting-confirmation-modal/voting-confirmation-modal.component';
+import { environment } from '../../environments/environment';
 
 // API Response interfaces
 interface ApiPredictionOption {
@@ -35,6 +40,7 @@ interface GetPredictionsResponse {
 
 // Frontend interface
 interface Prediction {
+  prediction_id: number; // Add this for voting functionality
   creator: string;
   category: string;
   timeAgo: string;
@@ -68,16 +74,24 @@ interface Prediction {
   selector: 'app-post-prediction',
   standalone: true,
   imports: [CommonModule, InfiniteScrollModule, HttpClientModule],
+  providers: [AuthorizationService],
   templateUrl: './post-prediction.component.html',
   styleUrls: ['./post-prediction.component.scss']
 })
 export class PostPredictionComponent implements OnInit {
   @Input() tab: 'for-you' | 'trending' = 'for-you';
 
-  constructor(private router: Router, private postPredictionService: PostPredictionService) {}
+  constructor(
+    private router: Router,
+    private postPredictionService: PostPredictionService,
+    private authService: AuthorizationService,
+    private walletConnectService: WalletConnectService,
+    private modalService: NgbModal
+  ) {}
 
   // API data properties
   predictions: Prediction[] = [];
+  apiPredictions: ApiPrediction[] = []; // Store raw API data for voting
   currentPage = 1;
   pageSize = 10;
   isLoading = false;
@@ -96,15 +110,28 @@ export class PostPredictionComponent implements OnInit {
       limit: this.pageSize
     };
 
-    this.postPredictionService.getPredictions(params).subscribe({
+    const apiCall = this.authService.isAuthenticated()
+      ? this.postPredictionService.getAuthenticatedPredictions(params)
+      : this.postPredictionService.getPublicPredictions(params);
+
+    apiCall.subscribe({
       next: (response: any) => {
         const apiResponse: GetPredictionsResponse = response.data;
         const mappedPredictions = this.mapApiPredictionsToFrontend(apiResponse.data);
 
         if (this.currentPage === 1) {
           this.predictions = mappedPredictions;
+          this.apiPredictions = apiResponse.data;
+          // Populate user votes from API data
+          this.userVotes = {};
+          apiResponse.data.forEach(pred => {
+            if (pred.userVotedOption) {
+              this.userVotes[pred.prediction_id] = pred.userVotedOption;
+            }
+          });
         } else {
           this.predictions = [...this.predictions, ...mappedPredictions];
+          this.apiPredictions = [...this.apiPredictions, ...apiResponse.data];
         }
 
         this.hasMoreData = mappedPredictions.length === this.pageSize;
@@ -143,6 +170,7 @@ export class PostPredictionComponent implements OnInit {
       };
 
       return {
+        prediction_id: apiPred.prediction_id,
         creator: 'Prediction Market', // This could come from a separate user API
         category: categoryMap[apiPred.prediction_category_id] || 'General',
         timeAgo: this.calculateTimeAgo(new Date(apiPred.prediction_create_at)),
@@ -193,12 +221,8 @@ export class PostPredictionComponent implements OnInit {
   activeMarketPopover: number | null = null;
   activeSentimentPopover: number | null = null;
 
-  // Voting state - for demonstration, we'll simulate different voting states
-  userVotes: { [predictionIndex: number]: 'yes' | 'no' | null } = {
-    0: 'yes', // First prediction has voted YES
-    2: 'no',  // Third prediction has voted NO
-    // Others are null (not voted)
-  };
+  // Voting state - tracks user's votes based on API data
+  userVotes: { [predictionId: number]: number | null } = {};
 
   // Toggle market popover
   toggleMarketPopover(index: number): void {
@@ -216,19 +240,117 @@ export class PostPredictionComponent implements OnInit {
     this.activeSentimentPopover = null;
   }
 
-  // Vote on sentiment poll
-  vote(predictionIndex: number, option: 'yes' | 'no'): void {
-    this.userVotes[predictionIndex] = option;
+  // Vote on sentiment poll - now with real API integration
+  async voteOnPrediction(predictionIndex: number, option: 'yes' | 'no'): Promise<void> {
+    try {
+      // Check if user is authenticated
+      if (!this.authService.isAuthenticated()) {
+        alert('Debes iniciar sesión para votar');
+        return;
+      }
+
+      // Check if wallet is connected
+      const isConnected = await this.walletConnectService.checkConnection();
+      if (!isConnected) {
+        alert('Debes conectar tu billetera para votar');
+        return;
+      }
+
+      // Get prediction data
+      const prediction = this.predictions[predictionIndex];
+      const apiPrediction = this.apiPredictions[predictionIndex]; // Access raw API data
+      if (!apiPrediction) return;
+
+      // Find the option based on user's choice
+      const selectedOption = apiPrediction.options.find(opt =>
+        option === 'yes'
+          ? (opt.prediction_option_title.toLowerCase().includes('sí') || opt.prediction_option_title.toLowerCase().includes('yes'))
+          : opt.prediction_option_title.toLowerCase().includes('no')
+      );
+
+      if (!selectedOption) return;
+
+      // Check Fierce balance
+      let hasFierceBalance = false;
+      try {
+        const fierceBalance = await this.walletConnectService.getERC20Balance(
+          environment.DECIMALFIERCE,
+          environment.FIERCECONTRACTADDRESS,
+          environment.USDTPolyABI
+        );
+        hasFierceBalance = parseFloat(fierceBalance) > 0;
+      } catch (error) {
+        console.error('Error checking Fierce balance:', error);
+      }
+
+      // Show confirmation modal
+      const modalRef = this.modalService.open(VotingConfirmationModalComponent, {
+        centered: true,
+        size: 'lg'
+      });
+
+      modalRef.componentInstance.predictionTitle = prediction.question;
+      modalRef.componentInstance.optionTitle = selectedOption.prediction_option_title;
+      modalRef.componentInstance.hasFierceBalance = hasFierceBalance;
+
+      const result = await modalRef.result;
+
+      if (result) {
+        // User confirmed, cast the vote
+        const voteParams = {
+          predictionId: apiPrediction.prediction_id,
+          optionId: selectedOption.prediction_option_id
+        };
+
+        this.postPredictionService.castIntuitionVote(voteParams).subscribe({
+          next: (response: any) => {
+            if (response.data?.success) {
+              // Update local state
+              this.userVotes[apiPrediction.prediction_id] = selectedOption.prediction_option_id;
+              // Reload predictions to get updated vote counts
+              this.currentPage = 1;
+              this.predictions = [];
+              this.loadPredictions();
+              alert('Voto registrado exitosamente!');
+            } else {
+              alert(response.data?.message || 'Error al registrar el voto');
+            }
+          },
+          error: (error) => {
+            console.error('Error casting vote:', error);
+            if (error.error?.data?.message) {
+              alert(error.error.data.message);
+            } else if (error.error?.data?.alreadyVoted) {
+              alert('Ya has votado en esta predicción');
+            } else {
+              alert('Error al registrar el voto');
+            }
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error in voting process:', error);
+    }
   }
 
   // Check if user has voted on a prediction
-  hasUserVoted(predictionIndex: number): boolean {
-    return this.userVotes[predictionIndex] !== undefined;
+  hasUserVoted(predictionId: number): boolean {
+    return this.userVotes[predictionId] !== undefined && this.userVotes[predictionId] !== null;
   }
 
   // Get user's vote for a prediction
-  getUserVote(predictionIndex: number): 'yes' | 'no' | null {
-    return this.userVotes[predictionIndex] || null;
+  getUserVote(predictionId: number): 'yes' | 'no' | null {
+    const userVotedOptionId = this.userVotes[predictionId];
+    if (!userVotedOptionId) return null;
+
+    // Find the prediction and check which option was voted
+    const prediction = this.apiPredictions.find((p: ApiPrediction) => p.prediction_id === predictionId);
+    if (!prediction) return null;
+
+    const votedOption = prediction.options.find(opt => opt.prediction_option_id === userVotedOptionId);
+    if (!votedOption) return null;
+
+    return votedOption.prediction_option_title.toLowerCase().includes('no') ? 'no' : 'yes';
   }
 
   // Navigate to trade detail page

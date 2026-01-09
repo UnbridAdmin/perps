@@ -68,21 +68,18 @@ export class AppComponent implements OnInit, OnDestroy {
       // 1. INICIALIZAR WALLET SERVICE
       this.initializeWalletConnect();
 
-      // 2. VERIFICAR SI HAY UNA SESIÓN PERSISTIDA ANTES DE CONFIGURAR DETECCIÓN
-      const persistedAddress = this.commonService.getAccountAddress();
-      if (persistedAddress) {
-        console.log('📝 Sesión persistida encontrada:', persistedAddress);
-        this.currentAccount = persistedAddress.toLowerCase();
-        this.isFirstConnection = false;
-      }
-
-      // 3. CONFIGURAR DETECCIÓN INMEDIATA
+      // 2. CONFIGURAR DETECCIÓN INMEDIATA DE CAMBIOS DE CUENTA
       this.setupImmediateAccountChangeDetection();
 
-      // 4. SUSCRIBIRSE A CAMBIOS DE ESTADO (SOLO COMO BACKUP)
-      this.subscribeToWalletStateBackup();
+      // 3. SUSCRIBIRSE A CAMBIOS DE ESTADO
+      this.setupWalletSubscriptions();
 
-      this.connectionChecker.startPeriodicCheck();
+      // 4. VERIFICAR CONEXIÓN PERSISTIDA
+      await this.handlePersistedConnection();
+
+      // 5. INICIAR CHECKER
+      //this.connectionChecker.startPeriodicCheck();
+
       this.isInitialized = true;
       console.log('✅ Aplicación inicializada correctamente');
 
@@ -93,6 +90,28 @@ export class AppComponent implements OnInit, OnDestroy {
       setTimeout(() => {
         this.signing = true;
       }, 500);
+    }
+  }
+
+  /**
+   * SUSCRIPCIONES DE WALLET
+   */
+  private setupWalletSubscriptions(): void {
+    // Adaptado para perps - vacío por ahora, ya que no hay walletState$
+  }
+
+  /**
+   * MANEJO DE CONEXIÓN PERSISTIDA
+   */
+  private async handlePersistedConnection(): Promise<void> {
+    const persistedAddress = this.commonService.getAccountAddress();
+    if (persistedAddress) {
+      console.log('🔍 Conexión persistida detectada:', persistedAddress);
+      this.currentAccount = persistedAddress.toLowerCase();
+      this.isFirstConnection = false;
+      this.signing = true;
+    } else {
+      this.signing = true;
     }
   }
 
@@ -526,7 +545,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
-    this.connectionChecker.stopPeriodicCheck();
+    //this.connectionChecker.stopPeriodicCheck();
     this.logoutSubscription?.unsubscribe();
     this.walletSubscription?.unsubscribe();
   }

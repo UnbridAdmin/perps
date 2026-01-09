@@ -69,4 +69,13 @@ export class AuthorizationService {
     public existUser(data) {
         return this.apiService.publicApiCall('/user/exist-user', 'GET', data);
     }
+
+    public isAuthenticated(): boolean {
+        const expirationDateString = localStorage.getItem('expirationDate');
+        if (!expirationDateString) return false;
+
+        const expirationDate = moment(expirationDateString, 'ddd MMM DD HH:mm:ss Z YYYY');
+        const currentDate = moment();
+        return currentDate.isBefore(expirationDate);
+    }
 }

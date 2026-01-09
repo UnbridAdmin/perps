@@ -35,22 +35,22 @@
       </div>
 
       <!-- Voting Options - Not Voted State -->
-      <div class="sentiment-options" *ngIf="!hasUserVoted(i)">
-        <button class="sentiment-vote-btn" (click)="vote(i, 'yes')">
+      <div class="sentiment-options" *ngIf="!hasUserVoted(prediction.prediction_id)">
+        <button class="sentiment-vote-btn" (click)="voteOnPrediction(i, 'yes')">
           <span class="vote-btn-text">SÍ</span>
         </button>
-        <button class="sentiment-vote-btn" (click)="vote(i, 'no')">
+        <button class="sentiment-vote-btn" (click)="voteOnPrediction(i, 'no')">
           <span class="vote-btn-text">NO</span>
         </button>
       </div>
 
       <!-- Results - Voted State -->
-      <div class="sentiment-results" *ngIf="hasUserVoted(i)">
-        <div class="result-option" [class.selected]="getUserVote(i) === 'yes'">
+      <div class="sentiment-results" *ngIf="hasUserVoted(prediction.prediction_id)">
+        <div class="result-option" [class.selected]="getUserVote(prediction.prediction_id) === 'yes'">
           <span class="result-label">SÍ</span>
           <span class="result-percentage">{{ prediction.yesPercentage }}%</span>
         </div>
-        <div class="result-option" [class.selected]="getUserVote(i) === 'no'">
+        <div class="result-option" [class.selected]="getUserVote(prediction.prediction_id) === 'no'">
           <span class="result-label">NO</span>
           <span class="result-percentage">{{ prediction.noPercentage }}%</span>
         </div>

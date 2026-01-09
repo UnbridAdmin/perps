@@ -6,6 +6,11 @@ interface GetPredictionsParams {
   limit: number;
 }
 
+interface CastIntuitionVoteParams {
+  predictionId: number;
+  optionId: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -13,8 +18,16 @@ export class PostPredictionService {
 
   constructor(private apiService: ApiServices) { }
 
-  public getPredictions(params: GetPredictionsParams) {
+  public getAuthenticatedPredictions(params: GetPredictionsParams) {
     return this.apiService.apiCall('predictions/get-predictions', 'GET', params);
+  }
+
+  public getPublicPredictions(params: GetPredictionsParams) {
+    return this.apiService.publicApiCall('predictions/get-public-predictions', 'GET', params);
+  }
+
+  public castIntuitionVote(params: CastIntuitionVoteParams) {
+    return this.apiService.apiCall('predictions/cast-intuition-vote', 'POST', params);
   }
 
 }

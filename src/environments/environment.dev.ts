@@ -38,4 +38,15 @@ export const environment = {
   ],
   CHAINPOSITION: 1,
   DECIMALSUSDT: 18,
+  DECIMALFIERCE: 18,
+  FIERCECONTRACTADDRESS: '0x1234567890123456789012345678901234567890', // TODO: Replace with actual contract address
+  USDTPolyABI: [
+    {
+      "constant": true,
+      "inputs": [{"name": "_owner", "type": "address"}],
+      "name": "balanceOf",
+      "outputs": [{"name": "balance", "type": "uint256"}],
+      "type": "function"
+    }
+  ],
 };
