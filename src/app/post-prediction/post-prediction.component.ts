@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
@@ -8,6 +8,9 @@ import { PostPredictionService } from './post-prediction.service';
 import { AuthorizationService } from '../services/authorization.service';
 import { WalletConnectService } from '../services/walletconnect.service';
 import { VotingConfirmationModalComponent } from '../shared/voting-confirmation-modal/voting-confirmation-modal.component';
+import { ConfirmDialogService } from '../shared/confirm-dialog/confirm-dialog.service';
+import { CommonService } from '../shared/commonService';
+import { Subscription } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 // API Response interfaces
@@ -74,19 +77,22 @@ interface Prediction {
   selector: 'app-post-prediction',
   standalone: true,
   imports: [CommonModule, InfiniteScrollModule, HttpClientModule],
-  providers: [AuthorizationService],
   templateUrl: './post-prediction.component.html',
   styleUrls: ['./post-prediction.component.scss']
 })
-export class PostPredictionComponent implements OnInit {
+export class PostPredictionComponent implements OnInit, OnDestroy {
   @Input() tab: 'for-you' | 'trending' = 'for-you';
+
+  private subscriptions: Subscription = new Subscription();
 
   constructor(
     private router: Router,
     private postPredictionService: PostPredictionService,
     private authService: AuthorizationService,
     private walletConnectService: WalletConnectService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private confirmDialogService: ConfirmDialogService,
+    private commonService: CommonService
   ) {}
 
   // API data properties
@@ -99,6 +105,22 @@ export class PostPredictionComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadPredictions();
+
+    // Subscribe to authentication changes to refresh predictions when user logs in
+    this.subscriptions.add(
+      this.commonService.updateUserAddress.subscribe(() => {
+        this.currentPage = 1;
+        this.predictions = [];
+        this.apiPredictions = [];
+        this.hasMoreData = true;
+        this.isLoading = false;
+        this.loadPredictions();
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   loadPredictions(): void {
@@ -245,14 +267,20 @@ export class PostPredictionComponent implements OnInit {
     try {
       // Check if user is authenticated
       if (!this.authService.isAuthenticated()) {
-        alert('Debes iniciar sesión para votar');
+        await this.confirmDialogService.showInfo({
+          title: 'Inicio de sesión requerido',
+          message1: 'Debes iniciar sesión para votar en las predicciones.'
+        });
         return;
       }
 
       // Check if wallet is connected
       const isConnected = await this.walletConnectService.checkConnection();
       if (!isConnected) {
-        alert('Debes conectar tu billetera para votar');
+        await this.confirmDialogService.showInfo({
+          title: 'Billetera requerida',
+          message1: 'Debes conectar tu billetera para votar en las predicciones.'
+        });
         return;
       }
 
@@ -303,7 +331,7 @@ export class PostPredictionComponent implements OnInit {
         };
 
         this.postPredictionService.castIntuitionVote(voteParams).subscribe({
-          next: (response: any) => {
+          next: async (response: any) => {
             if (response.data?.success) {
               // Update local state
               this.userVotes[apiPrediction.prediction_id] = selectedOption.prediction_option_id;
@@ -311,20 +339,33 @@ export class PostPredictionComponent implements OnInit {
               this.currentPage = 1;
               this.predictions = [];
               this.loadPredictions();
-              alert('Voto registrado exitosamente!');
+
+              await this.confirmDialogService.showSuccess({
+                title: 'Voto registrado',
+                message1: 'Tu voto ha sido registrado exitosamente.'
+              });
             } else {
-              alert(response.data?.message || 'Error al registrar el voto');
+              await this.confirmDialogService.showError({
+                title: 'Error al votar',
+                message1: response.data?.message || 'Ha ocurrido un error al registrar el voto.'
+              });
             }
           },
-          error: (error) => {
+          error: async (error) => {
             console.error('Error casting vote:', error);
+
+            let errorMessage = 'Ha ocurrido un error al registrar el voto.';
+
             if (error.error?.data?.message) {
-              alert(error.error.data.message);
+              errorMessage = error.error.data.message;
             } else if (error.error?.data?.alreadyVoted) {
-              alert('Ya has votado en esta predicción');
-            } else {
-              alert('Error al registrar el voto');
+              errorMessage = 'Ya has votado en esta predicción.';
             }
+
+            await this.confirmDialogService.showError({
+              title: 'Error al votar',
+              message1: errorMessage
+            });
           }
         });
       }
@@ -358,3 +399,4 @@ export class PostPredictionComponent implements OnInit {
     this.router.navigate(['/trade']);
   }
 }
+

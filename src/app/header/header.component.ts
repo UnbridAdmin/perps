@@ -8,8 +8,7 @@ import { WalletConnectService } from '../services/walletconnect.service';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss'],
-  providers: [WalletConnectService]
+  styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent {
   @Output() tabChange = new EventEmitter<'for-you' | 'trending'>();

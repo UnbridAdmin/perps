@@ -120,7 +120,7 @@
           <div class="profile_name">{{ truncateAddress(userAddress) }}</div>
           <div class="job">Wallet Address</div>
         </div>
-        <i class='bx bx-log-out'></i>
+        <i class='bx bx-log-out' *ngIf="userAddress" (click)="disconnectWallet()" style="cursor: pointer;"></i>
       </div>
     </li>
   </ul>

@@ -1,0 +1,220 @@
+// Importar variables del tema
+@use '../../../styles/variables' as *;
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+}
+
+.modal-content {
+  background: $background-color;
+  border: 1px solid $border-color;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modal-header {
+  padding: 20px 20px 0;
+  text-align: right;
+
+  .close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #F7D044;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+
+    span {
+      font-size: 24px;
+      color: #1a1a1a;
+      font-weight: 300;
+    }
+
+    &:hover {
+      transform: rotate(90deg);
+      background: #ffd700;
+    }
+  }
+}
+
+.modal-body {
+  padding: 30px 20px 20px;
+
+  .icon-section {
+    text-align: center;
+    margin-bottom: 25px;
+
+    .modal-icon {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+    }
+  }
+
+  .title-section {
+    text-align: center;
+    margin-bottom: 25px;
+
+    .modal-title {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 600;
+      color: $text-primary;
+      line-height: 1.2;
+    }
+  }
+
+  .message-section {
+    text-align: center;
+    margin-bottom: 35px;
+
+    .modal-message {
+      margin: 0 0 12px 0;
+      font-size: 16px;
+      line-height: 1.6;
+      color: $text-secondary;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .buttons-section {
+    .button-row {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+
+      .btn {
+        padding: 14px 28px;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 130px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+
+        &.btn-cancel {
+          background: $background-light;
+          color: $text-secondary;
+          border: 1px solid $border-color;
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+          }
+        }
+
+        &.btn-primary {
+          background: linear-gradient(135deg, $primary-color 0%, $primary-hover 100%);
+          color: $text-primary;
+          box-shadow: 0 4px 15px rgba(156, 39, 176, 0.4);
+
+          &:hover {
+            background: linear-gradient(135deg, $primary-hover 0%, $primary-dark 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(156, 39, 176, 0.6);
+          }
+        }
+
+        &:active {
+          transform: translateY(0);
+        }
+      }
+    }
+  }
+}
+
+// Scrollbar personalizado
+.modal-content {
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(156, 39, 176, 0.5);
+    border-radius: 4px;
+
+    &:hover {
+      background: rgba(156, 39, 176, 0.7);
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 576px) {
+  .modal-content {
+    width: 95%;
+    margin: 20px;
+  }
+
+  .modal-header .close-btn {
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 36px;
+    height: 36px;
+
+    span {
+      font-size: 20px;
+    }
+  }
+
+  .modal-body {
+    padding: 25px 15px 15px;
+
+    .modal-title {
+      font-size: 20px;
+    }
+
+    .modal-message {
+      font-size: 15px;
+    }
+
+    .buttons-section .button-row {
+      flex-direction: column;
+
+      .btn {
+        width: 100%;
+        margin-bottom: 12px;
+        padding: 16px 24px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}

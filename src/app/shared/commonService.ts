@@ -7,6 +7,7 @@ export class CommonService {
     signatureProcessing: EventEmitter<any> = new EventEmitter();
     updateUserAddress: EventEmitter<any> = new EventEmitter();
     logoutBalance: EventEmitter<any> = new EventEmitter();
+    accountChanging: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     validChains: number[] = environment.VALIDCHAINS;
     nameChains: any = environment.NAMECHAINS;
 
