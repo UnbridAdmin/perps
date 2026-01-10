@@ -1,6 +1,14 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { BrowserProvider, ethers } from 'ethers';
+import {
+  BrowserProvider,
+  Contract,
+  ethers,
+  formatEther,
+  formatUnits,
+  parseEther,
+  parseUnits,
+} from 'ethers';
 import { EthersAdapter } from '@reown/appkit-adapter-ethers';
 import { createAppKit } from '@reown/appkit';
 import { polygon, polygonAmoy } from '@reown/appkit/networks';
@@ -37,6 +45,16 @@ export class WalletConnectService {
         analytics: true
       }
     });
+  }
+
+  private async getSigner(): Promise<ethers.Signer | null> {
+    const provider = this.appKit.getWalletProvider();
+    if (!provider) {
+      console.error("Provider not available");
+      return null;
+    }
+    const ethersProvider = new BrowserProvider(provider);
+    return await ethersProvider.getSigner();
   }
 
   getWeb3Modal(): any {
@@ -133,22 +151,13 @@ export class WalletConnectService {
     }
   }
 
-  async getERC20Balance(decimals: number, contractAddress: string, abi: any): Promise<string> {
-    try {
-      const provider = await this.appKit.getWalletProvider();
-      if (!provider) {
-        throw new Error('No wallet connected');
-      }
-      const ethersProvider = new ethers.BrowserProvider(provider);
-      const signer = await ethersProvider.getSigner();
-      const address = await signer.getAddress();
+  async getERC20Balance(decimals: number, contractAddress: string, abi: any): Promise<string | null> {
+    const signer = await this.getSigner();
+    if (!signer) return null;
 
-      const contract = new ethers.Contract(contractAddress, abi, ethersProvider);
-      const balance = await contract['balanceOf'](address);
-      return ethers.formatUnits(balance, decimals);
-    } catch (error) {
-      console.error('Error getting ERC20 balance:', error);
-      throw error;
-    }
+    const address = await signer.getAddress();
+    const erc20Contract = new ethers.Contract(contractAddress, abi, signer);
+    const balance = await erc20Contract['balanceOf'](address);
+    return formatUnits(balance, decimals);
   }
 }
