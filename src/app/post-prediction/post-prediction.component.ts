@@ -272,21 +272,35 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     try {
       // Check if user is authenticated
       if (!this.authService.isAuthenticated()) {
-        await this.confirmDialogService.showInfo({
-          title: 'Inicio de sesión requerido',
-          message1: 'Debes iniciar sesión para votar en las predicciones.'
-        });
-        return;
-      }
+        // Check if wallet is connected
+        const isConnected = await this.walletConnectService.checkConnection();
+        if (!isConnected) {
+          await this.confirmDialogService.showInfo({
+            title: 'Billetera requerida',
+            message1: 'Debes conectar tu billetera para votar en las predicciones.'
+          });
+          return;
+        }
 
-      // Check if wallet is connected
-      const isConnected = await this.walletConnectService.checkConnection();
-      if (!isConnected) {
-        await this.confirmDialogService.showInfo({
-          title: 'Billetera requerida',
-          message1: 'Debes conectar tu billetera para votar en las predicciones.'
-        });
-        return;
+        // Get wallet address
+        const walletAddress = await this.walletConnectService.getConnectedWalletAddress();
+
+        // Check if user exists in database
+        try {
+          const existResponse = await this.authService.existUser({ address: walletAddress }).toPromise() as any;
+          if (existResponse?.data?.exists) {
+            // User exists in DB but not authenticated - show login required
+            await this.confirmDialogService.showInfo({
+              title: 'Inicio de sesión requerido',
+              message1: 'Debes iniciar sesión para votar en las predicciones.'
+            });
+            return;
+          }
+          // User doesn't exist in DB - proceed with balance check
+        } catch (error) {
+          console.error('Error checking if user exists:', error);
+          // If we can't check, assume user doesn't exist and proceed
+        }
       }
 
       // Get prediction data

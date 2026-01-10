@@ -4,53 +4,66 @@
       <span>&times;</span>
     </button>
 
-    <!-- Show different content based on Fierce balance -->
-    <ng-container *ngIf="hasFierceBalance; else noBalanceTemplate">
-      <!-- Has Fierce Balance - Confirmation Modal -->
-      <h2 class="modal-title gradient-text-expandital">Confirmar Voto</h2>
-
+    <!-- Loading state -->
+    <ng-container *ngIf="isCheckingBalance; else balanceCheckedTemplate">
+      <h2 class="modal-title gradient-text-expandital">Verificando Balance</h2>
       <p class="modal-subtitle">
-        Estás a punto de votar en la predicción comunitaria
+        Estamos verificando tu balance de Fierce tokens...
       </p>
-
-      <div class="content-wrapper">
-        <div class="steps-section">
-          <div class="step-item">
-            <div class="step-number">📊</div>
-            <div class="step-text">
-              <h3>Predicción</h3>
-              <p>{{ predictionTitle }}</p>
-            </div>
-          </div>
-
-          <div class="step-item">
-            <div class="step-number">🎯</div>
-            <div class="step-text">
-              <h3>Tu Voto</h3>
-              <p>{{ optionTitle }}</p>
-            </div>
-          </div>
-
-          <div class="step-item">
-            <div class="step-number">⚠️</div>
-            <div class="step-text">
-              <h3>Importante</h3>
-              <p>Solo puedes votar una vez por predicción. Esta acción no se puede deshacer.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="image-section">
-          <img src="https://ipfs.unbrid.com/landings/fierce/fierce-daapp.webp" alt="Confirmación de voto"
-            class="preview-image">
-        </div>
-      </div>
-
-      <div class="modal-actions">
-        <button class="btn-cancel" (click)="cancelVote()">Cancelar</button>
-        <button class="btn-confirm" (click)="confirmVote()">Confirmar Voto</button>
+      <div class="loading-section">
+        <div class="spinner"></div>
       </div>
     </ng-container>
+
+    <ng-template #balanceCheckedTemplate>
+      <!-- Show different content based on Fierce balance -->
+      <ng-container *ngIf="hasFierceBalance; else noBalanceTemplate">
+        <!-- Has Fierce Balance - Confirmation Modal -->
+        <h2 class="modal-title gradient-text-expandital">Confirmar Voto</h2>
+
+        <p class="modal-subtitle">
+          Estás a punto de votar en la predicción comunitaria
+        </p>
+
+        <div class="content-wrapper">
+          <div class="steps-section">
+            <div class="step-item">
+              <div class="step-number">📊</div>
+              <div class="step-text">
+                <h3>Predicción</h3>
+                <p>{{ predictionTitle }}</p>
+              </div>
+            </div>
+
+            <div class="step-item">
+              <div class="step-number">🎯</div>
+              <div class="step-text">
+                <h3>Tu Voto</h3>
+                <p>{{ optionTitle }}</p>
+              </div>
+            </div>
+
+            <div class="step-item">
+              <div class="step-number">⚠️</div>
+              <div class="step-text">
+                <h3>Importante</h3>
+                <p>Solo puedes votar una vez por predicción. Esta acción no se puede deshacer.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="image-section">
+            <img src="https://ipfs.unbrid.com/landings/fierce/fierce-daapp.webp" alt="Confirmación de voto"
+              class="preview-image">
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn-cancel" (click)="cancelVote()">Cancelar</button>
+          <button class="btn-confirm" (click)="confirmVote()">Confirmar Voto</button>
+        </div>
+      </ng-container>
+    </ng-template>
 
     <ng-template #noBalanceTemplate>
       <!-- No Fierce Balance - Get Fierce Modal -->
