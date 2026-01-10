@@ -25,7 +25,7 @@
     </div>
 
     <!-- Sentiment Voting Section -->
-    <div class="sentiment-section" *ngIf="prediction.sentimentVotes">
+    <div class="sentiment-section" *ngIf="prediction.options && prediction.options.length > 0">
       <div class="sentiment-header">
         <div class="sentiment-title-section">
           <span class="sentiment-title">🔥 Intuición Fierce</span>
@@ -36,23 +36,17 @@
 
       <!-- Voting Options - Not Voted State -->
       <div class="sentiment-options" *ngIf="!hasUserVoted(prediction.prediction_id)">
-        <button class="sentiment-vote-btn" (click)="voteOnPrediction(i, 'yes')">
-          <span class="vote-btn-text">SÍ</span>
-        </button>
-        <button class="sentiment-vote-btn" (click)="voteOnPrediction(i, 'no')">
-          <span class="vote-btn-text">NO</span>
+        <button class="sentiment-vote-btn" *ngFor="let option of prediction.options" (click)="voteOnPrediction(i, option.id)">
+          <span class="vote-btn-text">{{ option.title }}</span>
+          <span class="vote-percentage">{{ option.percentage }}%</span>
         </button>
       </div>
 
       <!-- Results - Voted State -->
       <div class="sentiment-results" *ngIf="hasUserVoted(prediction.prediction_id)">
-        <div class="result-option" [class.selected]="getUserVote(prediction.prediction_id) === 'yes'">
-          <span class="result-label">SÍ</span>
-          <span class="result-percentage">{{ prediction.yesPercentage }}%</span>
-        </div>
-        <div class="result-option" [class.selected]="getUserVote(prediction.prediction_id) === 'no'">
-          <span class="result-label">NO</span>
-          <span class="result-percentage">{{ prediction.noPercentage }}%</span>
+        <div class="result-option" *ngFor="let option of prediction.options" [class.selected]="getUserVotedOptionId(prediction.prediction_id) === option.id">
+          <span class="result-label">{{ option.title }}</span>
+          <span class="result-percentage">{{ option.percentage }}%</span>
         </div>
       </div>
     </div>
@@ -132,3 +126,4 @@
     No more predictions to load
   </div>
 </div>
+

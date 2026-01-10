@@ -49,12 +49,14 @@ interface Prediction {
   timeAgo: string;
   participants: string;
   question: string;
-  yesPercentage: number;
-  noPercentage: number;
   imageUrl?: string;
+  options: Array<{
+    id: number;
+    title: string;
+    votes: number;
+    percentage: number;
+  }>;
   sentimentVotes?: {
-    yes: number;
-    no: number;
     total: number;
   };
   marketInfo?: {
@@ -173,13 +175,19 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
 
   private mapApiPredictionsToFrontend(apiPredictions: ApiPrediction[]): Prediction[] {
     return apiPredictions.map(apiPred => {
-      // Calculate percentages based on options (assuming first two options are YES/NO)
-      const yesOption = apiPred.options.find(opt => opt.prediction_option_title.toLowerCase().includes('sí') || opt.prediction_option_title.toLowerCase().includes('yes'));
-      const noOption = apiPred.options.find(opt => opt.prediction_option_title.toLowerCase().includes('no'));
+      // Parse total participants to number
+      const totalParticipants = parseInt(apiPred.totalParticipants.replace('K', '000').replace('M', '000000')) || 0;
 
-      const totalVotes = (yesOption?.prediction_intuition_votes || 0) + (noOption?.prediction_intuition_votes || 0);
-      const yesPercentage = totalVotes > 0 ? Math.round(((yesOption?.prediction_intuition_votes || 0) / totalVotes) * 100) : 0;
-      const noPercentage = 100 - yesPercentage;
+      // Calculate percentages for each option
+      const options = apiPred.options.map(opt => ({
+        id: opt.prediction_option_id,
+        title: opt.prediction_option_title,
+        votes: opt.prediction_intuition_votes || 0,
+        percentage: totalParticipants > 0 ? Math.round(((opt.prediction_intuition_votes || 0) / totalParticipants) * 100) : 0
+      }));
+
+      // Calculate total votes for sentiment section
+      const totalVotes = apiPred.options.reduce((sum, opt) => sum + (opt.prediction_intuition_votes || 0), 0);
 
       // Map category ID to category name (this might need a separate API call for categories)
       const categoryMap: { [key: number]: string } = {
@@ -198,17 +206,14 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
         timeAgo: this.calculateTimeAgo(new Date(apiPred.prediction_create_at)),
         participants: apiPred.totalParticipants,
         question: apiPred.prediction_title,
-        yesPercentage,
-        noPercentage,
         imageUrl: apiPred.prediction_image || undefined,
+        options,
         sentimentVotes: {
-          yes: yesOption?.prediction_intuition_votes || 0,
-          no: noOption?.prediction_intuition_votes || 0,
           total: totalVotes
         },
         marketInfo: {
           poolAmount: '$0 USDT', // This would need market data API
-          participants: parseInt(apiPred.totalParticipants.replace('K', '000').replace('M', '000000')) || 0,
+          participants: totalParticipants,
           options: apiPred.options.map(opt => ({
             label: opt.prediction_option_title,
             amount: `$${opt.prediction_market_votes || 0}`,
@@ -263,7 +268,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
   }
 
   // Vote on sentiment poll - now with real API integration
-  async voteOnPrediction(predictionIndex: number, option: 'yes' | 'no'): Promise<void> {
+  async voteOnPrediction(predictionIndex: number, optionId: number): Promise<void> {
     try {
       // Check if user is authenticated
       if (!this.authService.isAuthenticated()) {
@@ -289,12 +294,8 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
       const apiPrediction = this.apiPredictions[predictionIndex]; // Access raw API data
       if (!apiPrediction) return;
 
-      // Find the option based on user's choice
-      const selectedOption = apiPrediction.options.find(opt =>
-        option === 'yes'
-          ? (opt.prediction_option_title.toLowerCase().includes('sí') || opt.prediction_option_title.toLowerCase().includes('yes'))
-          : opt.prediction_option_title.toLowerCase().includes('no')
-      );
+      // Find the selected option
+      const selectedOption = apiPrediction.options.find(opt => opt.prediction_option_id === optionId);
 
       if (!selectedOption) return;
 
@@ -379,6 +380,11 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     return this.userVotes[predictionId] !== undefined && this.userVotes[predictionId] !== null;
   }
 
+  // Get user's voted option ID for a prediction
+  getUserVotedOptionId(predictionId: number): number | null {
+    return this.userVotes[predictionId] || null;
+  }
+
   // Get user's vote for a prediction
   getUserVote(predictionId: number): 'yes' | 'no' | null {
     const userVotedOptionId = this.userVotes[predictionId];
@@ -399,4 +405,3 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     this.router.navigate(['/trade']);
   }
 }
-
