@@ -348,12 +348,11 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
         this.postPredictionService.castIntuitionVote(voteParams).subscribe({
           next: async (response: any) => {
             if (response.data?.success) {
-              // Update local state
+              // Update local state without reloading
               this.userVotes[apiPrediction.prediction_id] = selectedOption.prediction_option_id;
-              // Reload predictions to get updated vote counts
-              this.currentPage = 1;
-              this.predictions = [];
-              this.loadPredictions();
+
+              // Update vote counts locally
+              this.updateLocalVoteCounts(predictionIndex, selectedOption.prediction_option_id);
 
               await this.confirmDialogService.showSuccess({
                 title: 'Voto registrado',
@@ -412,6 +411,42 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     if (!votedOption) return null;
 
     return votedOption.prediction_option_title.toLowerCase().includes('no') ? 'no' : 'yes';
+  }
+
+  // Update vote counts locally after successful vote
+  private updateLocalVoteCounts(predictionIndex: number, selectedOptionId: number): void {
+    // Update the API prediction data
+    const apiPrediction = this.apiPredictions[predictionIndex];
+    const selectedOption = apiPrediction.options.find(opt => opt.prediction_option_id === selectedOptionId);
+
+    if (selectedOption && apiPrediction) {
+      // Increment the vote count for the selected option
+      selectedOption.prediction_intuition_votes = (selectedOption.prediction_intuition_votes || 0) + 1;
+      selectedOption.intuition_votes_count = (selectedOption.intuition_votes_count || 0) + 1;
+
+      // Update the frontend prediction data
+      const frontendPrediction = this.predictions[predictionIndex];
+      if (frontendPrediction && frontendPrediction.options) {
+        const frontendOption = frontendPrediction.options.find(opt => opt.id === selectedOptionId);
+        if (frontendOption) {
+          frontendOption.votes = selectedOption.prediction_intuition_votes || 0;
+
+          // Recalculate percentages for all options
+          const totalVotes = apiPrediction.options.reduce((sum, opt) => sum + (opt.prediction_intuition_votes || 0), 0);
+          frontendPrediction.sentimentVotes = { total: totalVotes };
+
+          // Update percentages
+          const totalParticipants = parseInt(apiPrediction.totalParticipants.replace('K', '000').replace('M', '000000')) || 0;
+          frontendPrediction.options.forEach(opt => {
+            const apiOpt = apiPrediction.options.find(apiOpt => apiOpt.prediction_option_id === opt.id);
+            if (apiOpt) {
+              opt.votes = apiOpt.prediction_intuition_votes || 0;
+              opt.percentage = totalParticipants > 0 ? Math.round((opt.votes / totalParticipants) * 100) : 0;
+            }
+          });
+        }
+      }
+    }
   }
 
   // Navigate to trade detail page
