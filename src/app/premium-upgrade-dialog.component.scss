@@ -1,0 +1,443 @@
+@use "sass:map";
+
+// Importar las mismas variables que rwa-types
+$font-sizes: (
+  'types-main-title-desktop': clamp(2rem, 4vw, 3.2rem),
+  'types-main-title-mobile': clamp(1.8rem, 5vw, 2.5rem),
+  'types-main-subtitle-desktop': clamp(2rem, 4vw, 3rem),
+  'types-main-subtitle-mobile': clamp(1.8rem, 5vw, 2rem),
+  'types-description-desktop': clamp(1.5rem, 1.5vw, 1.125rem),
+  'types-description-mobile': clamp(1rem, 3.5vw, 1.5rem),
+  'types-category-desktop': clamp(1rem, 1.2vw, 1.2rem),
+  'types-category-mobile': clamp(1.2rem, 2.5vw, 1rem),
+  'types-price-desktop': clamp(1.5rem, 2vw, 3rem),
+  'types-price-mobile': clamp(2rem, 3vw, 1.5rem),
+  'power-label-desktop': clamp(1rem, 1.2vw, 1.2rem),
+  'power-label-mobile': clamp(1rem, 2vw, 0.8rem),
+  'multiplier-desktop': clamp(1.2rem, 2vw, 3rem),
+  'multiplier-mobile': clamp(2rem, 2.5vw, 1.2rem),
+  'types-button-desktop': clamp(1rem, 1.2vw, 1rem),
+  'types-button-mobile': clamp(0.9rem, 2vw, 1rem),
+  'limit-text-desktop': clamp(0.8rem, 1vw, 0.9rem),
+  'limit-text-mobile': clamp(0.7rem, 2vw, 0.8rem),
+  'explanation-desktop': clamp(1rem, 1.2vw, 1.2rem),
+  'explanation-mobile': clamp(0.8rem, 2.2vw, 0.9rem),
+  'rewards-title-desktop': clamp(1.2rem, 1.5vw, 1.5rem),
+  'rewards-title-mobile': clamp(1rem, 2vw, 1.2rem),
+  'pool-title-desktop': clamp(0.9rem, 1.2vw, 1.1rem),
+  'pool-title-mobile': clamp(1rem, 1.8vw, 1rem),
+  'prize-amount-desktop': clamp(0.9rem, 1.2vw, 1.1rem),
+  'prize-amount-mobile': clamp(1rem, 1.8vw, 1rem),
+  'wheels-label-desktop': clamp(0.8rem, 1vw, 1rem),
+  'wheels-label-mobile': clamp(1rem, 1.5vw, 0.9rem),
+  'wheels-count-desktop': clamp(0.9rem, 1.2vw, 1.1rem),
+  'wheels-count-mobile': clamp(1rem, 1.8vw, 1rem)
+);
+
+$colorsRWA: (
+  'primary-bg': #0a0a0a,
+  'card-bg': rgba(20, 20, 20, 0.9),
+  'prosperity-pink': #ff0080,
+  'guardians-gold': #ffd700,
+  'highlight-white': #ffffff,
+  'highlight-orange-rwa': #ff8c00,
+  'aprendices-border': #ff6b6b,
+  'guardianes-border': #4a90e2,
+  'sabios-border': #50c878,
+  'misticos-border': #ff8c00,
+  'alquimista-border': #8a2be2,
+  'price-green': #00ff88,
+  'button-purple': #8a2be2,
+  'text-primary': #ffffff,
+  'text-secondary': var(--color-secondary-7),
+  'text-muted': #999999,
+  'rewards-bg': rgba(255, 255, 255, 0.05),
+  'rewards-border': rgba(255, 255, 255, 0.1),
+  'rewards-title': #ffffff,
+  'pool-title': #c0c0c0,
+  'prize-amount': #ffffff,
+  'wheels-label': #c0c0c0,
+  'wheels-count': #ffd700
+);
+
+$breakpoints: (
+  'mobile': 480px,
+  'tablet': 768px,
+  'desktop': 1024px,
+  'large': 1200px
+);
+
+@mixin respond-to($breakpoint) {
+  @media (min-width: map.get($breakpoints, $breakpoint)) {
+    @content;
+  }
+}
+
+@mixin gradient-textR($color1, $color2) {
+  background: linear-gradient(45deg,
+    #ffd700,
+    #ffed4a,
+    #fbbf24,
+    #f59e0b,
+    #d97706
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@mixin card-glow($color) {
+  box-shadow: 0 0 20px rgba($color, 0.3),
+    0 0 40px rgba($color, 0.2),
+    0 0 60px rgba($color, 0.1);
+}
+
+@mixin text-glow($color) {
+  text-shadow: 0 0 10px $color,
+    0 0 20px $color,
+    0 0 30px $color;
+}
+
+// Estilos del diálogo
+.dialog-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  padding: 20px;
+  box-sizing: border-box;
+  background: #000;
+  color: white;
+}
+
+.close-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: none;
+  border: none;
+  font-size: 30px;
+  color: white;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+.dialog-header {
+  text-align: center;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.verified-icon {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 10px;
+}
+
+.rwa-types {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+// Grid de totems - Exactamente como en rwa-types
+.totems-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+
+  @include respond-to('mobile') {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  @include respond-to('tablet') {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  @include respond-to('desktop') {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+// Tarjetas de totem - Estilos completos de rwa-types
+.totem-card {
+  background: map.get($colorsRWA, 'card-bg');
+  border-radius: 20px;
+  padding: 1.5rem;
+  text-align: center;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+
+  @include respond-to('tablet') {
+    padding: 2rem 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.2rem;
+  }
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+
+  // Variantes de tarjetas con bordes de colores
+  &.aprendices {
+    border-color: map.get($colorsRWA, 'aprendices-border');
+    &:hover {
+      @include card-glow(map.get($colorsRWA, 'aprendices-border'));
+    }
+  }
+
+  &.guardianes {
+    border-color: map.get($colorsRWA, 'guardianes-border');
+    &:hover {
+      @include card-glow(map.get($colorsRWA, 'guardianes-border'));
+    }
+  }
+
+  &.sabios {
+    border-color: map.get($colorsRWA, 'sabios-border');
+    &:hover {
+      @include card-glow(map.get($colorsRWA, 'sabios-border'));
+    }
+  }
+
+  &.misticos {
+    border-color: map.get($colorsRWA, 'misticos-border');
+    &:hover {
+      @include card-glow(map.get($colorsRWA, 'misticos-border'));
+    }
+  }
+
+  &.alquimista {
+    border-color: map.get($colorsRWA, 'alquimista-border');
+    &:hover {
+      @include card-glow(map.get($colorsRWA, 'alquimista-border'));
+    }
+  }
+}
+
+.totem-image {
+  margin-bottom: 1rem;
+
+  .animal-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    object-fit: cover;
+
+    @include respond-to('tablet') {
+      width: 100px;
+      height: 100px;
+    }
+
+    @include respond-to('desktop') {
+      width: 120px;
+      height: 120px;
+    }
+  }
+}
+
+.totem-info {
+  .totem-category {
+    font-size: map.get($font-sizes, 'types-category-mobile');
+    color: map.get($colorsRWA, 'text-primary');
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+
+    &.apprendice {
+      background: rgb(128, 128, 128);
+      background: linear-gradient(90deg, rgba(128, 128, 128, 1) 0%, rgba(48, 48, 48, 1) 100%);
+    }
+
+    &.guardian {
+      background: rgb(218, 164, 23);
+      background: linear-gradient(90deg, rgba(218, 164, 23, 1) 0%, rgba(218, 112, 23, 1) 100%);
+    }
+
+    &.sage {
+      background: rgb(4, 156, 203);
+      background: linear-gradient(90deg, rgba(4, 156, 203, 1) 0%, rgba(4, 88, 203, 1) 100%);
+    }
+
+    &.mystic {
+      background: rgb(26, 188, 111);
+      background: linear-gradient(90deg, rgba(26, 188, 111, 1) 0%, rgba(26, 94, 111, 1) 100%);
+    }
+
+    &.alchemist {
+      background: rgb(183, 60, 176);
+      background: linear-gradient(90deg, rgba(183, 60, 176, 1) 0%, rgba(110, 42, 176, 1) 100%);
+    }
+
+    @include respond-to('tablet') {
+      font-size: map.get($font-sizes, 'types-category-desktop');
+    }
+  }
+
+  .price {
+    margin-bottom: 1rem;
+
+    .amount {
+      font-size: map.get($font-sizes, 'types-price-mobile');
+      font-weight: bold;
+      color: map.get($colorsRWA, 'price-green');
+      display: block;
+
+      @include respond-to('tablet') {
+        font-size: map.get($font-sizes, 'types-price-desktop');
+      }
+    }
+
+    .currency {
+      font-size: map.get($font-sizes, 'types-category-mobile');
+      color: map.get($colorsRWA, 'price-green');
+      font-weight: 600;
+
+      @include respond-to('tablet') {
+        font-size: map.get($font-sizes, 'types-category-desktop');
+      }
+    }
+  }
+
+  .participation-power {
+    margin-bottom: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    .power-label {
+      font-size: map.get($font-sizes, 'power-label-mobile');
+      color: map.get($colorsRWA, 'text-primary');
+      display: block;
+      margin-bottom: 0.5rem;
+      margin-top: 0.5rem;
+
+      @include respond-to('tablet') {
+        font-size: map.get($font-sizes, 'power-label-desktop');
+      }
+    }
+
+    .power-value {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+
+      .lightning-icon {
+        width: 50px;
+        height: auto;
+
+        @include respond-to('tablet') {
+          width: 50px;
+          height: auto;
+        }
+      }
+
+      .multiplier {
+        font-size: map.get($font-sizes, 'multiplier-mobile');
+        font-weight: bold;
+        color: map.get($colorsRWA, 'guardians-gold');
+
+        @include respond-to('tablet') {
+          font-size: map.get($font-sizes, 'multiplier-desktop');
+        }
+      }
+    }
+  }
+
+  .buy-button {
+    background: rgb(117, 0, 236) !important;
+    background: linear-gradient(90deg, rgba(117, 0, 236, 1) 0%, rgba(213, 0, 238, 1) 100%) !important;
+    color: map.get($colorsRWA, 'text-primary');
+    border: none;
+    border-radius: 25px;
+    padding: 0.75rem 1rem;
+    font-size: map.get($font-sizes, 'types-button-mobile');
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+    width: 100%;
+
+    @include respond-to('tablet') {
+      font-size: map.get($font-sizes, 'types-button-desktop');
+      width: auto;
+      min-width: 60px;
+    }
+
+    @media (max-width: 768px) {
+      padding: 0.6rem 1.5rem;
+      font-size: 0.8rem;
+      max-width: 180px;
+    }
+
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(map.get($colorsRWA, 'button-purple'), 0.5);
+    }
+  }
+
+  .earnings-limit {
+    border: 1px solid #50c878;
+    height: 120px;
+    width: 120px;
+    margin: auto;
+    padding: 20px;
+    vertical-align: middle;
+    display: table;
+    border-radius: 50%;
+
+    @media (max-width: 768px) {
+      height: 100px;
+      width: 100px;
+    }
+
+    .limit-text {
+      font-size: map.get($font-sizes, 'limit-text-mobile');
+      color: var(--color-secondary-7);
+      display: block;
+      margin-bottom: 0.5rem;
+
+      @include respond-to('tablet') {
+        font-size: map.get($font-sizes, 'limit-text-desktop');
+      }
+    }
+
+    .infinity-icon {
+      width: 90px;
+      height: auto;
+
+      img {
+        width: 100%;
+        height: auto;
+      }
+
+      @include respond-to('tablet') {
+        width: 75px;
+        height: auto;
+      }
+
+      @media (max-width: 768px) {
+        width: 75px;
+        height: auto;
+      }
+    }
+  }
+}
+
+// Responsive para pantallas muy pequeñas
+@media (max-width: 360px) {
+  .totems-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .totem-card {
+    padding: 1rem;
+  }
+}

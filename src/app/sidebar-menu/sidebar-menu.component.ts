@@ -5,6 +5,8 @@ import { CommonService } from '../shared/commonService';
 import { WalletConnectService } from '../services/walletconnect.service';
 import { AuthorizationService } from '../services/authorization.service';
 import { Subscription } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { PremiumUpgradeDialogComponent } from '../premium-upgrade-dialog.component';
 
 @Component({
   selector: 'app-sidebar-menu',
@@ -25,7 +27,8 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
     private commonService: CommonService,
     private walletConnectService: WalletConnectService,
     private authorizationService: AuthorizationService,
-    private router: Router
+    private router: Router,
+    private modalService: NgbModal
   ) {
     this.subscriptions.add(
       this.commonService.updateUserAddress.subscribe(() => {
@@ -61,6 +64,14 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
   truncateAddress(address: string): string {
     if (!address) return 'Not Connected';
     return address.slice(0, 6) + '...' + address.slice(-4);
+  }
+
+  openPremiumDialog() {
+    const modalRef = this.modalService.open(PremiumUpgradeDialogComponent, {
+      size: 'xl',
+      backdrop: 'static',
+      windowClass: 'full-screen-modal'
+    });
   }
 
   async disconnectWallet(): Promise<void> {
