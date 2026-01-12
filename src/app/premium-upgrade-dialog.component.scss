@@ -75,12 +75,11 @@ $breakpoints: (
 
 @mixin gradient-textR($color1, $color2) {
   background: linear-gradient(45deg,
-    #ffd700,
-    #ffed4a,
-    #fbbf24,
-    #f59e0b,
-    #d97706
-  );
+      #ffd700,
+      #ffed4a,
+      #fbbf24,
+      #f59e0b,
+      #d97706);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -188,6 +187,7 @@ $breakpoints: (
   // Variantes de tarjetas con bordes de colores
   &.aprendices {
     border-color: map.get($colorsRWA, 'aprendices-border');
+
     &:hover {
       @include card-glow(map.get($colorsRWA, 'aprendices-border'));
     }
@@ -195,6 +195,7 @@ $breakpoints: (
 
   &.guardianes {
     border-color: map.get($colorsRWA, 'guardianes-border');
+
     &:hover {
       @include card-glow(map.get($colorsRWA, 'guardianes-border'));
     }
@@ -202,6 +203,7 @@ $breakpoints: (
 
   &.sabios {
     border-color: map.get($colorsRWA, 'sabios-border');
+
     &:hover {
       @include card-glow(map.get($colorsRWA, 'sabios-border'));
     }
@@ -209,6 +211,7 @@ $breakpoints: (
 
   &.misticos {
     border-color: map.get($colorsRWA, 'misticos-border');
+
     &:hover {
       @include card-glow(map.get($colorsRWA, 'misticos-border'));
     }
@@ -216,6 +219,7 @@ $breakpoints: (
 
   &.alquimista {
     border-color: map.get($colorsRWA, 'alquimista-border');
+
     &:hover {
       @include card-glow(map.get($colorsRWA, 'alquimista-border'));
     }
@@ -347,6 +351,31 @@ $breakpoints: (
         @include respond-to('tablet') {
           font-size: map.get($font-sizes, 'multiplier-desktop');
         }
+      }
+    }
+  }
+
+  .benefits {
+    .benefit {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+
+      .benefit-icon {
+        width: 20px;
+        height: 20px;
+      }
+
+      .info-icon {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+      }
+
+      span {
+        color: map.get($colorsRWA, 'text-secondary');
       }
     }
   }
