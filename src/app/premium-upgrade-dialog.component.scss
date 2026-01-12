@@ -157,7 +157,7 @@ $breakpoints: (
   }
 
   @include respond-to('desktop') {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
   }
 }
@@ -356,12 +356,20 @@ $breakpoints: (
   }
 
   .benefits {
+    margin-top: 1rem;
+
+    p {
+      color: map.get($colorsRWA, 'text-muted');
+      margin-bottom: 0.5rem;
+    }
+
     .benefit {
       display: flex;
-      align-items: center;
-      justify-content: center;
+      align-items: flex-start;
+      justify-content: flex-start;
       gap: 0.5rem;
       margin-bottom: 0.5rem;
+      text-align: left;
 
       .benefit-icon {
         width: 20px;
@@ -413,18 +421,18 @@ $breakpoints: (
   }
 
   .earnings-limit {
-    border: 1px solid #50c878;
-    height: 120px;
-    width: 120px;
+    //border: 1px solid #50c878;
+    height: 90px;
+    //width: 120px;
     margin: auto;
-    padding: 20px;
-    vertical-align: middle;
-    display: table;
-    border-radius: 50%;
-
+    //padding: 20px;
+    //vertical-align: middle;
+    //display: table;
+    //border-radius: 50%;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     @media (max-width: 768px) {
       height: 100px;
-      width: 100px;
+      //width: 100px;
     }
 
     .limit-text {
