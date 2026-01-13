@@ -34,11 +34,32 @@
       <div class="wow-text">{{ getPersuasiveMessage() }}</div>
     </div>
 
+    <!-- Phase Selector -->
+    <div class="phase-selector">
+      <div class="selector-header">
+        <span class="selector-label">Seleccionar Fase del Proyecto:</span>
+      </div>
+      <select
+        class="phase-dropdown"
+        [(ngModel)]="selectedPhase"
+        (ngModelChange)="onPhaseChange()"
+      >
+        <option *ngFor="let phase of projectPhases" [ngValue]="phase">
+          {{ phase.name }} (ROI +{{ ((phase.roiMultiplier - 1) * 100).toFixed(0) }}%)
+          <span *ngIf="phase.isCurrentPhase" class="current-badge">ACTUAL</span>
+        </option>
+      </select>
+    </div>
+
     <!-- Token Price Info -->
     <div class="token-price-info">
       <div class="price-alert">
         <span class="price-icon">📈</span>
-        <span class="price-text">Fierce Token: {{ formatCurrency(FIERCE_TOKEN_PRICE) }} - ¡Subiendo!</span>
+        <span class="price-text">
+          Fierce Token:
+          <strong>{{ formatCurrency(0.0033) }}</strong>
+          <span class="current-indicator">- ¡Precio Actual! Sigue aumentando 🚀</span>
+        </span>
       </div>
     </div>
 
@@ -49,7 +70,7 @@
         <div class="earning-content">
           <div class="earning-amount">{{ formatCurrency(getDailyEarningsUSD()) }}</div>
           <div class="earning-label">Diario</div>
-          <div class="earning-tokens">{{ formatNumber(character.dailyBase) }} tokens</div>
+          <div class="earning-tokens">{{ formatNumber(getRoundedDailyTokens()) }} tokens</div>
         </div>
       </div>
 
@@ -58,7 +79,7 @@
         <div class="earning-content">
           <div class="earning-amount">{{ formatCurrency(getMonthlyEarningsUSD()) }}</div>
           <div class="earning-label">Mensual</div>
-          <div class="earning-tokens">{{ formatNumber(character.dailyBase * 30) }} tokens</div>
+          <div class="earning-tokens">{{ formatNumber(getMonthlyTokens()) }} tokens</div>
         </div>
       </div>
 
@@ -67,21 +88,24 @@
         <div class="earning-content">
           <div class="earning-amount">{{ formatCurrency(getYearlyEarningsUSD()) }}</div>
           <div class="earning-label">Anual</div>
-          <div class="earning-tokens">{{ formatNumber(character.dailyBase * 365) }} tokens</div>
+          <div class="earning-tokens">{{ formatNumber(getMonthlyTokens() * 12) }} tokens</div>
         </div>
       </div>
     </div>
 
     <!-- Investment Message -->
-    <div class="investment-message">
-      <div class="investment-text">{{ getInvestmentMessage() }}</div>
-      <div class="growth-hint">
+    <div class="investment-message" [ngClass]="selectedPhase.isCurrentPhase ? 'current-phase' : 'future-phase'">
+      <div class="investment-text" [ngClass]="selectedPhase.isCurrentPhase ? 'current' : 'future'">{{ getInvestmentMessage() }}</div>
+      <div class="growth-hint" *ngIf="selectedPhase.isCurrentPhase">
         🚀 ¡El precio del token tiende a subir! Tus ganancias crecerán con el tiempo.
+      </div>
+      <div class="urgency-message" *ngIf="!selectedPhase.isCurrentPhase">
+        ⚠️ ¡URGENTE! En {{ selectedPhase.name }} ganarás MENOS tokens. ¡Compra AHORA en Fase 1!
       </div>
     </div>
 
     <!-- Tap Power Reminder -->
-    <div class="tap-power-reminder">
+    <!-- <div class="tap-power-reminder">
       <div class="tap-power-card">
         <div class="tap-icon">👆</div>
         <div class="tap-content">
@@ -90,6 +114,6 @@
           <div class="tap-description">Cada tap genera {{ character.multiplier }}x más recompensas</div>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </div>

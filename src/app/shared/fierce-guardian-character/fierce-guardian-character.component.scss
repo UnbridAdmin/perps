@@ -108,17 +108,70 @@
     }
   }
 
+  .phase-selector {
+    margin-bottom: 20px;
+
+    .selector-header {
+      margin-bottom: 8px;
+
+      .selector-label {
+        color: $text-primary;
+        font-weight: 600;
+        font-size: 0.95rem;
+      }
+    }
+
+    .phase-dropdown {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 2px solid $border-color;
+      background: $background-light;
+      color: $text-primary;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover {
+        border-color: #ff6b35;
+        box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+      }
+
+      &:focus {
+        outline: none;
+        border-color: #ff6b35;
+        box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.2);
+      }
+
+      .current-badge {
+        color: #4CAF50;
+        font-weight: bold;
+        margin-left: 8px;
+      }
+    }
+  }
+
   .token-price-info {
     margin-bottom: 20px;
 
     .price-alert {
-      background: linear-gradient(135deg, #4CAF50, #66BB6A);
       padding: 12px 16px;
       border-radius: 12px;
       display: flex;
       align-items: center;
       gap: 10px;
       box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
+      transition: all 0.3s ease;
+
+      &.projected {
+        background: linear-gradient(135deg, #9C27B0, #BA68C8);
+        box-shadow: 0 4px 15px rgba(156, 39, 176, 0.2);
+      }
+
+      &:not(.projected) {
+        background: linear-gradient(135deg, #4CAF50, #66BB6A);
+      }
 
       .price-icon {
         font-size: 1.5rem;
@@ -128,6 +181,20 @@
         color: white;
         font-weight: bold;
         font-size: 0.95rem;
+
+        strong {
+          font-size: 1.1rem;
+        }
+
+        .current-indicator {
+          color: #FFD700;
+          font-style: italic;
+        }
+
+        .projected-indicator {
+          color: #E1BEE7;
+          font-style: italic;
+        }
       }
     }
   }
@@ -194,18 +261,34 @@
   }
 
   .investment-message {
-    background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05));
-    border: 1px solid rgba(255, 193, 7, 0.3);
     border-radius: 12px;
     padding: 16px;
     margin-bottom: 20px;
 
+    &.current-phase {
+      background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05));
+      border: 1px solid rgba(255, 193, 7, 0.3);
+    }
+
+    &.future-phase {
+      background: linear-gradient(135deg, rgba(244, 67, 54, 0.1), rgba(244, 67, 54, 0.05));
+      border: 1px solid rgba(244, 67, 54, 0.3);
+    }
+
     .investment-text {
-      color: #FFC107;
       font-weight: 600;
       font-size: 0.95rem;
       margin-bottom: 8px;
       text-align: center;
+
+      &.current {
+        color: #FFC107;
+      }
+
+      &.future {
+        color: #F44336;
+        font-weight: bold;
+      }
     }
 
     .growth-hint {
@@ -213,6 +296,14 @@
       font-size: 0.85rem;
       text-align: center;
       font-style: italic;
+    }
+
+    .urgency-message {
+      color: #F44336;
+      font-size: 0.9rem;
+      text-align: center;
+      font-weight: bold;
+      animation: pulse 1.5s infinite;
     }
   }
 

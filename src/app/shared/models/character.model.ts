@@ -17,3 +17,17 @@ export interface Character {
     treeName: string;
   };
 }
+
+export interface ProjectPhase {
+  id: number;
+  name: string;
+  roiMultiplier: number; // 1.5, 1.3, 1.2, 1.1, 1.05
+  tokenPrice: number;
+  isCurrentPhase: boolean;
+  packageData: {
+    [multiplier: number]: {
+      cost: number;
+      monthlyTokens: number;
+    };
+  };
+}

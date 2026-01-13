@@ -36,53 +36,53 @@ export class PremiumUpgradeDialogComponent {
     const characterMap: { [key: string]: Character } = {
       'Wolf Character in Fierce Guardians Game': {
         id: 'pup',
-        name: 'IRONCLAW',
-        multiplier: 1.5,
-        dailyBase: 40,
-        unlocked: true,
-        image: '',
-        selectImage: '',
-        gifImage: 'https://ipfs.unbrid.com/app/iron.gif'
-      },
-      'Alpha Character in Fierce Guardians Game': {
-        id: 'alpha',
-        name: 'Alpha Wolf',
-        multiplier: 7.5,
+        name: 'Wolf Pup',
+        multiplier: 1,
         dailyBase: 303,
         unlocked: true,
         image: '',
         selectImage: '',
-        gifImage: 'https://ipfs.unbrid.com/app/shadowblade.gif'
+        gifImage: 'https://ipfs.unbrid.com/characters/wolf-pup.gif'
       },
-      'Beta Character in Fierce Guardians Game': {
-        id: 'beta',
-        name: 'Beta Wolf',
-        multiplier: 15,
-        dailyBase: 606,
-        unlocked: true,
-        image: '',
-        selectImage: '',
-        gifImage: 'https://ipfs.unbrid.com/app/poseidon.gif'
-      },
-      'Elite Character in Fierce Guardians Game': {
-        id: 'elite',
-        name: 'Elite Guardian',
-        multiplier: 37.5,
+      'Alpha Character in Fierce Guardians Game': {
+        id: 'alpha',
+        name: 'Alpha Wolf',
+        multiplier: 5,
         dailyBase: 1515,
         unlocked: true,
         image: '',
         selectImage: '',
-        gifImage: 'https://ipfs.unbrid.com/app/elite.gif'
+        gifImage: 'https://ipfs.unbrid.com/characters/alpha-wolf.gif'
       },
-      'Legend Character in Fierce Guardians Game': {
-        id: 'legend',
-        name: 'Legendary Beast',
-        multiplier: 75,
+      'Beta Character in Fierce Guardians Game': {
+        id: 'beta',
+        name: 'Beta Wolf',
+        multiplier: 10,
         dailyBase: 3030,
         unlocked: true,
         image: '',
         selectImage: '',
-        gifImage: 'https://ipfs.unbrid.com/app/eternus.gif'
+        gifImage: 'https://ipfs.unbrid.com/characters/beta-wolf.gif'
+      },
+      'Elite Character in Fierce Guardians Game': {
+        id: 'elite',
+        name: 'Elite Guardian',
+        multiplier: 25,
+        dailyBase: 7576,
+        unlocked: true,
+        image: '',
+        selectImage: '',
+        gifImage: 'https://ipfs.unbrid.com/characters/elite-guardian.gif'
+      },
+      'Legend Character in Fierce Guardians Game': {
+        id: 'legend',
+        name: 'Legendary Beast',
+        multiplier: 50,
+        dailyBase: 15152,
+        unlocked: true,
+        image: '',
+        selectImage: '',
+        gifImage: 'https://ipfs.unbrid.com/characters/legendary-beast.gif'
       }
     };
 
