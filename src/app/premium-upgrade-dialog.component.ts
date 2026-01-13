@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FierceGuardianCharacterComponent } from './shared/fierce-guardian-character/fierce-guardian-character.component';
 import { Character } from './shared/models/character.model';
@@ -6,9 +7,44 @@ import { Character } from './shared/models/character.model';
 @Component({
   selector: 'app-premium-upgrade-dialog',
   templateUrl: './premium-upgrade-dialog.component.html',
-  styleUrls: ['./premium-upgrade-dialog.component.scss']
+  styleUrls: ['./premium-upgrade-dialog.component.scss'],
+  imports: [CommonModule]
 })
 export class PremiumUpgradeDialogComponent {
+  selectedPackage: any = null;
+
+  packages = [
+    {
+      id: 'apprentice',
+      name: 'APPRENTICE',
+      price: 2,
+      multiplier: 1
+    },
+    {
+      id: 'guardian',
+      name: 'GUARDIAN',
+      price: 10,
+      multiplier: 5
+    },
+    {
+      id: 'sage',
+      name: 'SAGE',
+      price: 20,
+      multiplier: 10
+    },
+    {
+      id: 'mystic',
+      name: 'MYSTIC',
+      price: 50,
+      multiplier: 25
+    },
+    {
+      id: 'alchemist',
+      name: 'ALCHEMIST',
+      price: 100,
+      multiplier: 50
+    }
+  ];
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -17,6 +53,10 @@ export class PremiumUpgradeDialogComponent {
 
   closeDialog() {
     this.activeModal.close();
+  }
+
+  selectPackage(pkg: any) {
+    this.selectedPackage = pkg;
   }
 
   openCharacterModal(characterText: string) {
