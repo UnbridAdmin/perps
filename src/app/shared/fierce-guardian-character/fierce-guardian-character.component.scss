@@ -2,10 +2,13 @@
 @use '../../../styles/variables' as *;
 
 .modal-header {
+  position: relative;
   padding: 20px 20px 0;
-  text-align: right;
 
   .close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -43,6 +46,7 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    margin-top: 20px;
 
     .character-title {
       display: flex;
