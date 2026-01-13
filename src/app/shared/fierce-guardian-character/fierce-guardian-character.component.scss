@@ -38,70 +38,229 @@
 }
 
 .character-info {
-  .character-name {
-    font-size: 2rem;
-    font-weight: bold;
-    color: $text-primary;
-    margin: 0;
-  }
+  .character-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 
-  .crown-icon {
-    .crown {
-      font-size: 1.5rem;
-      color: #ffd700;
+    .character-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      .character-name {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: $text-primary;
+        margin: 0;
+      }
+
+      .crown-icon .crown {
+        font-size: 1.5rem;
+        color: #ffd700;
+      }
+    }
+
+    .power-badge {
+      background: linear-gradient(135deg, #ff6b35, #ff8f65);
+      padding: 6px 12px;
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+
+      .power-text {
+        color: white;
+        font-weight: bold;
+        font-size: 0.9rem;
+      }
     }
   }
 
   .gif-container {
+    text-align: center;
+    margin-bottom: 20px;
+
     .character-gif {
       width: 100%;
-      height: 256px;
+      max-width: 280px;
+      height: 200px;
       object-fit: cover;
-      border-radius: 12px;
-      border: 2px solid rgba(255, 107, 53, 0.3);
+      border-radius: 16px;
+      border: 3px solid rgba(255, 107, 53, 0.4);
+      box-shadow: 0 8px 25px rgba(255, 107, 53, 0.2);
     }
   }
 
-  .stats-container {
-    display: flex;
-    flex-direction: column;
+  .persuasive-message {
+    text-align: center;
+    margin-bottom: 20px;
+
+    .wow-text {
+      background: linear-gradient(135deg, #ff6b35, #ffd700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 1.1rem;
+      font-weight: bold;
+      padding: 10px;
+      border-radius: 12px;
+      animation: pulse 2s infinite;
+    }
+  }
+
+  .token-price-info {
+    margin-bottom: 20px;
+
+    .price-alert {
+      background: linear-gradient(135deg, #4CAF50, #66BB6A);
+      padding: 12px 16px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
+
+      .price-icon {
+        font-size: 1.5rem;
+      }
+
+      .price-text {
+        color: white;
+        font-weight: bold;
+        font-size: 0.95rem;
+      }
+    }
+  }
+
+  .earnings-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 12px;
+    margin-bottom: 20px;
 
-    .stat-card {
-      border-radius: 8px;
-      padding: 12px;
+    .earning-card {
+      background: $background-light;
+      border: 1px solid $border-color;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
 
-      &.daily-base {
-        background: rgba(255, 107, 53, 0.1);
-        border: 1px solid rgba(255, 107, 53, 0.2);
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      }
 
-        .stat-value {
+      &.daily {
+        border-color: #ff6b35;
+        background: rgba(255, 107, 53, 0.05);
+      }
+
+      &.monthly {
+        border-color: #2196F3;
+        background: rgba(33, 150, 243, 0.05);
+      }
+
+      &.yearly {
+        border-color: #9C27B0;
+        background: rgba(156, 39, 176, 0.05);
+      }
+
+      .earning-icon {
+        font-size: 2rem;
+        margin-bottom: 8px;
+      }
+
+      .earning-content {
+        .earning-amount {
+          font-size: 1.2rem;
+          font-weight: bold;
+          color: #ff6b35;
+          margin-bottom: 4px;
+        }
+
+        .earning-label {
+          font-size: 0.85rem;
+          color: rgba(255, 255, 255, 0.7);
+          margin-bottom: 2px;
+        }
+
+        .earning-tokens {
+          font-size: 0.75rem;
+          color: rgba(255, 255, 255, 0.5);
+        }
+      }
+    }
+  }
+
+  .investment-message {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05));
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+
+    .investment-text {
+      color: #FFC107;
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .growth-hint {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.85rem;
+      text-align: center;
+      font-style: italic;
+    }
+  }
+
+  .tap-power-reminder {
+    .tap-power-card {
+      background: linear-gradient(135deg, rgba(156, 39, 176, 0.1), rgba(156, 39, 176, 0.05));
+      border: 1px solid rgba(156, 39, 176, 0.3);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .tap-icon {
+        font-size: 2rem;
+      }
+
+      .tap-content {
+        flex: 1;
+
+        .tap-title {
+          font-weight: bold;
+          color: #9C27B0;
+          margin-bottom: 4px;
+        }
+
+        .tap-value {
           font-size: 1.5rem;
           font-weight: bold;
           color: #ff6b35;
           margin-bottom: 4px;
         }
 
-        .stat-label {
-          font-size: 0.75rem;
+        .tap-description {
+          font-size: 0.8rem;
           color: rgba(255, 255, 255, 0.7);
-        }
-      }
-
-      &.tap-power {
-        background: $background-light;
-        border: 1px solid $border-color;
-
-        .stat-label {
-          color: rgba(255, 255, 255, 0.7);
-        }
-
-        .stat-value {
-          font-weight: bold;
-          color: #ff6b35;
         }
       }
     }
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
   }
 }
 

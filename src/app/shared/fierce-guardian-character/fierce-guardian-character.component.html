@@ -7,17 +7,21 @@
 <div class="modal-body">
   <!-- Character info -->
   <div class="character-info" *ngIf="character">
-    <div class="text-center mb-4">
-      <div class="flex items-center justify-center space-x-2 mb-2">
+    <!-- Character Header -->
+    <div class="character-header">
+      <div class="character-title">
         <h3 class="character-name">{{ character.name }}</h3>
         <div class="crown-icon" *ngIf="character.id === 'legend'">
           <span class="crown">👑</span>
         </div>
       </div>
+      <div class="power-badge">
+        <span class="power-text">{{ getPotentialMultiplier() }} Power</span>
+      </div>
     </div>
 
     <!-- Animated GIF -->
-    <div class="gif-container mb-6">
+    <div class="gif-container">
       <img
         [src]="character.gifImage"
         [alt]="character.name + ' animation'"
@@ -25,23 +29,65 @@
       />
     </div>
 
-    <!-- Character stats -->
-    <div class="stats-container">
-      <div class="stat-card daily-base" *ngIf="character.dailyBase">
-        <div class="text-center">
-          <div class="stat-value">
-            💰 {{ formatNumber(character.dailyBase) }}
-          </div>
-          <div class="stat-label">
-            Base Fierce Tokens per day
-          </div>
+    <!-- Persuasive Message -->
+    <div class="persuasive-message">
+      <div class="wow-text">{{ getPersuasiveMessage() }}</div>
+    </div>
+
+    <!-- Token Price Info -->
+    <div class="token-price-info">
+      <div class="price-alert">
+        <span class="price-icon">📈</span>
+        <span class="price-text">Fierce Token: {{ formatCurrency(FIERCE_TOKEN_PRICE) }} - ¡Subiendo!</span>
+      </div>
+    </div>
+
+    <!-- Earnings Stats -->
+    <div class="earnings-container">
+      <div class="earning-card daily">
+        <div class="earning-icon">💰</div>
+        <div class="earning-content">
+          <div class="earning-amount">{{ formatCurrency(getDailyEarningsUSD()) }}</div>
+          <div class="earning-label">Diario</div>
+          <div class="earning-tokens">{{ formatNumber(character.dailyBase) }} tokens</div>
         </div>
       </div>
 
-      <div class="stat-card tap-power">
-        <div class="flex justify-between items-center">
-          <span class="stat-label">Tap Power</span>
-          <span class="stat-value">x{{ character.multiplier }}</span>
+      <div class="earning-card monthly">
+        <div class="earning-icon">📅</div>
+        <div class="earning-content">
+          <div class="earning-amount">{{ formatCurrency(getMonthlyEarningsUSD()) }}</div>
+          <div class="earning-label">Mensual</div>
+          <div class="earning-tokens">{{ formatNumber(character.dailyBase * 30) }} tokens</div>
+        </div>
+      </div>
+
+      <div class="earning-card yearly">
+        <div class="earning-icon">🎯</div>
+        <div class="earning-content">
+          <div class="earning-amount">{{ formatCurrency(getYearlyEarningsUSD()) }}</div>
+          <div class="earning-label">Anual</div>
+          <div class="earning-tokens">{{ formatNumber(character.dailyBase * 365) }} tokens</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Investment Message -->
+    <div class="investment-message">
+      <div class="investment-text">{{ getInvestmentMessage() }}</div>
+      <div class="growth-hint">
+        🚀 ¡El precio del token tiende a subir! Tus ganancias crecerán con el tiempo.
+      </div>
+    </div>
+
+    <!-- Tap Power Reminder -->
+    <div class="tap-power-reminder">
+      <div class="tap-power-card">
+        <div class="tap-icon">👆</div>
+        <div class="tap-content">
+          <div class="tap-title">Poder de Tap</div>
+          <div class="tap-value">x{{ character.multiplier }}</div>
+          <div class="tap-description">Cada tap genera {{ character.multiplier }}x más recompensas</div>
         </div>
       </div>
     </div>
