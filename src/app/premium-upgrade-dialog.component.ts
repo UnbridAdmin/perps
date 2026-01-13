@@ -42,7 +42,7 @@ export class PremiumUpgradeDialogComponent {
         unlocked: true,
         image: '',
         selectImage: '',
-        gifImage: 'https://ipfs.unbrid.com/characters/wolf-pup.gif'
+        gifImage: 'https://ipfs.unbrid.com/app/iron.gif'
       },
       'Alpha Character in Fierce Guardians Game': {
         id: 'alpha',
@@ -52,7 +52,7 @@ export class PremiumUpgradeDialogComponent {
         unlocked: true,
         image: '',
         selectImage: '',
-        gifImage: 'https://ipfs.unbrid.com/characters/alpha-wolf.gif'
+        gifImage: 'https://ipfs.unbrid.com/app/shadowblade.gif'
       },
       'Beta Character in Fierce Guardians Game': {
         id: 'beta',
@@ -62,7 +62,7 @@ export class PremiumUpgradeDialogComponent {
         unlocked: true,
         image: '',
         selectImage: '',
-        gifImage: 'https://ipfs.unbrid.com/characters/beta-wolf.gif'
+        gifImage: 'https://ipfs.unbrid.com/app/poseidon.gif'
       },
       'Elite Character in Fierce Guardians Game': {
         id: 'elite',
@@ -72,7 +72,7 @@ export class PremiumUpgradeDialogComponent {
         unlocked: true,
         image: '',
         selectImage: '',
-        gifImage: 'https://ipfs.unbrid.com/characters/elite-guardian.gif'
+        gifImage: 'https://ipfs.unbrid.com/app/elite.gif'
       },
       'Legend Character in Fierce Guardians Game': {
         id: 'legend',
@@ -82,7 +82,7 @@ export class PremiumUpgradeDialogComponent {
         unlocked: true,
         image: '',
         selectImage: '',
-        gifImage: 'https://ipfs.unbrid.com/characters/legendary-beast.gif'
+        gifImage: 'https://ipfs.unbrid.com/app/eternus.gif'
       }
     };
 

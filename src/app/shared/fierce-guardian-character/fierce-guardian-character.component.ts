@@ -34,7 +34,7 @@ export class FierceGuardianCharacterComponent {
       roiMultiplier: 1.5,
       tokenPrice: 0.0033,
       isCurrentPhase: true,
-      packageData: {
+       packageData: {
         1: { cost: 2.00, monthlyTokens: 3429 },
         5: { cost: 10.00, monthlyTokens: 17143 },
         10: { cost: 20.00, monthlyTokens: 34286 },
@@ -49,6 +49,20 @@ export class FierceGuardianCharacterComponent {
       tokenPrice: 0.0033,
       isCurrentPhase: false,
       packageData: {
+        1: { cost: 2.00, monthlyTokens: 3030 },
+        5: { cost: 10.00, monthlyTokens: 15152 },
+        10: { cost: 20.00, monthlyTokens: 30303 },
+        25: { cost: 50.00, monthlyTokens: 75758 },
+        50: { cost: 100.00, monthlyTokens: 151515 }
+      }
+    },
+    {
+      id: 3,
+      name: 'Fase 3',
+      roiMultiplier: 1.2,
+      tokenPrice: 0.0033,
+      isCurrentPhase: false,
+      packageData: {
         1: { cost: 2.00, monthlyTokens: 2952 },
         5: { cost: 10.00, monthlyTokens: 14762 },
         10: { cost: 20.00, monthlyTokens: 29524 },
@@ -57,9 +71,9 @@ export class FierceGuardianCharacterComponent {
       }
     },
     {
-      id: 3,
-      name: 'Fase 3',
-      roiMultiplier: 1.2,
+      id: 4,
+      name: 'Fase 4',
+      roiMultiplier: 1.1,
       tokenPrice: 0.0033,
       isCurrentPhase: false,
       packageData: {
@@ -71,31 +85,17 @@ export class FierceGuardianCharacterComponent {
       }
     },
     {
-      id: 4,
-      name: 'Fase 4',
-      roiMultiplier: 1.1,
-      tokenPrice: 0.0033,
-      isCurrentPhase: false,
-      packageData: {
-        1: { cost: 2.00, monthlyTokens: 2286 },
-        5: { cost: 10.00, monthlyTokens: 11429 },
-        10: { cost: 20.00, monthlyTokens: 22857 },
-        25: { cost: 50.00, monthlyTokens: 57143 },
-        50: { cost: 100.00, monthlyTokens: 114286 }
-      }
-    },
-    {
       id: 5,
       name: 'Fase 5',
       roiMultiplier: 1.05,
       tokenPrice: 0.0033,
       isCurrentPhase: false,
       packageData: {
-        1: { cost: 2.00, monthlyTokens: 2000 },
-        5: { cost: 10.00, monthlyTokens: 10000 },
-        10: { cost: 20.00, monthlyTokens: 20000 },
-        25: { cost: 50.00, monthlyTokens: 50000 },
-        50: { cost: 100.00, monthlyTokens: 100000 }
+        1: { cost: 2.00, monthlyTokens: 1714 },
+        5: { cost: 10.00, monthlyTokens: 8571 },
+        10: { cost: 20.00, monthlyTokens: 17143 },
+        25: { cost: 50.00, monthlyTokens: 42857 },
+        50: { cost: 100.00, monthlyTokens: 85714 }
       }
     }
   ];
