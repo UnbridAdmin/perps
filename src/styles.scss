@@ -51,3 +51,65 @@ body {
   border: none;
   border-radius: 0;
 }
+
+
+/*Modal*/
+.modal-dialog {
+  //display: flex;
+  //align-items: center;
+  //min-height: calc(100% - 3.5rem);
+
+  .modal-header {
+    border-bottom: none !important;
+    padding: unset !important;
+    float: right !important;
+
+    /*button {
+      background-color: transparent !important;
+      border: none !important;
+      z-index: 1;
+
+      span {
+        font-size: 2.75rem;
+        font-weight: 600;
+        position: relative;
+        right: 5px;
+        bottom: 9px;
+        color: $text-primary;
+
+        i {
+          color: $text-primary;
+          font-size: 1.5625rem;
+          position: relative;
+          top: -7px;
+        }
+      }
+    }*/
+  }
+
+  .modal-content {
+    background-color:$background-dark;
+    border-radius: 25px;
+    margin: auto;
+
+    .modal-body {
+      padding: 40px !important;
+
+      .title-dialog {
+        color: $primary-color;
+      }
+
+      .message-container {
+        display: flex;
+        color: $text-secondary;
+        justify-content: center;
+
+        p {
+          text-align: center;
+        }
+      }
+    }
+  }
+}
+
+/*Modal*/
