@@ -1,9 +1,73 @@
+@use '../../../styles/variables' as *;
+
 /* Header Section */
+.profile-header-wrapper {
+  position: relative;
+}
+
+.header-container {
+  /* removed position relative */
+}
+
 .header-image {
   width: 100%;
   height: 200px;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  position: relative;
+  background: url('https://picsum.photos/800/200?random=2') center/cover;
+}
+
+.top-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-left: 20px;
+}
+
+.back-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  margin-right: 15px;
+}
+
+.back-btn:hover {
+  color: #ccc;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.user-name {
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.predictions-count {
+  color: #fff;
+  font-size: 14px;
+}
+
+.follow-btn {
+  position: absolute;
+  top: 210px;
+  right: 20px;
+  background: transparent;
+  border: 1px solid #555;
+  color: #fff;
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .profile-section {
@@ -21,30 +85,44 @@
   margin-bottom: 15px;
 }
 
-.follow-btn {
-  position: absolute;
-  top: -40px;
-  right: 20px;
-  background: transparent;
-  border: 1px solid #555;
-  color: #fff;
-  padding: 8px 20px;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
 .follow-btn:hover {
   background: #1a1a1a;
+}
+
+.username-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 5px;
 }
 
 .username {
   font-size: 22px;
   font-weight: 600;
-  margin-bottom: 5px;
+}
+
+.creator-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.creator-badge svg {
+  fill: $primary-color;
+  width: 14px;
+  height: 14px;
+}
+
+.creator-badge img {
+  width: 16px;
+  height: 16px;
 }
 
 .handle {

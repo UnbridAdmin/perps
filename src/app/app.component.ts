@@ -27,6 +27,7 @@ export class AppComponent implements OnInit, OnDestroy {
   title = 'perps';
   activeTab: 'for-you' | 'trending' = 'for-you';
   isHomePage = true;
+  showNewsSidebar = true;
   private subscriptions: Subscription = new Subscription();
   signing: boolean = true;
   currentpath: any;
@@ -59,6 +60,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.currentpath = e.url;
         console.log('Current path:', this.currentpath);
         this.isHomePage = e.url === '/' || e.url === '/home';
+        this.showNewsSidebar = this.isHomePage || e.url === '/profile';
       });
   }
 
@@ -696,4 +698,3 @@ export class AppComponent implements OnInit, OnDestroy {
     this.activeTab = tab;
   }
 }
-
