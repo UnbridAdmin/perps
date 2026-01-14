@@ -5,12 +5,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-home',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <div class="home">
-      <h2>Perps Home</h2>
-      <p>This is the initial structure for the Perps project.</p>
-    </div>
-  `,
+  template: ``,
   styles: [`
     .home {
       padding: 20px;
