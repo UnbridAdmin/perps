@@ -1,4 +1,3 @@
-
 @use '../../styles/variables' as *;
 
 .sidebar {
@@ -240,6 +239,17 @@
 .sidebar.collapsed .profile-details .job,
 .sidebar.collapsed .profile-details i {
   display: none;
+}
+
+.btn-create {
+  background: #4ade80;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 80%;
+  margin: 0 auto;
+  display: block;
 }
 
 /* Automatic responsive - collapse on smaller screens */
