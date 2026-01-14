@@ -1,0 +1,51 @@
+.metrics-container {
+  background: #0f0f0f;
+  border-top: 1px solid #222;
+  border-bottom: 1px solid #222;
+  padding: 15px 20px;
+}
+
+.metrics-tabs {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.metric-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #888;
+  padding: 10px;
+  cursor: pointer;
+  text-align: center;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s ease;
+
+  &.active {
+    color: #fff;
+    border-bottom-color: #c77dff;
+  }
+
+  &:hover {
+    color: #fff;
+  }
+}
+
+.metric-value {
+  display: block;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+
+.metric-label {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.metric-content {
+  display: block;
+}

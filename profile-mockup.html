@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReíhanReí - Perfil</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 640px;
+            margin: 0 auto;
+            background: #000000;
+        }
+
+        /* Header Section */
+        .header-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            position: relative;
+        }
+
+        .profile-section {
+            padding: 0 20px;
+            margin-top: -50px;
+            position: relative;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 4px solid #000;
+            background: url('Profile.jpg') center/cover;
+            margin-bottom: 15px;
+        }
+
+        .follow-btn {
+            position: absolute;
+            top: -40px;
+            right: 20px;
+            background: transparent;
+            border: 1px solid #555;
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .follow-btn:hover {
+            background: #1a1a1a;
+        }
+
+        .username {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .handle {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #aaa;
+        }
+
+        .stat-item strong {
+            color: #fff;
+        }
+
+        .bio {
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 10px;
+            color: #ddd;
+        }
+
+        .bio-links {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .bio-link {
+            color: #5b9bd5;
+            text-decoration: none;
+            font-size: 13px;
+            word-break: break-all;
+        }
+
+        .bio-link:hover {
+            text-decoration: underline;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .tag {
+            background: #1a1a2e;
+            color: #5b9bd5;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        /* Metrics Section */
+        .metrics-container {
+            background: #0f0f0f;
+            border-top: 1px solid #222;
+            border-bottom: 1px solid #222;
+            padding: 15px 20px;
+        }
+
+        .metrics-tabs {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .metric-tab {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #888;
+            padding: 10px;
+            cursor: pointer;
+            text-align: center;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .metric-tab.active {
+            color: #fff;
+            border-bottom-color: #c77dff;
+        }
+
+        .metric-tab:hover {
+            color: #fff;
+        }
+
+        .metric-value {
+            display: block;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+
+        .metric-label {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .metric-content {
+            display: none;
+        }
+
+        .metric-content.active {
+            display: block;
+        }
+
+        .chart-area {
+            background: #1a1a1a;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .chart-stats {
+            display: flex;
+            gap: 15px;
+        }
+
+        .chart-stat {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .chart-stat strong {
+            color: #00ff00;
+            font-size: 16px;
+        }
+
+        .time-filters {
+            display: flex;
+            gap: 8px;
+        }
+
+        .time-filter {
+            background: transparent;
+            border: 1px solid #333;
+            color: #888;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .time-filter.active {
+            background: #c77dff;
+            color: #fff;
+            border-color: #c77dff;
+        }
+
+        .chart-placeholder {
+            height: 150px;
+            background: linear-gradient(to top, rgba(0, 255, 0, 0.3), transparent);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Posts Section */
+        .posts-tabs {
+            display: flex;
+            border-bottom: 1px solid #222;
+        }
+
+        .posts-tab {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #888;
+            padding: 15px;
+            cursor: pointer;
+            text-align: center;
+            border-bottom: 2px solid transparent;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .posts-tab.active {
+            color: #fff;
+            border-bottom-color: #5b9bd5;
+        }
+
+        .posts-content {
+            padding: 20px;
+        }
+
+        .post-card {
+            background: #0f0f0f;
+            border: 1px solid #222;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .post-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #5b9bd5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .post-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .post-meta {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .post-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .post-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .post-voting {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .vote-option {
+            flex: 1;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vote-option:hover {
+            border-color: #c77dff;
+        }
+
+        .vote-option.yes {
+            border-color: #c77dff;
+        }
+
+        .vote-option.yes::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 25%;
+            background: rgba(199, 125, 255, 0.2);
+        }
+
+        .vote-option.no::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 75%;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .vote-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+
+        .vote-text {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .vote-percentage {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #222;
+        }
+
+        .post-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 13px;
+            color: #888;
+        }
+
+        .post-stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .trade-btn {
+            background: #c77dff;
+            color: #fff;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .trade-btn:hover {
+            background: #b366ff;
+        }
+
+        .market-label {
+            font-size: 12px;
+            color: #00ff00;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header-image"></div>
+
+        <!-- Profile Section -->
+        <div class="profile-section">
+            <div class="profile-avatar"></div>
+            <button class="follow-btn">
+                <span>☰</span> Follow
+            </button>
+
+            <div class="username">ReíhanReí</div>
+            <div class="handle">@ReihanRei</div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <span>👥</span> <strong>3.75K</strong> Followers
+                </div>
+                <div class="stat-item">
+                    <span>👤</span> <strong>489</strong> Following
+                </div>
+                <div class="stat-item">
+                    <span>📺</span> <strong>5</strong> Subscribers
+                </div>
+            </div>
+
+            <div class="bio">
+                Love photography and painting. Part of @twenty20 photography site.
+            </div>
+
+            <div class="bio-links">
+                <a href="#" class="bio-link">https://www.instagram.com/reihantrandafilr_art?igsh=MTdidzczcDQNNx3cw==</a>
+                <a href="#" class="bio-link">ReihanRei.NFTz.zone</a>
+                <div style="color: #aaa; font-size: 13px; margin-top: 5px;">
+                    You will find me on my YouTube channel. Thank you for watching and subscribing.
+                </div>
+                <a href="#" class="bio-link">https://www.youtube.com/@ReihanTrandafir</a>
+                <div style="color: #aaa; font-size: 13px; margin-top: 5px;">
+                    Author page on AMAZON KDP, for my books
+                </div>
+                <a href="#" class="bio-link">https://www.amazon.com/author/rosaclark</a>
+                <div style="color: #aaa; font-size: 13px; margin-top: 5px;">
+                    Creator on @desocialworld @diamond.app<br>
+                    Part of the @pemwyn project.<br>
+                    My new website, check it out
+                </div>
+                <a href="#" class="bio-link">https://www.reihantrandafir.com</a>
+            </div>
+
+            <div class="tags">
+                <span class="tag">@twenty20</span>
+                <span class="tag">@desocialworld</span>
+                <span class="tag">@diamond.app</span>
+                <span class="tag">@pemwyn</span>
+            </div>
+        </div>
+
+        <!-- Metrics Section -->
+        <div class="metrics-container">
+            <div class="metrics-tabs">
+                <button class="metric-tab active" data-tab="followers">
+                    <span class="metric-value">3.75K</span>
+                    <span class="metric-label">Followers</span>
+                </button>
+                <button class="metric-tab" data-tab="views">
+                    <span class="metric-value">48.83K</span>
+                    <span class="metric-label">Post Views</span>
+                </button>
+                <button class="metric-tab" data-tab="assets">
+                    <span class="metric-value">$527.74</span>
+                    <span class="metric-label">Assets</span>
+                </button>
+                <button class="metric-tab" data-tab="earning">
+                    <span class="metric-value">$21.2</span>
+                    <span class="metric-label">Earning</span>
+                </button>
+            </div>
+
+            <!-- Followers Content -->
+            <div id="followers" class="metric-content active">
+                <div class="chart-area">
+                    <div class="chart-header">
+                        <div class="chart-stats">
+                            <div class="chart-stat">
+                                <strong>+$0.06</strong><br>
+                                <span>(Last 30d)</span>
+                            </div>
+                        </div>
+                        <div class="time-filters">
+                            <button class="time-filter">Last 24hrs</button>
+                            <button class="time-filter">Last 7d</button>
+                            <button class="time-filter active">Last 30d</button>
+                            <button class="time-filter">Last 90d</button>
+                        </div>
+                    </div>
+                    <div class="chart-placeholder"></div>
+                </div>
+            </div>
+
+            <!-- Views Content -->
+            <div id="views" class="metric-content">
+                <div class="chart-area">
+                    <div class="chart-header">
+                        <div class="chart-stats">
+                            <div class="chart-stat">
+                                <strong>48.83K</strong><br>
+                                <span>Total Views</span>
+                            </div>
+                        </div>
+                        <div class="time-filters">
+                            <button class="time-filter">Last 24hrs</button>
+                            <button class="time-filter">Last 7d</button>
+                            <button class="time-filter active">Last 30d</button>
+                            <button class="time-filter">Last 90d</button>
+                        </div>
+                    </div>
+                    <div class="chart-placeholder" style="background: linear-gradient(to top, rgba(91, 155, 213, 0.3), transparent);"></div>
+                </div>
+            </div>
+
+            <!-- Assets Content -->
+            <div id="assets" class="metric-content">
+                <div class="chart-area">
+                    <div class="chart-header">
+                        <div class="chart-stats">
+                            <div class="chart-stat">
+                                <strong>$527.74</strong><br>
+                                <span>Total Assets</span>
+                            </div>
+                        </div>
+                        <div class="time-filters">
+                            <button class="time-filter">Last 24hrs</button>
+                            <button class="time-filter">Last 7d</button>
+                            <button class="time-filter active">Last 30d</button>
+                            <button class="time-filter">Last 90d</button>
+                        </div>
+                    </div>
+                    <div class="chart-placeholder" style="background: linear-gradient(to top, rgba(199, 125, 255, 0.3), transparent);"></div>
+                </div>
+            </div>
+
+            <!-- Earning Content -->
+            <div id="earning" class="metric-content">
+                <div class="chart-area">
+                    <div class="chart-header">
+                        <div class="chart-stats">
+                            <div class="chart-stat">
+                                <strong>$21.2</strong><br>
+                                <span>Total Earning</span>
+                            </div>
+                        </div>
+                        <div class="time-filters">
+                            <button class="time-filter">Last 24hrs</button>
+                            <button class="time-filter">Last 7d</button>
+                            <button class="time-filter active">Last 30d</button>
+                            <button class="time-filter">Last 90d</button>
+                        </div>
+                    </div>
+                    <div class="chart-placeholder" style="background: linear-gradient(to top, rgba(255, 206, 87, 0.3), transparent);"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Posts Tabs -->
+        <div class="posts-tabs">
+            <button class="posts-tab active">Posts</button>
+            <button class="posts-tab">Posts</button>
+        </div>
+
+        <!-- Posts Content -->
+        <div class="posts-content">
+            <!-- Post 1 - Prediction Market -->
+            <div class="post-card">
+                <div class="post-header">
+                    <div class="post-avatar">📊</div>
+                    <div class="post-info">
+                        <h4>PredictMarket</h4>
+                        <div class="post-meta">Politics • 2h ago • 12K participants</div>
+                    </div>
+                </div>
+
+                <div class="market-label">
+                    🔥 Intuición Fierce <span style="color: #888;">How it works?</span>
+                </div>
+
+                <div class="post-title">¿Donald Trump ganará las elecciones de 2028?</div>
+
+                <div class="post-image"></div>
+
+                <div class="post-voting">
+                    <div class="vote-option yes">
+                        <div class="vote-label">
+                            <div class="vote-text">
+                                <span>✓</span>
+                                <span>SÍ</span>
+                            </div>
+                            <span class="vote-percentage">25%</span>
+                        </div>
+                    </div>
+                    <div class="vote-option no">
+                        <div class="vote-label">
+                            <div class="vote-text">
+                                <span>✕</span>
+                                <span>NO</span>
+                            </div>
+                            <span class="vote-percentage">75%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <div style="font-size: 12px; color: #888; margin-bottom: 5px;">12547 votos</div>
+                </div>
+
+                <div class="post-actions">
+                    <div class="post-stats">
+                        <div class="post-stat">💬 234</div>
+                        <div class="post-stat">❤️ 456</div>
+                        <div class="post-stat">📊 Mercado</div>
+                        <div class="post-stat" style="color: #00ff00;">💰 $138K</div>
+                    </div>
+                    <button class="trade-btn">💎 TRADE</button>
+                </div>
+            </div>
+
+            <!-- Post 2 -->
+            <div class="post-card">
+                <div class="post-header">
+                    <div class="post-avatar">🎨</div>
+                    <div class="post-info">
+                        <h4>ArtGallery</h4>
+                        <div class="post-meta">NFT • 5h ago • 8K participants</div>
+                    </div>
+                </div>
+
+                <div class="post-title">Nueva colección de NFTs disponible</div>
+
+                <div class="post-image" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
+
+                <div class="post-actions">
+                    <div class="post-stats">
+                        <div class="post-stat">💬 189</div>
+                        <div class="post-stat">❤️ 892</div>
+                        <div class="post-stat">👁️ 15.2K</div>
+                    </div>
+                    <button class="trade-btn">Ver Más</button>
+                </div>
+            </div>
+
+            <!-- Post 3 -->
+            <div class="post-card">
+                <div class="post-header">
+                    <div class="post-avatar">🎮</div>
+                    <div class="post-info">
+                        <h4>GameHub</h4>
+                        <div class="post-meta">Gaming • 1d ago • 25K participants</div>
+                    </div>
+                </div>
+
+                <div class="post-title">Fierce Guardian: Nuevo evento de staking</div>
+
+                <div class="post-image" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>
+
+                <div class="post-actions">
+                    <div class="post-stats">
+                        <div class="post-stat">💬 567</div>
+                        <div class="post-stat">❤️ 1.2K</div>
+                        <div class="post-stat" style="color: #00ff00;">🎯 Active</div>
+                    </div>
+                    <button class="trade-btn">Participar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tabs de métricas
+        const metricTabs = document.querySelectorAll('.metric-tab');
+        const metricContents = document.querySelectorAll('.metric-content');
+
+        metricTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.dataset.tab;
+
+                metricTabs.forEach(t => t.classList.remove('active'));
+                metricContents.forEach(c => c.classList.remove('active'));
+
+                tab.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // Time filters (simulación)
+        document.querySelectorAll('.time-filter').forEach(filter => {
+            filter.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.time-filter').forEach(f => f.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

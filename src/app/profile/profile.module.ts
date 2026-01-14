@@ -3,6 +3,14 @@ import { CommonModule } from '@angular/common';
 
 import { ProfileRoutingModule } from './profile-routing.module';
 import { ProfileDetailComponent } from './profile-detail/profile-detail.component';
+import { ProfileInfoComponent } from './profile-info/profile-info.component';
+import { UserMetricsComponent } from './user-metrics/user-metrics.component';
+import { FollowersMetricsComponent } from './followers-metrics/followers-metrics.component';
+import { AccuracyMetricsComponent } from './accuracy-metrics/accuracy-metrics.component';
+import { TotemsMetricsComponent } from './totems-metrics/totems-metrics.component';
+import { EarningsMetricsComponent } from './earnings-metrics/earnings-metrics.component';
+import { UserTabsComponent } from './user-tabs/user-tabs.component';
+import { MyPredictionsComponent } from './my-predictions/my-predictions.component';
 
 
 @NgModule({
@@ -10,7 +18,15 @@ import { ProfileDetailComponent } from './profile-detail/profile-detail.componen
   imports: [
     CommonModule,
     ProfileRoutingModule,
-    ProfileDetailComponent
+    ProfileDetailComponent,
+    ProfileInfoComponent,
+    UserMetricsComponent,
+    FollowersMetricsComponent,
+    AccuracyMetricsComponent,
+    TotemsMetricsComponent,
+    EarningsMetricsComponent,
+    UserTabsComponent,
+    MyPredictionsComponent
   ]
 })
 export class ProfileModule { }

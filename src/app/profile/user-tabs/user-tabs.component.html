@@ -1,0 +1,26 @@
+<div class="posts-tabs">
+  <button
+    class="posts-tab"
+    [class.active]="activeTab === 'predictions'"
+    (click)="setActiveTab('predictions')">
+    My Predictions
+  </button>
+  <button
+    class="posts-tab"
+    [class.active]="activeTab === 'future'"
+    (click)="setActiveTab('future')">
+    Future Tab
+  </button>
+</div>
+
+<div class="posts-content">
+  <div *ngIf="activeTab === 'predictions'">
+    <app-my-predictions></app-my-predictions>
+  </div>
+  <div *ngIf="activeTab === 'future'">
+    <!-- Future content placeholder -->
+    <div style="padding: 20px; text-align: center; color: #888;">
+      Future content will be implemented here
+    </div>
+  </div>
+</div>

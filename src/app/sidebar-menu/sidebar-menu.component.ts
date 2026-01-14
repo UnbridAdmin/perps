@@ -1,6 +1,6 @@
 import { Component, AfterViewInit, ElementRef, Renderer2, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { CommonService } from '../shared/commonService';
 import { WalletConnectService } from '../services/walletconnect.service';
 import { AuthorizationService } from '../services/authorization.service';
@@ -11,7 +11,7 @@ import { PremiumUpgradeDialogComponent } from '../premium-upgrade-dialog.compone
 @Component({
   selector: 'app-sidebar-menu',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './sidebar-menu.component.html',
   styleUrls: ['./sidebar-menu.component.scss']
 })
