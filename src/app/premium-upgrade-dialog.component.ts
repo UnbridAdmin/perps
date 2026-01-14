@@ -49,7 +49,9 @@ export class PremiumUpgradeDialogComponent {
   constructor(
     public activeModal: NgbActiveModal,
     private modalService: NgbModal
-  ) {}
+  ) {
+    this.selectedPackage = this.packages[2]; // SAGE package selected by default
+  }
 
   closeDialog() {
     this.activeModal.close();

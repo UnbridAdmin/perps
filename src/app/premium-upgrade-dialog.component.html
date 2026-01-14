@@ -2,12 +2,13 @@
   <button class="close-button" (click)="closeDialog()">&times;</button>
   <div class="dialog-header">
     <img src="https://via.placeholder.com/50x50/00FF00/000000?text=%E2%9C%93" alt="Verified User" class="verified-icon">
-    <h2>Upgrade to Premium</h2>
+    <h2>Upgrade to Premium With Totem NFT</h2>
   </div>
   <section class="rwa-types">
     <div class="totems-grid">
-        <div class="totem-card aprendices">
-          <input type="radio" name="package" [checked]="selectedPackage === packages[0]" (click)="selectPackage(packages[0])" class="package-radio">
+        <div class="totem-card aprendices" [class.selected]="selectedPackage === packages[0]" (click)="selectPackage(packages[0])">
+          <input type="radio" name="package" [checked]="selectedPackage === packages[0]" class="package-radio" [class.hidden]="selectedPackage === packages[0]">
+          <i class="fas fa-check-circle selection-icon" *ngIf="selectedPackage === packages[0]"></i>
           <div class="totem-image">
             <img src="https://ipfs.unbrid.com/landings/rwa/apprentice.webp" alt="Fox Totem" class="animal-avatar">
           </div>
@@ -25,7 +26,7 @@
               </div>
             </div>
             <div class="earnings-limit">
-              <span class="limit-text">INFINITE REWARDS</span>
+              <span class="limit-text">INFINITE UPN REWARDS</span>
               <img src="https://ipfs.unbrid.com/landings/rwa/infinity.webp" alt="Infinity" class="infinity-icon">
             </div>
             <div class="benefits">
@@ -36,15 +37,16 @@
               </div>
               <div class="benefit">
                 <img src="https://ipfs.unbrid.com/landings/rwa/power.webp" alt="UPN Icon" class="benefit-icon">
-                <span>UPN Rewards</span>
+                <span>Infinite UPN Rewards</span>
                 <i class="fas fa-info-circle info-icon"></i>
               </div>
             </div>
           </div>
         </div>
 
-      <div class="totem-card misticos">
-        <input type="radio" name="package" [checked]="selectedPackage === packages[1]" (click)="selectPackage(packages[1])" class="package-radio">
+      <div class="totem-card misticos" [class.selected]="selectedPackage === packages[1]" (click)="selectPackage(packages[1])">
+        <input type="radio" name="package" [checked]="selectedPackage === packages[1]" class="package-radio" [class.hidden]="selectedPackage === packages[1]">
+        <i class="fas fa-check-circle selection-icon" *ngIf="selectedPackage === packages[1]"></i>
         <div class="totem-image">
           <img src="https://ipfs.unbrid.com/landings/rwa/guardian.webp" alt="Panther Totem" class="animal-avatar">
         </div>
@@ -62,7 +64,7 @@
             </div>
           </div>
           <div class="earnings-limit">
-            <span class="limit-text">INFINITE REWARDS</span>
+            <span class="limit-text">INFINITE UPN REWARDS</span>
             <img src="https://ipfs.unbrid.com/landings/rwa/infinity.webp" alt="Infinity" class="infinity-icon">
           </div>
           <div class="benefits">
@@ -88,8 +90,9 @@
         </div>
       </div>
 
-      <div class="totem-card guardianes">
-        <input type="radio" name="package" [checked]="selectedPackage === packages[2]" (click)="selectPackage(packages[2])" class="package-radio">
+      <div class="totem-card guardianes" [class.selected]="selectedPackage === packages[2]" (click)="selectPackage(packages[2])">
+        <input type="radio" name="package" [checked]="selectedPackage === packages[2]" class="package-radio" [class.hidden]="selectedPackage === packages[2]">
+        <i class="fas fa-check-circle selection-icon" *ngIf="selectedPackage === packages[2]"></i>
         <div class="totem-image">
           <img src="https://ipfs.unbrid.com/landings/rwa/sage.webp" alt="Owl Totem" class="animal-avatar">
         </div>
@@ -107,7 +110,7 @@
             </div>
           </div>
           <div class="earnings-limit">
-            <span class="limit-text">INFINITE REWARDS</span>
+            <span class="limit-text">INFINITE UPN REWARDS</span>
             <img src="https://ipfs.unbrid.com/landings/rwa/infinity.webp" alt="Infinity" class="infinity-icon">
           </div>
           <div class="benefits">
@@ -125,8 +128,9 @@
         </div>
       </div>
 
-      <div class="totem-card sabios">
-        <input type="radio" name="package" [checked]="selectedPackage === packages[3]" (click)="selectPackage(packages[3])" class="package-radio">
+      <div class="totem-card sabios" [class.selected]="selectedPackage === packages[3]" (click)="selectPackage(packages[3])">
+        <input type="radio" name="package" [checked]="selectedPackage === packages[3]" class="package-radio" [class.hidden]="selectedPackage === packages[3]">
+        <i class="fas fa-check-circle selection-icon" *ngIf="selectedPackage === packages[3]"></i>
         <div class="totem-image">
           <img src="https://ipfs.unbrid.com/landings/rwa/mystic.webp" alt="Dragon Totem" class="animal-avatar">
         </div>
@@ -144,7 +148,7 @@
             </div>
           </div>
           <div class="earnings-limit">
-            <span class="limit-text">INFINITE REWARDS</span>
+            <span class="limit-text">INFINITE UPN REWARDS</span>
             <img src="https://ipfs.unbrid.com/landings/rwa/infinity.webp" alt="Infinity" class="infinity-icon">
           </div>
           <div class="benefits">
@@ -171,8 +175,9 @@
         </div>
       </div>
 
-      <div class="totem-card alquimista">
-        <input type="radio" name="package" [checked]="selectedPackage === packages[4]" (click)="selectPackage(packages[4])" class="package-radio">
+      <div class="totem-card alquimista" [class.selected]="selectedPackage === packages[4]" (click)="selectPackage(packages[4])">
+        <input type="radio" name="package" [checked]="selectedPackage === packages[4]" class="package-radio" [class.hidden]="selectedPackage === packages[4]">
+        <i class="fas fa-check-circle selection-icon" *ngIf="selectedPackage === packages[4]"></i>
         <div class="totem-image">
           <img src="https://ipfs.unbrid.com/landings/rwa/alchemist.webp" alt="Wolf Totem" class="animal-avatar">
         </div>
@@ -190,7 +195,7 @@
             </div>
           </div>
           <div class="earnings-limit">
-            <span class="limit-text">INFINITE REWARDS</span>
+            <span class="limit-text">INFINITE UPN REWARDS</span>
             <img src="https://ipfs.unbrid.com/landings/rwa/infinity.webp" alt="Infinity" class="infinity-icon">
           </div>
           <div class="benefits">
@@ -221,10 +226,12 @@
           </div>
           <div class="billing-note">Billed monthly</div>
         </div>
-        <button class="subscribe-btn">Subscribe & Pay</button>
-      </div>
-      <div class="terms-box">
-        By subscribing, you agree to our Purchaser Terms, and that subscriptions auto-renew until you cancel. Cancel anytime, at least 24 hours prior to renewal to avoid additional charges. Price subject to change. The price of Fierce is variable depending on the supply and demand of services in the ecosystem, and subscription prices are subject to changes. Manage your subscription through the platform you subscribed on.
+        <div class="button-and-terms">
+          <button class="subscribe-btn">Subscribe & Pay</button>
+          <div class="terms-box">
+            By subscribing, you agree to our Purchaser Terms, and that subscriptions auto-renew until you cancel. Cancel anytime, at least 24 hours prior to renewal to avoid additional charges. Price subject to change. The price of Fierce is variable depending on the supply and demand of services in the ecosystem, and subscription prices are subject to changes. Manage your subscription through the platform you subscribed on.
+          </div>
+        </div>
       </div>
     </div>
   </div>
