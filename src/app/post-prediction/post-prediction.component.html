@@ -36,10 +36,11 @@
 
       <!-- Voting Options - Not Voted State -->
       <div class="sentiment-options" *ngIf="!hasUserVoted(prediction.prediction_id)">
-        <button class="sentiment-vote-btn" *ngFor="let option of prediction.options" (click)="voteOnPrediction(i, option.id)">
+        <div class="sentiment-vote-btn" *ngFor="let option of prediction.options" (click)="voteOnPrediction(i, option.id)">
+          <div class="percentage-bar" [style.width.%]="option.percentage"></div>
           <span class="vote-btn-text">{{ option.title }}</span>
           <span class="vote-percentage">{{ option.percentage }}%</span>
-        </button>
+        </div>
       </div>
 
       <!-- Results - Voted State -->
@@ -126,4 +127,3 @@
     No more predictions to load
   </div>
 </div>
-
