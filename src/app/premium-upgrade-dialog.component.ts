@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FierceGuardianCharacterComponent } from './shared/fierce-guardian-character/fierce-guardian-character.component';
+import { InfiniteUpnRewardsComponent } from './shared/infinite-upn-rewards/infinite-upn-rewards.component';
 import { Character } from './shared/models/character.model';
 
 @Component({
@@ -72,6 +73,14 @@ export class PremiumUpgradeDialogComponent {
     });
 
     modalRef.componentInstance.character = character;
+  }
+
+  openInfiniteUpnRewardsModal() {
+    const modalRef = this.modalService.open(InfiniteUpnRewardsComponent, {
+      size: 'lg',
+      backdrop: 'static',
+      centered: true
+    });
   }
 
   private getCharacterFromText(text: string): Character | null {
