@@ -1,51 +1,56 @@
 <div class="dialog-content">
   <button class="close-button" (click)="closeDialog()">&times;</button>
   <div class="dialog-header">
-    <img src="https://via.placeholder.com/50x50/00FF00/000000?text=%E2%9C%93" alt="Verified User" class="verified-icon">
+    <img src="https://abs.twimg.com/responsive-web/client-web/premium-badge.8d5b82aa.png" alt="Verified User" class="verified-icon">
     <h2>Upgrade to Premium With Totem NFT</h2>
   </div>
   <section class="rwa-types">
     <div class="totems-grid">
-        <div class="totem-card aprendices" [class.selected]="selectedPackage === packages[0]" (click)="selectPackage(packages[0])">
-          <input type="radio" name="package" [checked]="selectedPackage === packages[0]" class="package-radio" [class.hidden]="selectedPackage === packages[0]">
-          <i class="fas fa-check-circle selection-icon" *ngIf="selectedPackage === packages[0]"></i>
-          <div class="totem-image">
-            <img src="https://ipfs.unbrid.com/landings/rwa/apprentice.webp" alt="Fox Totem" class="animal-avatar">
+      <div class="totem-card aprendices" [class.selected]="selectedPackage === packages[0]"
+        (click)="selectPackage(packages[0])">
+        <input type="radio" name="package" [checked]="selectedPackage === packages[0]" class="package-radio"
+          [class.hidden]="selectedPackage === packages[0]">
+        <i class="fas fa-check-circle selection-icon" *ngIf="selectedPackage === packages[0]"></i>
+        <div class="totem-image">
+          <img src="https://ipfs.unbrid.com/landings/rwa/apprentice.webp" alt="Fox Totem" class="animal-avatar">
+        </div>
+        <div class="totem-info">
+          <h3 class="totem-category apprendice">APRENTICE</h3>
+          <div class="price">
+            <span class="amount">2</span>
+            <span class="currency">USDT / month</span>
           </div>
-          <div class="totem-info">
-            <h3 class="totem-category apprendice">APRENTICE</h3>
-            <div class="price">
-              <span class="amount">2</span>
-              <span class="currency">USDT / month</span>
+          <div class="participation-power">
+            <span class="power-label">Ownership Power</span>
+            <div class="power-value">
+              <img src="https://ipfs.unbrid.com/landings/rwa/power.webp" alt="Lightning" class="lightning-icon">
+              <span class="multiplier">1x</span>
             </div>
-            <div class="participation-power">
-              <span class="power-label">Ownership Power</span>
-              <div class="power-value">
-                <img src="https://ipfs.unbrid.com/landings/rwa/power.webp" alt="Lightning" class="lightning-icon">
-                <span class="multiplier">1x</span>
-              </div>
+          </div>
+          <div class="earnings-limit">
+            <span class="limit-text">INFINITE UPN REWARDS</span>
+            <img src="https://ipfs.unbrid.com/landings/rwa/infinity.webp" alt="Infinity" class="infinity-icon">
+          </div>
+          <div class="benefits">
+            <div class="benefit">
+              <img src="https://ipfs.unbrid.com/landings/rwa/power.webp" alt="Character Icon" class="benefit-icon">
+              <span>Wolf Character in Fierce Guardians Game</span>
+              <i class="fas fa-info-circle info-icon"
+                (click)="openCharacterModal('Wolf Character in Fierce Guardians Game')"></i>
             </div>
-            <div class="earnings-limit">
-              <span class="limit-text">INFINITE UPN REWARDS</span>
-              <img src="https://ipfs.unbrid.com/landings/rwa/infinity.webp" alt="Infinity" class="infinity-icon">
-            </div>
-            <div class="benefits">
-              <div class="benefit">
-                <img src="https://ipfs.unbrid.com/landings/rwa/power.webp" alt="Character Icon" class="benefit-icon">
-                <span>Wolf Character in Fierce Guardians Game</span>
-                <i class="fas fa-info-circle info-icon" (click)="openCharacterModal('Wolf Character in Fierce Guardians Game')"></i>
-              </div>
-              <div class="benefit">
-                <img src="https://ipfs.unbrid.com/landings/rwa/power.webp" alt="UPN Icon" class="benefit-icon">
-                <span>Infinite UPN Rewards</span>
-                <i class="fas fa-info-circle info-icon" (click)="openInfiniteUpnRewardsModal()"></i>
-              </div>
+            <div class="benefit">
+              <img src="https://ipfs.unbrid.com/landings/rwa/power.webp" alt="UPN Icon" class="benefit-icon">
+              <span>Infinite UPN Rewards</span>
+              <i class="fas fa-info-circle info-icon" (click)="openInfiniteUpnRewardsModal()"></i>
             </div>
           </div>
         </div>
+      </div>
 
-      <div class="totem-card misticos" [class.selected]="selectedPackage === packages[1]" (click)="selectPackage(packages[1])">
-        <input type="radio" name="package" [checked]="selectedPackage === packages[1]" class="package-radio" [class.hidden]="selectedPackage === packages[1]">
+      <div class="totem-card misticos" [class.selected]="selectedPackage === packages[1]"
+        (click)="selectPackage(packages[1])">
+        <input type="radio" name="package" [checked]="selectedPackage === packages[1]" class="package-radio"
+          [class.hidden]="selectedPackage === packages[1]">
         <i class="fas fa-check-circle selection-icon" *ngIf="selectedPackage === packages[1]"></i>
         <div class="totem-image">
           <img src="https://ipfs.unbrid.com/landings/rwa/guardian.webp" alt="Panther Totem" class="animal-avatar">
@@ -80,7 +85,8 @@
             <div class="benefit">
               <img src="https://ipfs.unbrid.com/landings/rwa/power.webp" alt="Character Icon" class="benefit-icon">
               <span>Alpha Character in Fierce Guardians Game</span>
-              <i class="fas fa-info-circle info-icon" (click)="openCharacterModal('Alpha Character in Fierce Guardians Game')"></i>
+              <i class="fas fa-info-circle info-icon"
+                (click)="openCharacterModal('Alpha Character in Fierce Guardians Game')"></i>
             </div>
             <div class="benefit">
               <img src="https://ipfs.unbrid.com/landings/rwa/power.webp" alt="Social Icon" class="benefit-icon">
@@ -90,8 +96,10 @@
         </div>
       </div>
 
-      <div class="totem-card guardianes" [class.selected]="selectedPackage === packages[2]" (click)="selectPackage(packages[2])">
-        <input type="radio" name="package" [checked]="selectedPackage === packages[2]" class="package-radio" [class.hidden]="selectedPackage === packages[2]">
+      <div class="totem-card guardianes" [class.selected]="selectedPackage === packages[2]"
+        (click)="selectPackage(packages[2])">
+        <input type="radio" name="package" [checked]="selectedPackage === packages[2]" class="package-radio"
+          [class.hidden]="selectedPackage === packages[2]">
         <i class="fas fa-check-circle selection-icon" *ngIf="selectedPackage === packages[2]"></i>
         <div class="totem-image">
           <img src="https://ipfs.unbrid.com/landings/rwa/sage.webp" alt="Owl Totem" class="animal-avatar">
@@ -122,14 +130,17 @@
             <div class="benefit">
               <img src="https://ipfs.unbrid.com/landings/rwa/power.webp" alt="Character Icon" class="benefit-icon">
               <span>Beta Character in Fierce Guardians Game</span>
-              <i class="fas fa-info-circle info-icon" (click)="openCharacterModal('Beta Character in Fierce Guardians Game')"></i>
+              <i class="fas fa-info-circle info-icon"
+                (click)="openCharacterModal('Beta Character in Fierce Guardians Game')"></i>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="totem-card sabios" [class.selected]="selectedPackage === packages[3]" (click)="selectPackage(packages[3])">
-        <input type="radio" name="package" [checked]="selectedPackage === packages[3]" class="package-radio" [class.hidden]="selectedPackage === packages[3]">
+      <div class="totem-card sabios" [class.selected]="selectedPackage === packages[3]"
+        (click)="selectPackage(packages[3])">
+        <input type="radio" name="package" [checked]="selectedPackage === packages[3]" class="package-radio"
+          [class.hidden]="selectedPackage === packages[3]">
         <i class="fas fa-check-circle selection-icon" *ngIf="selectedPackage === packages[3]"></i>
         <div class="totem-image">
           <img src="https://ipfs.unbrid.com/landings/rwa/mystic.webp" alt="Dragon Totem" class="animal-avatar">
@@ -165,7 +176,8 @@
             <div class="benefit">
               <img src="https://ipfs.unbrid.com/landings/rwa/power.webp" alt="Character Icon" class="benefit-icon">
               <span>Elite Character in Fierce Guardians Game</span>
-              <i class="fas fa-info-circle info-icon" (click)="openCharacterModal('Elite Character in Fierce Guardians Game')"></i>
+              <i class="fas fa-info-circle info-icon"
+                (click)="openCharacterModal('Elite Character in Fierce Guardians Game')"></i>
             </div>
             <div class="benefit">
               <img src="https://ipfs.unbrid.com/landings/rwa/power.webp" alt="Checkmark Icon" class="benefit-icon">
@@ -175,8 +187,10 @@
         </div>
       </div>
 
-      <div class="totem-card alquimista" [class.selected]="selectedPackage === packages[4]" (click)="selectPackage(packages[4])">
-        <input type="radio" name="package" [checked]="selectedPackage === packages[4]" class="package-radio" [class.hidden]="selectedPackage === packages[4]">
+      <div class="totem-card alquimista" [class.selected]="selectedPackage === packages[4]"
+        (click)="selectPackage(packages[4])">
+        <input type="radio" name="package" [checked]="selectedPackage === packages[4]" class="package-radio"
+          [class.hidden]="selectedPackage === packages[4]">
         <i class="fas fa-check-circle selection-icon" *ngIf="selectedPackage === packages[4]"></i>
         <div class="totem-image">
           <img src="https://ipfs.unbrid.com/landings/rwa/alchemist.webp" alt="Wolf Totem" class="animal-avatar">
@@ -207,7 +221,8 @@
             <div class="benefit">
               <img src="https://ipfs.unbrid.com/landings/rwa/power.webp" alt="Character Icon" class="benefit-icon">
               <span>Legend Character in Fierce Guardians Game</span>
-              <i class="fas fa-info-circle info-icon" (click)="openCharacterModal('Legend Character in Fierce Guardians Game')"></i>
+              <i class="fas fa-info-circle info-icon"
+                (click)="openCharacterModal('Legend Character in Fierce Guardians Game')"></i>
             </div>
           </div>
         </div>
@@ -222,6 +237,43 @@
         </span>
       </div>
     </div>
+
+    <div class="phase-info">
+      <div class="info-container">
+        <div class="info-image">
+          <img src="https://ipfs.unbrid.com/landings/rwa/guardian.webp" alt="Fierce Guardian" class="game-icon">
+        </div>
+        <div class="info-content">
+          <div class="info-title">Información Importante sobre Ganancias</div>
+          <div class="info-message">
+            <div class="nft-explanation">
+              <strong>Tu suscripción mensual te entrega cada mes un NFT único y exclusivo.</strong><br>
+              Ese NFT es tuyo para siempre y te da acceso perpetuo a recompensas clave, incluso si cancelas la suscripción.
+            </div>
+
+            <div class="permanent-rewards">
+              <h4>🪙 Recompensas Permanentes Incluidas:</h4>
+              <ul>
+                <li><strong>UPN Rewards:</strong> ingresos continuos de proyectos productivos del ecosistema UPN</li>
+                <li><strong>Cashback por pérdidas:</strong> en Fierce Tokens en las plataformas de predicción</li>
+                <li><strong>Acceso a Fierce Exchange:</strong> trading y funcionalidades exclusivas en el exchange del ecosistema</li>
+                <li><strong>Funcionalidades premium en Envision:</strong> la plataforma de predicciones (mejores tools, límites o ventajas según tu nivel de NFT)</li>
+              </ul>
+            </div>
+
+            <div class="game-info">
+              <h4>🎮 Sobre el Juego (Season 1):</h4>
+              <p>Las recompensas diarias específicas de Fierce Guardians Game son temporales y se pausarán al finalizar la temporada.</p>
+              <p class="highlight">Las recompensas base (UPN Rewards, cashback, acceso a Fierce Exchange y Envision) nunca se interrumpen, porque están vinculadas directamente a tu NFT.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
   </section>
 
   <div class="subscription-footer" *ngIf="selectedPackage">
@@ -238,7 +290,10 @@
         <div class="button-and-terms">
           <button class="subscribe-btn">Subscribe & Pay</button>
           <div class="terms-box">
-            By subscribing, you agree to our Purchaser Terms, and that subscriptions auto-renew until you cancel. Cancel anytime, at least 24 hours prior to renewal to avoid additional charges. Price subject to change. The price of Fierce is variable depending on the supply and demand of services in the ecosystem, and subscription prices are subject to changes. Manage your subscription through the platform you subscribed on.
+            By subscribing, you agree to our Purchaser Terms, and that subscriptions auto-renew until you cancel. Cancel
+            anytime, at least 24 hours prior to renewal to avoid additional charges. Price subject to change. The price
+            of Fierce is variable depending on the supply and demand of services in the ecosystem, and subscription
+            prices are subject to changes. Manage your subscription through the platform you subscribed on.
           </div>
         </div>
       </div>

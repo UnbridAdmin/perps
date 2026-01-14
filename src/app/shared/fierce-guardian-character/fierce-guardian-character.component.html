@@ -45,7 +45,7 @@
         (ngModelChange)="onPhaseChange()"
       >
         <option *ngFor="let phase of projectPhases" [ngValue]="phase">
-          {{ phase.name }} (ROI +{{ ((phase.roiMultiplier - 1) * 100).toFixed(0) }}%)
+          {{ phase.name }}
           <span *ngIf="phase.isCurrentPhase" class="current-badge">ACTUAL</span>
         </option>
       </select>
@@ -83,14 +83,14 @@
         </div>
       </div>
 
-      <div class="earning-card yearly">
+      <!-- <div class="earning-card yearly">
         <div class="earning-icon">🎯</div>
         <div class="earning-content">
           <div class="earning-amount">{{ formatCurrency(getYearlyEarningsUSD()) }}</div>
           <div class="earning-label">Anual</div>
           <div class="earning-tokens">{{ formatNumber(getMonthlyTokens() * 12) }} tokens</div>
         </div>
-      </div>
+      </div> -->
     </div>
 
     <!-- Investment Message -->

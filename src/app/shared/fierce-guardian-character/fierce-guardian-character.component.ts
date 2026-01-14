@@ -209,7 +209,7 @@ export class FierceGuardianCharacterComponent {
     const monthly = this.getMonthlyEarningsUSD();
     const yearly = this.getYearlyEarningsUSD();
 
-    return `Con ${this.character.multiplier}x de poder, ganarás ${this.formatCurrency(monthly)} al mes y ${this.formatCurrency(yearly)} al año`;
+    return `Con ${this.character.multiplier}x de podrías, ganar ${this.formatCurrency(monthly)} al mes y ${this.formatCurrency(yearly)} al año`;
   }
 
   onPhaseChange() {
