@@ -212,18 +212,20 @@
 
   <div class="subscription-footer" *ngIf="selectedPackage">
     <div class="footer-content">
-      <div class="package-summary">
-        <h4>{{ selectedPackage.name }}</h4>
-        <div class="price-info">
-          <span class="amount">{{ selectedPackage.price }}</span>
-          <span class="currency">USDT / month</span>
+      <div class="summary-and-button">
+        <div class="package-summary">
+          <h4>{{ selectedPackage.name }}</h4>
+          <div class="price-info">
+            <span class="amount">{{ selectedPackage.price }}</span>
+            <span class="currency">USDT / month</span>
+          </div>
+          <div class="billing-note">Billed monthly</div>
         </div>
-        <div class="billing-note">Billed monthly</div>
+        <button class="subscribe-btn">Subscribe & Pay</button>
       </div>
-      <button class="subscribe-btn">Subscribe & Pay</button>
-    </div>
-    <div class="terms-box">
-      By subscribing, you agree to our Purchaser Terms, and that subscriptions auto-renew until you cancel. Cancel anytime, at least 24 hours prior to renewal to avoid additional charges. Price subject to change. Manage your subscription through the platform you subscribed on.
+      <div class="terms-box">
+        By subscribing, you agree to our Purchaser Terms, and that subscriptions auto-renew until you cancel. Cancel anytime, at least 24 hours prior to renewal to avoid additional charges. Price subject to change. The price of Fierce is variable depending on the supply and demand of services in the ecosystem, and subscription prices are subject to changes. Manage your subscription through the platform you subscribed on.
+      </div>
     </div>
   </div>
 </div>
