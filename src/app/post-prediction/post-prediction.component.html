@@ -52,10 +52,6 @@
       </div>
     </div>
 
-    <div class="prediction-predict">
-      <button class="predict-btn btn-primary" (click)="navigateToTrade()">🎯 Trade</button>
-    </div>
-
     <!-- Action Buttons -->
     <div class="prediction-actions" *ngIf="prediction.actions">
       <button class="action-btn">
@@ -65,11 +61,9 @@
         👁️ {{ prediction.actions.likes | number:'1.0-0' }}
       </button>
       <button class="action-btn market-btn" (click)="toggleMarketPopover(i)" [class.active]="activeMarketPopover === i">
-        📊 Mercado
+        💰 $138K
       </button>
-      <button class="action-btn volume-btn">
-        📈 {{ prediction.actions.volume }}
-      </button>
+      <button class="predict-btn btn-primary" (click)="navigateToTrade()">🎯 Trade</button>
     </div>
 
     <!-- Market Popover -->
