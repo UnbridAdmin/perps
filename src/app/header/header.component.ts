@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Output, Input } from '@angular/core';
+import { Component, EventEmitter, Output, Input, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CommonService } from '../shared/commonService';
 import { WalletConnectService } from '../services/walletconnect.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -10,13 +11,14 @@ import { WalletConnectService } from '../services/walletconnect.service';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit, OnDestroy {
   @Output() tabChange = new EventEmitter<'for-you' | 'trending'>();
   @Input() isHomePage = true;
 
   showMoreCategories = false;
   activeTab: 'for-you' | 'trending' = 'for-you';
   userAddress: string = '';
+  private subscriptions: Subscription = new Subscription();
 
   categories = [
     { name: 'Politics', active: true },
@@ -27,11 +29,30 @@ export class HeaderComponent {
     { name: 'Culture', active: false }
   ];
 
-  constructor(private commonService: CommonService, private walletConnectService: WalletConnectService) {
-    // Keep userAddress for login button logic
-    this.commonService.updateUserAddress.subscribe(() => {
-      this.userAddress = this.commonService.getAccountAddress();
-    });
+  constructor(private commonService: CommonService, private walletConnectService: WalletConnectService) {}
+
+  ngOnInit() {
+    // Subscribe to user address updates (legacy)
+    this.subscriptions.add(
+      this.commonService.updateUserAddress.subscribe(() => {
+        this.userAddress = this.commonService.getAccountAddress();
+      })
+    );
+
+    // Subscribe to wallet state changes for real-time updates
+    this.subscriptions.add(
+      this.walletConnectService.walletState$.subscribe(state => {
+        if (state.isConnected && state.address) {
+          this.userAddress = state.address;
+        } else {
+          this.userAddress = '';
+        }
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   toggleMoreCategories() {

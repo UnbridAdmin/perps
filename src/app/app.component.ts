@@ -5,7 +5,7 @@ import { HeaderComponent } from './header/header.component';
 import { SidebarMenuComponent } from './sidebar-menu/sidebar-menu.component';
 import { PostPredictionComponent } from './post-prediction/post-prediction.component';
 import { NewsComponent } from './news/news.component';
-import { WalletConnectService } from './services/walletconnect.service';
+import { WalletConnectService, WalletState } from './services/walletconnect.service';
 import { CommonService } from './shared/commonService';
 import { AuthorizationService } from './services/authorization.service';
 import { CacheService } from './services/cache.service';
@@ -69,20 +69,14 @@ export class AppComponent implements OnInit, OnDestroy {
       console.log('🚀 Iniciando aplicación...');
       this.signing = true;
 
-      // 1. INICIALIZAR WALLET SERVICE
-      this.initializeWalletConnect();
+      // 1. INICIALIZAR SERVICIO WALLET
+      await this.walletConnectService.initializeService();
 
-      // 2. CONFIGURAR DETECCIÓN INMEDIATA DE CAMBIOS DE CUENTA
-      this.setupImmediateAccountChangeDetection();
-
-      // 3. SUSCRIBIRSE A CAMBIOS DE ESTADO
+      // 2. SUSCRIBIRSE A CAMBIOS DE ESTADO
       this.setupWalletSubscriptions();
 
-      // 4. VERIFICAR CONEXIÓN PERSISTIDA
+      // 3. VERIFICAR CONEXIÓN PERSISTIDA
       await this.handlePersistedConnection();
-
-      // 5. INICIAR CHECKER
-      //this.connectionChecker.startPeriodicCheck();
 
       this.isInitialized = true;
       console.log('✅ Aplicación inicializada correctamente');
@@ -98,165 +92,108 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * SUSCRIPCIONES DE WALLET
+   * SUSCRIPCIONES DE WALLET - Optimizado como en Fierce
    */
   private setupWalletSubscriptions(): void {
-    // Adaptado para perps - vacío por ahora, ya que no hay walletState$
-  }
+    this.walletSubscription = this.walletConnectService.walletState$
+      .pipe(
+        distinctUntilChanged((prev, curr) => {
+          const prevAddr = prev.address?.toLowerCase() || '';
+          const currAddr = curr.address?.toLowerCase() || '';
 
-  /**
-   * CONFIGURACIÓN PRINCIPAL: Detección inmediata de cambios
-   */
-  private setupImmediateAccountChangeDetection(): void {
-    const web3Modal = this.walletConnectService.getWeb3Modal();
-
-    // Suscribirse a cambios de proveedor (PRINCIPAL)
-    if (web3Modal && typeof web3Modal.subscribeWalletInfo === 'function') {
-      console.log('🔍 Configurando detección inmediata de cambios de cuenta...');
-      web3Modal.subscribeWalletInfo(this.handleImmediateAccountChange.bind(this));
-    }
-
-    // Suscribirse a eventos del modal
-    if (web3Modal?.subscribeEvents) {
-      web3Modal.subscribeEvents(this.handleWalletEvents.bind(this));
-    }
-
-    // Obtener cuenta inicial del modal (si existe)
-    const initialAccount = web3Modal?.getAccount();
-    const modalAddress = initialAccount?.address?.toLowerCase() || null;
-
-    // Solo establecer como cuenta actual si no hay una sesión persistida
-    if (!this.currentAccount && modalAddress) {
-      this.currentAccount = modalAddress;
-      console.log('📍 Cuenta inicial detectada del modal:', this.currentAccount);
-    }
+          return prevAddr === currAddr &&
+                 prev.chainId === curr.chainId &&
+                 prev.isConnected === curr.isConnected;
+        })
+      )
+      .subscribe(state => {
+        console.log('🔄 AppComponent - Estado de wallet:', state);
+        this.handleWalletStateChange(state);
+      });
   }
 
   /**
    * MANEJO DE CONEXIÓN PERSISTIDA - Optimizado como en Fierce
    */
   private async handlePersistedConnection(): Promise<void> {
-    try {
-      const persistedAddress = this.commonService.getAccountAddress();
-      const web3Modal = this.walletConnectService.getWeb3Modal();
+    const currentState = this.walletConnectService.walletStateSubject.value;
 
-      if (persistedAddress && web3Modal) {
-        console.log('🔍 Conexión persistida detectada:', persistedAddress);
+    if (currentState.isConnected && currentState.address) {
+      console.log('🔍 Conexión persistida detectada:', currentState.address);
 
-        // Verificar si el modal tiene la misma cuenta
-        const modalAccount = web3Modal.getAccount();
-        const modalAddress = modalAccount?.address?.toLowerCase() || null;
-        const persistedNormalized = persistedAddress.toLowerCase();
+      const currentAddress = this.commonService.getAccountAddress();
+      const newAddress = currentState.address.toLowerCase();
 
-        // Si las direcciones coinciden, ya estamos sincronizados
-        if (modalAddress === persistedNormalized) {
-          console.log('✅ Ya sincronizado con la conexión persistida');
-          this.currentAccount = persistedNormalized;
-          this.lastProcessedAddress = persistedNormalized;
-          this.isFirstConnection = false;
-          this.signing = true;
-          return;
-        }
-
-        // Si el modal tiene una cuenta diferente, procesar el cambio
-        if (modalAddress && modalAddress !== persistedNormalized) {
-          console.log('🔄 Detectado cambio de cuenta persistida, procesando...');
-          this.currentAccount = modalAddress;
-          this.isFirstConnection = false;
-          // Procesar inmediatamente sin delay
-          if (!this.isProcessingLogin) {
-            await this.processWalletConnection(modalAddress);
-          }
-          return;
-        }
-
-        // Si no hay cuenta en el modal pero sí persistida, mantener la persistida
-        if (!modalAddress && persistedNormalized) {
-          console.log('📍 Manteniendo conexión persistida (sin modal activo)');
-          this.currentAccount = persistedNormalized;
-          this.lastProcessedAddress = persistedNormalized;
-          this.isFirstConnection = false;
-          this.signing = true;
-          return;
-        }
+      // Verificar si es la misma dirección
+      if (currentAddress?.toLowerCase() === newAddress) {
+        console.log('✅ Ya sincronizado con la conexión persistida');
+        this.signing = true;
+        this.lastProcessedAddress = newAddress;
+        this.currentAccount = newAddress;
+        return;
       }
 
-      // No hay conexión persistida
-      this.signing = true;
-      console.log('ℹ️ No se detectó conexión persistida');
-
-    } catch (error) {
-      console.error('❌ Error en handlePersistedConnection:', error);
+      // Procesar inmediatamente sin delay
+      if (!this.isProcessingLogin) {
+        console.log('🔄 Procesando conexión persistida inmediatamente...');
+        await this.handleWalletConnection(currentState);
+      }
+    } else {
       this.signing = true;
     }
   }
 
   /**
-   * MANEJADOR PRINCIPAL: Cambios inmediatos de cuenta
+   * MANEJO DE CAMBIOS DE ESTADO DE WALLET - Optimizado como en Fierce
    */
-  private handleImmediateAccountChange(info: any): void {
-    if (this.accountChangeInProgress || this.isDisconnecting) {
+  private async handleWalletStateChange(state: WalletState): Promise<void> {
+    console.log("🟢 [1] handleWalletStateChange INICIO", {
+      isConnected: state.isConnected,
+      address: state.address,
+      isDisconnecting: this.isDisconnecting,
+      isProcessingLogin: this.isProcessingLogin,
+      lastProcessed: this.lastProcessedAddress
+    });
+
+    if (this.isDisconnecting) {
+      console.log("🟡 [1.1] Ignorando por desconexión en progreso");
       return;
     }
 
-    const web3Modal = this.walletConnectService.getWeb3Modal();
-    const changedAccount = web3Modal?.getAccount();
-    const newAddress = changedAccount?.address?.toLowerCase() || null;
-    const prevAddress = this.currentAccount;
+    const newAddress = state.address?.toLowerCase() || '';
 
-    // Solo procesar si hay un cambio real
-    if (prevAddress !== newAddress) {
-      console.log('🔄 Cambio detectado:', {
-        prevAddress,
-        newAddress,
-        isFirstConnection: this.isFirstConnection
-      });
+    // Si hay un cambio a estado conectado
+    if (state.isConnected && state.address && state.chainId) {
 
-      this.accountChangeInProgress = true;
-
-      if (this.isFirstConnection && newAddress) {
-        // PRIMERA CONEXIÓN
-        console.log('🟢 PRIMERA CONEXIÓN - Procesando...');
-        this.processFirstConnection(newAddress);
-        this.isFirstConnection = false;
-      } else if (prevAddress && newAddress) {
-        // CAMBIO DE CUENTA
-        console.log('⚡ CAMBIO DE CUENTA - Procesando...');
-        this.processAccountChange(prevAddress, newAddress);
-      } else if (prevAddress && !newAddress) {
-        // DESCONEXIÓN
-        console.log('🔴 DESCONEXIÓN - Procesando...');
-        this.handleCompleteDisconnect();
-        this.isFirstConnection = true; // Reset para próxima conexión
-      } else if (!prevAddress && newAddress) {
-        // RECONEXIÓN SIN SESIÓN PERSISTIDA
-        console.log('🔵 RECONEXIÓN - Procesando...');
-        this.processFirstConnection(newAddress);
-        this.isFirstConnection = false;
+      // Evitar reprocesar la misma dirección
+      if (newAddress === this.lastProcessedAddress && !this.isProcessingLogin) {
+        console.log("⏭️ [1.1.5] Dirección ya procesada, omitiendo...");
+        return;
       }
 
-      this.currentAccount = newAddress;
-      this.accountChangeInProgress = false;
+      if (!this.isProcessingLogin) {
+        console.log("🔵 [1.2] Wallet conectada, procesando...");
+        await this.handleWalletConnection(state);
+      }
     }
+    // Si se desconectó
+    else if (!state.isConnected && this.commonService.getAccountAddress()) {
+      console.log("🔴 [1.3] Wallet desconectada, limpiando...");
+      this.lastProcessedAddress = '';
+      this.currentAccount = null;
+      this.handleCompleteDisconnect();
+    }
+
+    console.log("🟢 [1.4] handleWalletStateChange FIN");
   }
 
   /**
-   * PROCESAMIENTO PRIMERA CONEXIÓN
+   * PROCESAMIENTO DE WALLET STATE CONEXIÓN - Optimizado
    */
-  private async processFirstConnection(address: string): Promise<void> {
-    try {
-      console.log('🎯 Procesando primera conexión para:', address);
+  private async handleWalletConnection(state: WalletState): Promise<void> {
+    if (!state.address) return;
 
-      // 1. Guardar cuenta inmediatamente
-      this.commonService.saveAccountAddress(address);
-
-      // 2. Verificar si es usuario existente o nuevo
-      await this.checkUserAndProceed(address);
-
-    } catch (error) {
-      console.error('❌ Error en primera conexión:', error);
-      this.signing = true;
-    }
+    await this.processWalletConnection(state.address);
   }
 
   /**
@@ -277,15 +214,6 @@ export class AppComponent implements OnInit, OnDestroy {
       const currentAddress = this.commonService.getAccountAddress();
       const currentNormalized = currentAddress?.toLowerCase() || '';
 
-      // OPTIMIZADO: Verificación rápida
-      if (currentNormalized === normalizedAddress) {
-        console.log('✅ Ya sincronizado');
-        this.finalizeConnection(address);
-        this.lastProcessedAddress = normalizedAddress;
-        this.currentAccount = normalizedAddress;
-        return;
-      }
-
       // OPTIMIZADO: Detección inmediata de cambio de cuenta
       const isAccountChange = currentAddress && currentNormalized !== normalizedAddress;
 
@@ -295,8 +223,9 @@ export class AppComponent implements OnInit, OnDestroy {
         this.changeAccount();
       }
 
-      // Procesar nuevo usuario o cambio
-      await this.handleNewUserConnection(address, isAccountChange);
+      // SIEMPRE verificar usuario al conectar (incluyendo conexiones persistidas)
+      console.log('🔍 Verificando usuario para dirección:', normalizedAddress);
+      await this.checkUserAndProceed(normalizedAddress);
 
       // Marcar como procesada
       this.lastProcessedAddress = normalizedAddress;
@@ -423,45 +352,6 @@ export class AppComponent implements OnInit, OnDestroy {
       });
     } catch (error) {
       console.log('⚠️ Error en limpieza rápida:', error);
-    }
-  }
-
-  /**
-   * BACKUP: Suscripción a cambios de estado
-   */
-  private subscribeToWalletStateBackup(): void {
-    // For now, we'll skip this as it requires walletState$ from service
-    // In the panel project, they have a more complex wallet service with state
-  }
-
-  private initializeWalletConnect(): void {
-    const web3Modal = this.walletConnectService.getWeb3Modal();
-
-    if (!web3Modal) {
-      console.warn("Web3Modal no está inicializado");
-      return;
-    }
-
-    // Limpiar suscripción anterior si existe
-    this.walletSubscription?.unsubscribe();
-  }
-
-  private handleWalletEvents(event: any): void {
-    console.log("Wallet event:", event);
-
-    if (event.data?.event === 'MODAL_LOADED') {
-      this.signing = true;
-    }
-
-    if (event.data?.event === 'CONNECT_SUCCESS' &&
-      !this.isDisconnecting &&
-      (this.commonService.getAccountAddress() == '' || this.commonService.getAccountAddress() == null)) {
-      const account = this.walletConnectService.getWeb3Modal().getAccount();
-      this.signatureProcess(account);
-    }
-
-    if (event.data?.event === 'DISCONNECT_SUCCESS') {
-      this.handleCompleteDisconnect();
     }
   }
 
@@ -692,6 +582,11 @@ export class AppComponent implements OnInit, OnDestroy {
     //this.connectionChecker.stopPeriodicCheck();
     this.logoutSubscription?.unsubscribe();
     this.walletSubscription?.unsubscribe();
+
+    // NUEVO: Asegurar estado limpio
+    if (this.walletConnectService) {
+      console.log('🧹 Limpiando estado de AppComponent');
+    }
   }
 
   onTabChange(tab: 'for-you' | 'trending') {

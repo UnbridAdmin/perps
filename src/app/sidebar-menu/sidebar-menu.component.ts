@@ -31,9 +31,21 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
     private router: Router,
     private modalService: NgbModal
   ) {
+    // Subscribe to user address updates (legacy)
     this.subscriptions.add(
       this.commonService.updateUserAddress.subscribe(() => {
         this.userAddress = this.commonService.getAccountAddress();
+      })
+    );
+
+    // Subscribe to wallet state changes for real-time updates
+    this.subscriptions.add(
+      this.walletConnectService.walletState$.subscribe(state => {
+        if (state.isConnected && state.address) {
+          this.userAddress = state.address;
+        } else {
+          this.userAddress = '';
+        }
       })
     );
   }
