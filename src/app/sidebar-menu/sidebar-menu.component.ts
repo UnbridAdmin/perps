@@ -7,6 +7,7 @@ import { AuthorizationService } from '../services/authorization.service';
 import { Subscription } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PremiumUpgradeDialogComponent } from '../premium-upgrade-dialog.component';
+import { CreatePredictionComponent } from '../shared/create-prediction.component';
 
 @Component({
   selector: 'app-sidebar-menu',
@@ -68,6 +69,14 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
 
   openPremiumDialog() {
     const modalRef = this.modalService.open(PremiumUpgradeDialogComponent, {
+      size: 'xl',
+      backdrop: 'static',
+      windowClass: 'full-screen-modal'
+    });
+  }
+
+  openCreatePrediction() {
+    const modalRef = this.modalService.open(CreatePredictionComponent, {
       size: 'xl',
       backdrop: 'static',
       windowClass: 'full-screen-modal'
