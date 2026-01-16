@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TradeService } from '../trade.service';
 import { AuthorizationService } from '../../services/authorization.service';
+import moment from 'moment';
+import { WalletConnectService } from '../../services/walletconnect.service';
 
 @Component({
   selector: 'app-trading-panel',
@@ -29,7 +31,8 @@ export class TradingPanelComponent implements OnInit {
 
   constructor(
     private tradeService: TradeService,
-    private authService: AuthorizationService
+    private authService: AuthorizationService,
+    private walletConnectService: WalletConnectService
   ) {}
 
   ngOnInit() {
@@ -58,12 +61,12 @@ export class TradingPanelComponent implements OnInit {
     }
   }
 
-  buyVote() {
+  async buyVote(): Promise<void> {
     // Check if user has authentication token (registered user)
     const hasAuthToken = this.authService.isAuthenticated();
 
     // Check if user has wallet connection (for wallet-only users)
-    const hasWalletConnection = this.hasWalletConnection();
+    const hasWalletConnection = await this.walletConnectService.checkConnection();
 
     if (!hasAuthToken && !hasWalletConnection) {
       console.error('User must be authenticated or have wallet connection to buy votes');
@@ -80,7 +83,7 @@ export class TradingPanelComponent implements OnInit {
 
     // If user is wallet-connected but not token-authenticated, add signature data
     if (!hasAuthToken && hasWalletConnection) {
-      const walletData = this.getWalletSignatureData();
+      const walletData = await this.generateWalletSignature();
       if (walletData) {
         buyVoteParams.message = walletData.message;
         buyVoteParams.signature = walletData.signature;
@@ -93,11 +96,34 @@ export class TradingPanelComponent implements OnInit {
     buyMethod.subscribe({
       next: (response: any) => {
         this.isLoading = false;
-        if (response.data?.success) {
-          console.log('Vote purchased successfully:', response.data);
-          // Handle success - maybe update prices, show confirmation, etc.
+
+        // Handle authentication response for public votes
+        if (!hasAuthToken && response.data && Array.isArray(response.data) && response.data.length >= 2) {
+          // Extract auth data and buy vote data from response
+          const authData = response.data[0]; // AuthResponse object
+          const buyVoteData = response.data[1]; // BuyVoteResponse object
+
+          // Store authentication token if provided
+          if (authData && authData.expires) {
+            localStorage.setItem('expirationDate', authData.expires);
+            // Set security token cookie (this should be handled by the browser from the response cookie)
+          }
+
+          // Check buy vote success
+          if (buyVoteData?.success) {
+            console.log('Vote purchased successfully:', buyVoteData);
+            // Handle success - maybe update prices, show confirmation, etc.
+          } else {
+            console.error('Error purchasing vote:', buyVoteData?.message);
+          }
         } else {
-          console.error('Error purchasing vote:', response.data?.message);
+          // Handle regular authenticated response
+          if (response.data?.success) {
+            console.log('Vote purchased successfully:', response.data);
+            // Handle success - maybe update prices, show confirmation, etc.
+          } else {
+            console.error('Error purchasing vote:', response.data?.message);
+          }
         }
       },
       error: (error) => {
@@ -108,36 +134,27 @@ export class TradingPanelComponent implements OnInit {
   }
 
   /**
-   * Check if user has wallet connection (for wallet-only authentication)
+   * Generate wallet signature data for public vote purchase
    */
-  private hasWalletConnection(): boolean {
-    // Check for wallet connection indicators
-    // This could be a wallet address in localStorage/sessionStorage
-    // or any other wallet connection state
-    const walletAddress = localStorage.getItem('walletAddress') || sessionStorage.getItem('walletAddress');
-    return !!walletAddress;
-  }
+  private async generateWalletSignature(): Promise<{ message: string; signature: string; coin_id?: number } | null> {
+    try {
+      const walletAddress = await this.walletConnectService.getConnectedWalletAddress();
 
-  /**
-   * Get wallet signature data for public vote purchase
-   */
-  private getWalletSignatureData(): { message: string; signature: string; coin_id?: number } | null {
-    // Get signature data from storage or generate new signature
-    // This should return the message, signature, and coin_id needed for the backend
-    const message = localStorage.getItem('signatureMessage') || sessionStorage.getItem('signatureMessage');
-    const signature = localStorage.getItem('walletSignature') || sessionStorage.getItem('walletSignature');
-    const coinId = parseInt(localStorage.getItem('coinId') || sessionStorage.getItem('coinId') || '1');
+      // Create a message for signing
+      const message = `Buy vote for prediction option ${this.predictionOptionId} with ${this.amount} USD at ${new Date().toISOString()}`;
 
-    if (message && signature) {
+      // Sign the message
+      const signatureData = await this.walletConnectService.signMessage(message);
+
       return {
-        message,
-        signature,
-        coin_id: coinId
+        message: signatureData.message,
+        signature: signatureData.signature,
+        coin_id: 1 // Default coin_id, adjust as needed
       };
+    } catch (error) {
+      console.error('Error generating wallet signature:', error);
+      return null;
     }
-
-    console.error('Wallet signature data not available');
-    return null;
   }
 
   sellVote() {
