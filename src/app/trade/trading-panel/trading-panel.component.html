@@ -20,12 +20,21 @@
   <div class="trade-section">
     <div class="amount-section">
       <label class="section-title">{{ isBuyMode ? 'Amount' : 'Shares' }}</label>
-      <input type="number" class="amount-input" [(ngModel)]="amount" min="1" max="{{ maxAmount }}" [placeholder]="isBuyMode ? '$0' : '0'" />
+      <input *ngIf="isBuyMode" type="number" class="amount-input" [(ngModel)]="amount" min="1" max="{{ maxAmount }}" placeholder="$0" />
+      <input *ngIf="!isBuyMode" type="number" class="amount-input" [(ngModel)]="sharesToSell" min="1" max="{{ userShares }}" placeholder="0" />
       <div class="quick-amounts">
-        <button class="quick-btn" (click)="setAmount(1)">+{{ isBuyMode ? '$1' : '1' }}</button>
-        <button class="quick-btn" (click)="setAmount(20)">+{{ isBuyMode ? '$20' : '20' }}</button>
-        <button class="quick-btn" (click)="setAmount(100)">+{{ isBuyMode ? '$100' : '100' }}</button>
-        <button class="quick-btn max-btn" (click)="setMaxAmount()">Max</button>
+        <ng-container *ngIf="isBuyMode">
+          <button class="quick-btn" (click)="setAmount(1)">+$1</button>
+          <button class="quick-btn" (click)="setAmount(20)">+$20</button>
+          <button class="quick-btn" (click)="setAmount(100)">+$100</button>
+          <button class="quick-btn max-btn" (click)="setMaxAmount()">Max</button>
+        </ng-container>
+        <ng-container *ngIf="!isBuyMode">
+          <button class="quick-btn" (click)="sharesToSell = Math.min(sharesToSell + 1, userShares)">+1</button>
+          <button class="quick-btn" (click)="sharesToSell = Math.min(sharesToSell + 10, userShares)">+10</button>
+          <button class="quick-btn" (click)="sharesToSell = Math.min(sharesToSell + 100, userShares)">+100</button>
+          <button class="quick-btn max-btn" (click)="sharesToSell = userShares">All</button>
+        </ng-container>
       </div>
     </div>
 
@@ -40,8 +49,8 @@
       </div>
     </div>
 
-    <button class="btn-trade" (click)="buyVote()" [disabled]="isLoading">
-      {{ isLoading ? 'Processing...' : 'Trade' }}
+    <button class="btn-trade" (click)="executeTrade()" [disabled]="isLoading">
+      {{ isLoading ? 'Processing...' : (isBuyMode ? 'Buy' : 'Sell') }}
     </button>
   </div>
 </div>

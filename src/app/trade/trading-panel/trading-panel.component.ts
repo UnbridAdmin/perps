@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TradingPanelService } from './trading-pnael.service';
+import { TradeService } from '../trade.service';
 import { AuthorizationService } from '../../services/authorization.service';
 
 @Component({
@@ -11,10 +11,14 @@ import { AuthorizationService } from '../../services/authorization.service';
   templateUrl: './trading-panel.component.html',
   styleUrl: './trading-panel.component.scss',
 })
-export class TradingPanelComponent {
+export class TradingPanelComponent implements OnInit {
+  @Input() predictionOptionId: number = 1;
+  @Input() userShares: number = 0;
+
   isBuyMode = true;
   selectedOption: 'yes' | 'no' = 'yes';
   amount = 2;
+  sharesToSell = 1;
   maxAmount = 100;
 
   yesPrice = 97.4;
@@ -24,9 +28,13 @@ export class TradingPanelComponent {
   isLoading = false;
 
   constructor(
-    private tradingPanelService: TradingPanelService,
+    private tradeService: TradeService,
     private authService: AuthorizationService
   ) {}
+
+  ngOnInit() {
+    // Initialize component
+  }
 
   get toWin(): number {
     // If buying at yesPrice, potential win = amount / (yesPrice/100)
@@ -42,6 +50,14 @@ export class TradingPanelComponent {
     this.amount = this.maxAmount;
   }
 
+  executeTrade() {
+    if (this.isBuyMode) {
+      this.buyVote();
+    } else {
+      this.sellVote();
+    }
+  }
+
   buyVote() {
     if (!this.authService.isAuthenticated()) {
       console.error('User must be authenticated to buy votes');
@@ -51,12 +67,12 @@ export class TradingPanelComponent {
     this.isLoading = true;
 
     const buyVoteParams = {
-      prediction_option_multiple_id: 1, // This should be provided from the prediction context
+      prediction_option_multiple_id: this.predictionOptionId,
       side: this.selectedOption.toUpperCase(),
       amount_usd: this.amount
     };
 
-    this.tradingPanelService.buyVote(buyVoteParams).subscribe({
+    this.tradeService.buyVote(buyVoteParams).subscribe({
       next: (response: any) => {
         this.isLoading = false;
         if (response.data?.success) {
@@ -69,6 +85,43 @@ export class TradingPanelComponent {
       error: (error) => {
         this.isLoading = false;
         console.error('Error purchasing vote:', error);
+      }
+    });
+  }
+
+  sellVote() {
+    if (!this.authService.isAuthenticated()) {
+      console.error('User must be authenticated to sell votes');
+      return;
+    }
+
+    if (this.userShares <= 0) {
+      console.error('No shares available to sell');
+      return;
+    }
+
+    this.isLoading = true;
+
+    const sellVoteParams = {
+      prediction_option_multiple_id: this.predictionOptionId,
+      side: this.selectedOption.toUpperCase(),
+      shares_to_sell: this.sharesToSell
+    };
+
+    this.tradeService.sellVote(sellVoteParams).subscribe({
+      next: (response: any) => {
+        this.isLoading = false;
+        if (response.data?.success) {
+          console.log('Shares sold successfully:', response.data);
+          // Update user shares
+          this.userShares = Math.max(0, this.userShares - this.sharesToSell);
+        } else {
+          console.error('Error selling shares:', response.data?.message);
+        }
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error selling shares:', error);
       }
     });
   }
