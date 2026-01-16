@@ -22,11 +22,11 @@
       </div>
 
       <div class="tab-content" *ngIf="activeTab[outcome.id] === 'graph'">
-        <app-graph [percentage]="outcome.percentage" [change]="outcome.change"></app-graph>
+        <app-graph [percentage]="outcome.percentage" [change]="outcome.change" [optionData]="outcome.optionData"></app-graph>
       </div>
 
       <div class="tab-content" *ngIf="activeTab[outcome.id] === 'resolution'">
-        <app-resolution [date]="outcome.date"></app-resolution>
+        <app-resolution [date]="outcome.date" [optionData]="outcome.optionData"></app-resolution>
       </div>
     </div>
   </div>

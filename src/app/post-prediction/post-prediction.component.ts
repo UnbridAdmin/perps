@@ -125,7 +125,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
-  loadPredictions(): void {
+  async loadPredictions(): Promise<void> {
     if (this.isLoading || !this.hasMoreData) return;
 
     this.isLoading = true;
@@ -134,7 +134,11 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
       limit: this.pageSize
     };
 
-    const apiCall = this.authService.isAuthenticated()
+    // Check both authentication and wallet connection
+    const isAuthenticated = this.authService.isAuthenticated();
+    const isWalletConnected = await this.walletConnectService.checkConnection();
+
+    const apiCall = (isAuthenticated && isWalletConnected)
       ? this.postPredictionService.getAuthenticatedPredictions(params)
       : this.postPredictionService.getPublicPredictions(params);
 
@@ -450,7 +454,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
   }
 
   // Navigate to trade detail page
-  navigateToTrade(): void {
-    this.router.navigate(['/trade']);
+  navigateToTrade(prediction: any): void {
+    this.router.navigate(['/trade', prediction.prediction_id]);
   }
 }

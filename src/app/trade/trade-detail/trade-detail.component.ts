@@ -6,6 +6,8 @@ import { TradingPanelComponent } from '../trading-panel/trading-panel.component'
 import { CommentsComponent } from '../comments/comments.component';
 import { PriceTrendComponent } from '../price-trend/price-trend.component';
 import { TradeService } from '../trade.service';
+import { AuthorizationService } from '../../services/authorization.service';
+import { WalletConnectService } from '../../services/walletconnect.service';
 
 @Component({
   selector: 'app-trade-detail',
@@ -22,7 +24,9 @@ export class TradeDetailComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private tradeService: TradeService
+    private tradeService: TradeService,
+    private authService: AuthorizationService,
+    private walletConnectService: WalletConnectService
   ) {}
 
   ngOnInit() {
@@ -35,9 +39,18 @@ export class TradeDetailComponent implements OnInit {
     });
   }
 
-  loadTradeDetails() {
+  async loadTradeDetails(): Promise<void> {
     this.isLoading = true;
-    this.tradeService.getTradeDetails({ prediction_id: this.predictionId }).subscribe({
+
+    // Check both authentication and wallet connection
+    const isAuthenticated = this.authService.isAuthenticated();
+    const isWalletConnected = await this.walletConnectService.checkConnection();
+
+    const apiCall = (isAuthenticated && isWalletConnected)
+      ? this.tradeService.getTradeDetails({ prediction_id: this.predictionId })
+      : this.tradeService.getTradePublicDetails({ prediction_id: this.predictionId });
+
+    apiCall.subscribe({
       next: (response: any) => {
         this.isLoading = false;
         if (response.data?.success) {

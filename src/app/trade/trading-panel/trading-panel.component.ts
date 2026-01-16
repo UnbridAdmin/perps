@@ -59,20 +59,38 @@ export class TradingPanelComponent implements OnInit {
   }
 
   buyVote() {
-    if (!this.authService.isAuthenticated()) {
-      console.error('User must be authenticated to buy votes');
+    // Check if user has authentication token (registered user)
+    const hasAuthToken = this.authService.isAuthenticated();
+
+    // Check if user has wallet connection (for wallet-only users)
+    const hasWalletConnection = this.hasWalletConnection();
+
+    if (!hasAuthToken && !hasWalletConnection) {
+      console.error('User must be authenticated or have wallet connection to buy votes');
       return;
     }
 
     this.isLoading = true;
 
-    const buyVoteParams = {
+    const buyVoteParams: any = {
       prediction_option_multiple_id: this.predictionOptionId,
       side: this.selectedOption.toUpperCase(),
       amount_usd: this.amount
     };
 
-    this.tradeService.buyVote(buyVoteParams).subscribe({
+    // If user is wallet-connected but not token-authenticated, add signature data
+    if (!hasAuthToken && hasWalletConnection) {
+      const walletData = this.getWalletSignatureData();
+      if (walletData) {
+        buyVoteParams.message = walletData.message;
+        buyVoteParams.signature = walletData.signature;
+        buyVoteParams.coin_id = walletData.coin_id || 1; // Default to 1 if not specified
+      }
+    }
+
+    const buyMethod = hasAuthToken ? this.tradeService.buyVote(buyVoteParams) : this.tradeService.buyPublicVote(buyVoteParams);
+
+    buyMethod.subscribe({
       next: (response: any) => {
         this.isLoading = false;
         if (response.data?.success) {
@@ -87,6 +105,39 @@ export class TradingPanelComponent implements OnInit {
         console.error('Error purchasing vote:', error);
       }
     });
+  }
+
+  /**
+   * Check if user has wallet connection (for wallet-only authentication)
+   */
+  private hasWalletConnection(): boolean {
+    // Check for wallet connection indicators
+    // This could be a wallet address in localStorage/sessionStorage
+    // or any other wallet connection state
+    const walletAddress = localStorage.getItem('walletAddress') || sessionStorage.getItem('walletAddress');
+    return !!walletAddress;
+  }
+
+  /**
+   * Get wallet signature data for public vote purchase
+   */
+  private getWalletSignatureData(): { message: string; signature: string; coin_id?: number } | null {
+    // Get signature data from storage or generate new signature
+    // This should return the message, signature, and coin_id needed for the backend
+    const message = localStorage.getItem('signatureMessage') || sessionStorage.getItem('signatureMessage');
+    const signature = localStorage.getItem('walletSignature') || sessionStorage.getItem('walletSignature');
+    const coinId = parseInt(localStorage.getItem('coinId') || sessionStorage.getItem('coinId') || '1');
+
+    if (message && signature) {
+      return {
+        message,
+        signature,
+        coin_id: coinId
+      };
+    }
+
+    console.error('Wallet signature data not available');
+    return null;
   }
 
   sellVote() {

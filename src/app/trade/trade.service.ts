@@ -85,10 +85,17 @@ export class TradeService {
   constructor(private apiService: ApiServices) { }
 
   /**
-   * Buy votes for a prediction option
+   * Buy votes for a prediction option (authenticated users)
    */
   public buyVote(params: BuyVoteParams) {
     return this.apiService.apiCall('trader/buy-vote', 'POST', params);
+  }
+
+  /**
+   * Buy votes for a prediction option (public - wallet authenticated users)
+   */
+  public buyPublicVote(params: BuyVoteParams) {
+    return this.apiService.publicApiCall('trader/buy-public-vote', 'POST', params);
   }
 
   /**
@@ -103,6 +110,13 @@ export class TradeService {
    */
   public getTradeDetails(params: TradeDetailsParams) {
     return this.apiService.apiCall('trader/trade-details', 'POST', params);
+  }
+
+  /**
+   * Get public trade details for a prediction (no user authentication required)
+   */
+  public getTradePublicDetails(params: TradeDetailsParams) {
+    return this.apiService.publicApiCall('trader/trade-public-details', 'POST', params);
   }
 
   /**
