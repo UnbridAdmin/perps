@@ -40,6 +40,8 @@
       </div>
     </div>
 
-    <button class="btn-trade">Trade</button>
+    <button class="btn-trade" (click)="buyVote()" [disabled]="isLoading">
+      {{ isLoading ? 'Processing...' : 'Trade' }}
+    </button>
   </div>
 </div>

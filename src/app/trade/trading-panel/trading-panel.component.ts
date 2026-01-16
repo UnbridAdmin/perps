@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TradingPanelService } from './trading-pnael.service';
+import { AuthorizationService } from '../../services/authorization.service';
 
 @Component({
   selector: 'app-trading-panel',
@@ -19,6 +21,13 @@ export class TradingPanelComponent {
   noPrice = 3.7;
   avgPrice = 97.4;
 
+  isLoading = false;
+
+  constructor(
+    private tradingPanelService: TradingPanelService,
+    private authService: AuthorizationService
+  ) {}
+
   get toWin(): number {
     // If buying at yesPrice, potential win = amount / (yesPrice/100)
     const price = this.selectedOption === 'yes' ? this.yesPrice : this.noPrice;
@@ -31,5 +40,36 @@ export class TradingPanelComponent {
 
   setMaxAmount() {
     this.amount = this.maxAmount;
+  }
+
+  buyVote() {
+    if (!this.authService.isAuthenticated()) {
+      console.error('User must be authenticated to buy votes');
+      return;
+    }
+
+    this.isLoading = true;
+
+    const buyVoteParams = {
+      prediction_option_multiple_id: 1, // This should be provided from the prediction context
+      side: this.selectedOption.toUpperCase(),
+      amount_usd: this.amount
+    };
+
+    this.tradingPanelService.buyVote(buyVoteParams).subscribe({
+      next: (response: any) => {
+        this.isLoading = false;
+        if (response.data?.success) {
+          console.log('Vote purchased successfully:', response.data);
+          // Handle success - maybe update prices, show confirmation, etc.
+        } else {
+          console.error('Error purchasing vote:', response.data?.message);
+        }
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error purchasing vote:', error);
+      }
+    });
   }
 }

@@ -17,13 +17,8 @@
     </div>
     <div class="outcome-content" [class.expanded]="outcome.expanded">
       <div class="tabs">
-        <div class="tab" [class.active]="activeTab[outcome.id] === 'orderbook'" (click)="switchTab(outcome.id, 'orderbook')">Order Book</div>
         <div class="tab" [class.active]="activeTab[outcome.id] === 'graph'" (click)="switchTab(outcome.id, 'graph')">Graph</div>
         <div class="tab" [class.active]="activeTab[outcome.id] === 'resolution'" (click)="switchTab(outcome.id, 'resolution')">Resolución</div>
-      </div>
-
-      <div class="tab-content" *ngIf="activeTab[outcome.id] === 'orderbook'">
-        <app-order-book></app-order-book>
       </div>
 
       <div class="tab-content" *ngIf="activeTab[outcome.id] === 'graph'">

@@ -7,7 +7,7 @@ import { ResolutionComponent } from '../resolution/resolution.component';
 @Component({
   selector: 'app-outcome',
   standalone: true,
-  imports: [CommonModule, GraphComponent, OrderBookComponent, ResolutionComponent],
+  imports: [CommonModule, GraphComponent, ResolutionComponent],
   templateUrl: './outcome.component.html',
   styleUrl: './outcome.component.scss',
 })
