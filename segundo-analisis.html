@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarjeta de señal profesional · para subscriptores</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: #0d1117;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        /* contenedor para mostrar dos variantes (live y previa) */
+        .demo-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        /* tarjeta base — sombras y forma limpia */
+        .signal-card {
+            width: 400px;
+            background: #0f151f;
+            border-radius: 32px;
+            padding: 0;
+            border: 1px solid #2b3445;
+            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(249, 115, 22, 0.2) inset;
+            overflow: hidden;
+            transition: transform 0.15s ease;
+        }
+
+        .signal-card:hover {
+            transform: translateY(-4px);
+            border-color: #f97316;
+        }
+
+        /* cabecera con tipo de señal y timestamp */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px 8px 20px;
+        }
+
+        .signal-type {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge-live {
+            background: #dc2626;
+            color: white;
+            font-weight: 700;
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 40px;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            box-shadow: 0 0 10px #dc2626;
+        }
+
+        .badge-pre {
+            background: #2b2f45;
+            color: #b3c7ff;
+            font-weight: 700;
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 40px;
+            letter-spacing: 0.4px;
+            border: 1px solid #42506b;
+        }
+
+        .timestamp {
+            color: #8e9fb1;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: #1a212d;
+            padding: 4px 10px;
+            border-radius: 30px;
+        }
+
+        /* cuerpo principal */
+        .card-body {
+            padding: 4px 20px 16px 20px;
+        }
+
+        /* partido y liga */
+        .match-header {
+            margin-bottom: 14px;
+        }
+
+        .match-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .match-flags {
+            font-size: 22px;
+        }
+
+        .league-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: #95aac9;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .live-minute {
+            background: #2f3e57;
+            padding: 2px 12px;
+            border-radius: 30px;
+            color: #fbbf24;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        /* mercado principal (foco) */
+        .market-box {
+            background: #14212b;
+            border-radius: 20px;
+            padding: 16px 18px;
+            margin: 16px 0 18px 0;
+            border-left: 5px solid #f97316;
+            border-right: 1px solid #2f4055;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .market-name {
+            font-weight: 600;
+            color: #b7d0f0;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .market-selection {
+            background: #26364a;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-weight: 800;
+            color: #fbbf24;
+            font-size: 20px;
+            letter-spacing: 0.3px;
+            box-shadow: 0 2px 0 #0a0e14;
+        }
+
+        /* grid de datos críticos */
+        .data-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px 20px;
+            background: #0f1a24;
+            border-radius: 22px;
+            padding: 16px 18px;
+            margin-bottom: 16px;
+            border: 1px solid #293544;
+        }
+
+        .data-item {
+            display: flex;
+            flex-direction: column;
+            min-width: 70px;
+        }
+
+        .data-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #7990b0;
+            letter-spacing: 0.4px;
+            font-weight: 600;
+        }
+
+        .data-value {
+            font-size: 20px;
+            font-weight: 800;
+            margin-top: 2px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .value-highlight {
+            color: #f97316;
+        }
+
+        .value-odds {
+            color: #94e6b5;
+        }
+
+        .value-stake {
+            color: #f9a8d4;
+        }
+
+        .stake-scale {
+            font-size: 13px;
+            color: #a0b5d0;
+            font-weight: 400;
+        }
+
+        .confidence-badge {
+            background: #1f3140;
+            border-radius: 40px;
+            padding: 6px 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            color: #fbbf24;
+        }
+
+        /* bookmakers + footer */
+        .footer-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px dashed #2e3d52;
+            padding-top: 16px;
+            margin-top: 8px;
+        }
+
+        .bookmakers {
+            color: #95adcc;
+            font-size: 14px;
+            background: #1b2635;
+            padding: 6px 15px;
+            border-radius: 30px;
+        }
+
+        .tipster {
+            color: #94a3b8;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tipster-avatar {
+            width: 24px;
+            height: 24px;
+            background: #f97316;
+            border-radius: 40px;
+            display: inline-block;
+        }
+
+        .note {
+            margin: 12px 0 8px 0;
+            font-style: italic;
+            color: #a7bfe6;
+            background: #1b2735;
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            border-left: 3px solid #3b8c6e;
+        }
+
+        /* botón de acción (simulado) */
+        .action-btn {
+            background: #f97316;
+            border: none;
+            color: #0d1117;
+            font-weight: 800;
+            padding: 14px 20px;
+            width: 100%;
+            border-radius: 40px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 14px;
+            cursor: default;
+            opacity: 0.9;
+            transition: 0.1s ease;
+            border: 1px solid #ffb577;
+        }
+
+        .action-btn:hover {
+            opacity: 1;
+            background: #fb8b3c;
+        }
+
+        /* variante para señal previa (ejemplo segundo) */
+        .previa .badge-live {
+            display: none;
+        }
+        .previa .badge-pre {
+            display: inline-flex;
+        }
+
+        hr {
+            border: 1px solid #253040;
+            margin: 6px 0;
+        }
+
+        .sub-note {
+            color: #5e7797;
+            font-size: 12px;
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        /* tipografía */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,800&display=swap');
+    </style>
+</head>
+<body>
+    <div style="color:#d5e2f6; margin-bottom: 10px; font-weight: 600;">📡 Tarjetas de señal · información completa para el subscriptor</div>
+    <div class="demo-wrapper">
+        <!-- TARJETA 1: Señal EN VIVO (Late Goal) con todos los campos críticos -->
+        <div class="signal-card">
+            <div class="card-header">
+                <div class="signal-type">
+                    <span class="badge-live">🔴 EN VIVO</span>
+                    <span style="color:#b1c6e5; font-size:13px; background:#1f2632; padding:3px 10px; border-radius:30px;">⚽ Late Goal Alert</span>
+                </div>
+                <div class="timestamp">
+                    <span>⏱️ hace 3 min</span> · <span>9:43 AM</span>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="match-header">
+                    <div class="match-title">
+                        <span class="match-flags">🇪🇸🇪🇸</span> Real Madrid vs Barcelona
+                    </div>
+                    <div class="league-info">
+                        <span>🏆 La Liga · Jornada 30</span>
+                        <span class="live-minute">⏱️ Minuto 78'</span>
+                    </div>
+                </div>
+
+                <!-- Mercado destacado -->
+                <div class="market-box">
+                    <span class="market-name">⚽ Total de goles del partido</span>
+                    <span class="market-selection">OVER 2.5</span>
+                </div>
+
+                <!-- Grid con lo VITAL: cuota, stake, confianza -->
+                <div class="data-grid">
+                    <div class="data-item">
+                        <span class="data-label">💰 Cuota mín.</span>
+                        <span class="data-value value-odds">2.10 <span style="font-size: 13px; color:#728aa8;">+110</span></span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">📊 Stake</span>
+                        <span class="data-value value-stake">4/10 <span class="stake-scale">(4% bank)</span></span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">🔥 Confianza</span>
+                        <span class="data-value value-highlight">85%</span>
+                    </div>
+                </div>
+
+                <!-- Nota del tipster (opcional pero valiosa) -->
+                <div class="note">
+                    “High pressure in final third · Real Madrid volcado, Barcelona solo se defiende. Ocasiones claras.”
+                </div>
+
+                <!-- Footer con casas y tipster -->
+                <div class="footer-row">
+                    <span class="bookmakers">🏅 Bet365 · Pinnacle · Betway</span>
+                    <span class="tipster"><span class="tipster-avatar"></span> @gurú_goles</span>
+                </div>
+
+                <!-- Botón call to action (simula enlace) -->
+                <div class="action-btn">
+                    ⚡ APOSTAR AHORA EN BET365 ⚡
+                </div>
+                <div class="sub-note">Stake 4/10 ·  Unidades: +4.4 si se confirma</div>
+            </div>
+        </div>
+
+        <!-- TARJETA 2: Señal PREVIA (Corner Opportunity) con datos obligatorios -->
+        <div class="signal-card">
+            <div class="card-header">
+                <div class="signal-type">
+                    <span class="badge-pre">⏳ PREVIA · CORNERS</span>
+                </div>
+                <div class="timestamp">
+                    <span>⏰ hace 12 min</span> · <span>9:32 AM</span>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="match-header">
+                    <div class="match-title">
+                        <span class="match-flags">🏴󠁧󠁢󠁥󠁮󠁧󠁿🏴󠁧󠁢󠁥󠁮󠁧󠁿</span> Liverpool vs Arsenal
+                    </div>
+                    <div class="league-info">
+                        <span>🏆 Premier League</span>
+                        <span style="color:#cbd5e1;">Inicio · 16:30</span>
+                    </div>
+                </div>
+
+                <div class="market-box">
+                    <span class="market-name">🚩 Córners del partido</span>
+                    <span class="market-selection">OVER 9.5</span>
+                </div>
+
+                <div class="data-grid">
+                    <div class="data-item">
+                        <span class="data-label">💰 Cuota mín.</span>
+                        <span class="data-value value-odds">1.80 <span style="font-size:13px;">(esperar)</span></span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">📊 Stake</span>
+                        <span class="data-value value-stake">3/10</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">📈 Confianza</span>
+                        <span class="data-value value-highlight">65%</span>
+                    </div>
+                </div>
+
+                <div class="note">
+                    “Ambos equipos promedian 12 corners por partido. Esperar odds >1.80, salida en vivo.”
+                </div>
+
+                <div class="footer-row">
+                    <span class="bookmakers">🏅 Betfair · Unibet · William Hill</span>
+                    <span class="tipster"><span class="tipster-avatar"></span> @corner_pro</span>
+                </div>
+
+                <!-- Botón secundario (previa sin enlace directo) -->
+                <div style="background:#2a3442; color:#f5f9ff; font-weight:600; padding:12px; border-radius:40px; text-align:center; margin-top:14px; border:1px solid #4f6183; opacity:0.8;">
+                    ⏳ ACTIVAR ALERTA (cuota 1.80)
+                </div>
+                <div class="sub-note">Señal previa · stake 3/10 · unidades estimadas: +2.4</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resumen visual de por qué funcionan -->
+    <div style="max-width:830px; margin-top:30px; background:#131d2b; border-radius:40px; padding:18px 24px; color:#b7cef0; border:1px solid #2c3e5a; text-align:left;">
+        <p style="font-weight:700; color:white; margin-bottom:12px;">✅ Información crítica incluida (para subscriptores reales):</p>
+        <ul style="display:grid; grid-template-columns:1fr 1fr; gap:12px; list-style:none;">
+            <li style="display:flex; gap:8px;">✔️ <strong>Stake (4/10, 3/10)</strong> — gestión de bankroll</li>
+            <li style="display:flex; gap:8px;">✔️ <strong>Cuota mínima clara</strong> — 2.10 / 1.80</li>
+            <li style="display:flex; gap:8px;">✔️ <strong>Momento exacto</strong> (minuto 78' o previa)</li>
+            <li style="display:flex; gap:8px;">✔️ <strong>Casas recomendadas</strong> — acción rápida</li>
+            <li style="display:flex; gap:8px;">✔️ <strong>Confianza + nota del tipster</strong> — contexto</li>
+            <li style="display:flex; gap:8px;">✔️ <strong>Timestamp y tipster</strong> — trazabilidad</li>
+        </ul>
+        <p style="margin-top:16px; color:#fbbf24;">💡 Diseño listo para plataforma social de señales (subida por cualquier usuario).</p>
+    </div>
+</body>
+</html>

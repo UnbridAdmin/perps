@@ -1,0 +1,70 @@
+<div class="prediction-card signal-post" [class.live]="signal.isLive">
+    <!-- Post Header: Tipster Info -->
+    <div class="prediction-header">
+        <div class="prediction-avatar" [style.background]="signal.isLive ? '#dc2626' : '#1d9bf0'">
+            <i class='bx' [ngClass]="signal.isLive ? 'bx-broadcast' : 'bx-time-five'"></i>
+        </div>
+        <div class="prediction-info">
+            <h3>@{{ signal.tipster.handle }} <span class="badge-type" *ngIf="signal.isLive">LIVE</span></h3>
+            <p>{{ signal.category | titlecase }} • Hace {{ getTimeAgo(signal.timestamp) }} • {{ signal.confidence }}%
+                Confianza</p>
+        </div>
+        <div class="post-menu-btn">
+            <i class='bx bx-dots-horizontal-rounded'></i>
+        </div>
+    </div>
+
+    <!-- Post Body: Match & Selection -->
+    <div class="prediction-question">
+        {{ signal.match }} <span class="match-flags" *ngIf="signal.category === 'sports'">🇪🇸🇪🇸</span>
+    </div>
+
+    <div class="signal-context-info">
+        <span class="league-tag" *ngIf="signal.league">🏆 {{ signal.league }}</span>
+        <span class="minute-tag" *ngIf="signal.minute">{{ signal.minute }}</span>
+    </div>
+
+    <!-- Signal Specific Content (The "Professional" Card integrated) -->
+    <div class="signal-data-container">
+        <div class="market-highlight">
+            <div class="market-label">{{ signalMarket }}</div>
+            <div class="market-value" [attr.data-action]="signalAction">
+                {{ signalValue | uppercase }}
+            </div>
+        </div>
+
+        <!-- Data Grid integrated as "stats" -->
+        <div class="data-row">
+            <div class="data-box">
+                <span class="label">CUOTA MÍN.</span>
+                <span class="value odds">{{ signal.odds.value | number:'1.2-2' }} <small *ngIf="signal.odds.format2">{{
+                        signal.odds.format2 }}</small></span>
+            </div>
+            <div class="data-box">
+                <span class="label">STAKE</span>
+                <span class="value stake">{{ signal.stake.value }} <small *ngIf="signal.stake.percentage">({{
+                        signal.stake.percentage }})</small></span>
+            </div>
+            <div class="data-box bookies">
+                <span class="label">CASAS</span>
+                <span class="value">{{ signal.bookmakers[0] }} <small *ngIf="signal.bookmakers.length > 1">+{{
+                        signal.bookmakers.length - 1 }}</small></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="note-section" *ngIf="signal.note">
+        <p>“{{ signal.note }}”</p>
+    </div>
+
+    <!-- Post Actions -->
+    <!-- <div class="prediction-actions">
+        <button class="action-btn">💬 24</button>
+        <button class="action-btn">👁️ 1.2K</button>
+        <button class="action-btn volume-btn">💰 {{ signal.estimatedUnits }} units</button>
+
+        <button class="predict-btn btn-primary" [class.live-btn]="signal.isLive">
+            {{ signal.isLive ? '⚡ Bet Now' : '⏳ Alert Me' }}
+        </button>
+    </div> -->
+</div>

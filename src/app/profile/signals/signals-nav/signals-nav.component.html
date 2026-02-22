@@ -1,0 +1,16 @@
+<div class="signals-nav-horizontal">
+    <div class="main-categories">
+        <button *ngFor="let cat of categories" class="nav-item" [class.active]="isActive(cat.id)"
+            (click)="selectCategory(cat)">
+            <i class='bx' [ngClass]="cat.icon"></i>
+            <span>{{ cat.name }}</span>
+        </button>
+    </div>
+
+    <div class="sub-categories" *ngIf="selectedCategoryId && getSubCategories()">
+        <button *ngFor="let sub of getSubCategories()" class="sub-item" [class.active]="isSubActive(sub.id)"
+            (click)="selectSubCategoryById(sub.id)">
+            <span>{{ sub.name }}</span>
+        </button>
+    </div>
+</div>

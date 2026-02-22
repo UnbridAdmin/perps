@@ -1,0 +1,15 @@
+<div class="signals-list-container">
+    <div *ngIf="loading" class="loading-state">
+        <div class="shimmer-card" *ngFor="let i of [1,2,3]"></div>
+    </div>
+
+    <div *ngIf="!loading && signals.length === 0" class="empty-state">
+        <i class='bx bx-info-circle'></i>
+        <p>No signals found for this category.</p>
+    </div>
+
+    <div *ngIf="!loading && signals.length > 0" class="signals-grid">
+        <app-signal-card *ngFor="let signal of signals" [signal]="signal">
+        </app-signal-card>
+    </div>
+</div>

@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.unbrid.com/api',
+  apiUrl: 'https://envision-back.unbrid.com/envision/api/',
   MATIC: {
     chainId: 80002,
     name: 'Polygon Testnet',

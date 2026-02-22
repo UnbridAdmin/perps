@@ -1,0 +1,24 @@
+<div class="signals-module">
+    <header class="module-header">
+        <div class="header-content">
+            <h2 class="title">📡 Central de Señales</h2>
+            <p class="subtitle">Información crítica en tiempo real para subscriptores profesionales</p>
+        </div>
+        <div class="user-status">
+            <div class="subscription-badge">
+                <i class='bx bxs-crown'></i>
+                SUBSCRIBER PRO
+            </div>
+        </div>
+    </header>
+
+    <nav class="horizontal-nav">
+        <app-signals-nav [categories]="categories" (categorySelected)="onCategorySelected($event)">
+        </app-signals-nav>
+    </nav>
+
+    <main class="feed-content">
+        <app-signals-list [signals]="signals" [loading]="loading">
+        </app-signals-list>
+    </main>
+</div>

@@ -1,0 +1,243 @@
+@use '../../../../styles/variables' as *;
+
+.prediction-card {
+  border: 1px solid #222;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  background: #0d1117;
+  transition: all 0.2s;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    border-color: #333;
+    background: #0f141a;
+  }
+
+  &.live {
+    border-left: 4px solid #dc2626;
+  }
+}
+
+.prediction-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+
+  .post-menu-btn {
+    margin-left: auto;
+    color: #71767b;
+    font-size: 20px;
+  }
+}
+
+.prediction-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+
+  i {
+    font-size: 20px;
+  }
+}
+
+.prediction-info {
+  h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #e7e9ea;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .badge-type {
+      font-size: 10px;
+      background: #dc2626;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  p {
+    font-size: 13px;
+    color: #71767b;
+    margin: 4px 0 0 0;
+  }
+}
+
+.prediction-question {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  line-height: 1.3;
+  color: #e7e9ea;
+}
+
+.signal-context-info {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+
+  .league-tag {
+    font-size: 13px;
+    color: #94a3b8;
+  }
+
+  .minute-tag {
+    background: rgba(251, 191, 36, 0.1);
+    color: #fbbf24;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+}
+
+.signal-data-container {
+  background: #161a22;
+  border: 1px solid #222;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.market-highlight {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #222;
+  margin-bottom: 12px;
+
+  .market-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #94a3b8;
+  }
+
+  .market-value {
+    font-size: 18px;
+    font-weight: 800;
+    color: #fbbf24;
+
+    &[data-action="entry"] {
+      color: #4caf50;
+    }
+
+    &[data-action="exit"] {
+      color: #f44336;
+    }
+  }
+}
+
+.data-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.data-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #5e7797;
+    letter-spacing: 0.5px;
+  }
+
+  .value {
+    font-size: 15px;
+    font-weight: 700;
+    color: #eee;
+
+    &.odds {
+      color: #4ade80;
+    }
+
+    &.stake {
+      color: #f9a8d4;
+    }
+
+    small {
+      font-size: 11px;
+      color: #71767b;
+      font-weight: 400;
+    }
+  }
+}
+
+.note-section {
+  background: rgba(255, 255, 255, 0.02);
+  border-left: 2px solid #5e7797;
+  padding: 10px 14px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+
+  p {
+    font-size: 14px;
+    color: #a7bfe6;
+    font-style: italic;
+    margin: 0;
+  }
+}
+
+.prediction-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #222;
+  padding-top: 15px;
+}
+
+.action-btn {
+  background: transparent;
+  border: none;
+  color: #71767b;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  &:hover {
+    color: $primary-color;
+  }
+
+  &.volume-btn {
+    color: #4ade80;
+  }
+}
+
+.predict-btn {
+  background: #f97316;
+  color: #0d1117;
+  border: none;
+  font-weight: 700;
+  padding: 8px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #fb8b3c;
+    transform: scale(1.05);
+  }
+
+  &.live-btn {
+    box-shadow: 0 0 15px rgba(249, 115, 22, 0.3);
+  }
+}
