@@ -19,6 +19,8 @@ import { CreatePredictionComponent } from '../shared/create-prediction.component
 export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
   isSidebarExpanded = true;
   userAddress: string = '';
+  unbridBalance: number = 1250.75; // Placeholder balance
+
   private isDisconnecting: boolean = false;
   private subscriptions: Subscription = new Subscription();
 

@@ -102,7 +102,17 @@
         <li><a class="link_name" href="#">Setting</a></li>
       </ul>
     </li> -->
+    <li class="balance-container" *ngIf="userAddress">
+      <div class="balance-content">
+        <div class="balance-header">
+          <i class='bx bx-wallet'></i>
+          <span class="balance-label">Balance</span>
+        </div>
+        <span class="balance-amount">{{ unbridBalance | number:'1.2-2' }} Fierce</span>
+      </div>
+    </li>
     <li>
+
       <div class="profile-details">
         <div class="profile-content">
           <img src="https://sachinsamal.netlify.app/static/media/sachin-samal.d451ea9b3c53ed984bf7.png"
