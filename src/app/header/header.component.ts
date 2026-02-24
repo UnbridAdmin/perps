@@ -2,6 +2,7 @@ import { Component, EventEmitter, Output, Input, OnDestroy, OnInit } from '@angu
 import { CommonModule } from '@angular/common';
 import { CommonService } from '../shared/commonService';
 import { WalletConnectService } from '../services/walletconnect.service';
+import { AuthorizationService } from '../services/authorization.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -18,6 +19,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   showMoreCategories = false;
   activeTab: 'for-you' | 'trending' = 'for-you';
   userAddress: string = '';
+  isAuthenticated: boolean = false;
   private subscriptions: Subscription = new Subscription();
 
   categories = [
@@ -29,22 +31,32 @@ export class HeaderComponent implements OnInit, OnDestroy {
     { name: 'Culture', active: false }
   ];
 
-  constructor(private commonService: CommonService, private walletConnectService: WalletConnectService) {}
+  constructor(
+    private commonService: CommonService, 
+    private walletConnectService: WalletConnectService,
+    private authorizationService: AuthorizationService
+  ) {}
 
   ngOnInit() {
-    // Subscribe to user address updates (legacy)
+    // Inicializar estado de autenticación y dirección
+    this.isAuthenticated = this.authorizationService.isAuthenticated();
+    this.userAddress = this.isAuthenticated ? (this.commonService.getAccountAddress() || '') : '';
+
+    // Subscribe to user address updates
     this.subscriptions.add(
       this.commonService.updateUserAddress.subscribe(() => {
-        this.userAddress = this.commonService.getAccountAddress();
+        this.isAuthenticated = this.authorizationService.isAuthenticated();
+        this.userAddress = this.isAuthenticated ? (this.commonService.getAccountAddress() || '') : '';
       })
     );
 
-    // Subscribe to wallet state changes for real-time updates
+    // Subscribe to wallet state changes
     this.subscriptions.add(
       this.walletConnectService.walletState$.subscribe(state => {
-        if (state.isConnected && state.address) {
+        this.isAuthenticated = this.authorizationService.isAuthenticated();
+        if (state.isConnected && state.address && this.isAuthenticated) {
           this.userAddress = state.address;
-        } else {
+        } else if (!this.isAuthenticated) {
           this.userAddress = '';
         }
       })

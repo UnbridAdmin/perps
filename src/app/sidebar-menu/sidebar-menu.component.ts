@@ -4,6 +4,7 @@ import { RouterModule, Router } from '@angular/router';
 import { CommonService } from '../shared/commonService';
 import { WalletConnectService } from '../services/walletconnect.service';
 import { AuthorizationService } from '../services/authorization.service';
+import { SidebarMenuService } from './sidebar-menu.service';
 import { Subscription } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PremiumUpgradeDialogComponent } from '../premium-upgrade-dialog.component';
@@ -19,7 +20,9 @@ import { CreatePredictionComponent } from '../shared/create-prediction.component
 export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
   isSidebarExpanded = true;
   userAddress: string = '';
-  unbridBalance: number = 1250.75; // Placeholder balance
+  unbridBalance: number = 0;
+  username: string = '';
+  isAuthenticated: boolean = false;
 
   private isDisconnecting: boolean = false;
   private subscriptions: Subscription = new Subscription();
@@ -30,13 +33,29 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
     private commonService: CommonService,
     private walletConnectService: WalletConnectService,
     private authorizationService: AuthorizationService,
+    private sidebarMenuService: SidebarMenuService,
     private router: Router,
     private modalService: NgbModal
   ) {
+    // Initialize authentication state
+    this.isAuthenticated = this.authorizationService.isAuthenticated();
+
+    // Load user profile and wallet address if authenticated
+    if (this.isAuthenticated) {
+      this.loadUserProfile();
+      this.loadWalletAddress();
+    }
+
     // Subscribe to user address updates (legacy)
     this.subscriptions.add(
       this.commonService.updateUserAddress.subscribe(() => {
         this.userAddress = this.commonService.getAccountAddress();
+        // Update authentication state when user address changes
+        this.isAuthenticated = this.authorizationService.isAuthenticated();
+        if (this.isAuthenticated) {
+          this.loadUserProfile();
+          this.loadWalletAddress();
+        }
       })
     );
 
@@ -48,8 +67,41 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
         } else {
           this.userAddress = '';
         }
+        // Update authentication state when wallet state changes
+        this.isAuthenticated = this.authorizationService.isAuthenticated();
+        if (this.isAuthenticated) {
+          this.loadUserProfile();
+        }
       })
     );
+  }
+
+  private loadUserProfile(): void {
+    this.sidebarMenuService.getUserProfile().subscribe({
+      next: (response: any) => {
+        console.log("🚀 ~ SidebarMenuComponent ~ loadUserProfile ~ response:", response)
+        console.log(response);
+        if (response?.data) {
+          this.username = response.data[0].username || '';
+          this.unbridBalance = response.data[0].fierce_balance || 0;
+        }
+      },
+      error: (error) => {
+        console.error('Error loading user profile:', error);
+      }
+    });
+  }
+
+  private async loadWalletAddress(): Promise<void> {
+    try {
+      const address = await this.walletConnectService.getConnectedWalletAddress();
+      if (address) {
+        this.userAddress = address;
+      }
+    } catch (error) {
+      // Si falla, usar el address de commonService como fallback
+      this.userAddress = this.commonService.getAccountAddress() || '';
+    }
   }
 
   ngAfterViewInit() {

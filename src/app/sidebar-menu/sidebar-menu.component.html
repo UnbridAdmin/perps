@@ -75,10 +75,10 @@
         <span class="link_name">Social</span>
       </a>
     </li>
-    <li>
-      <a routerLink="/profile">
+    <li *ngIf="isAuthenticated">
+      <a [routerLink]="['/', username]">
         <i class='bx bx-cog'></i>
-        <span class="link_name">Profile</span>
+        <span class="link_name">{{username}}</span>
       </a>
     </li>
     <li>
@@ -102,7 +102,7 @@
         <li><a class="link_name" href="#">Setting</a></li>
       </ul>
     </li> -->
-    <li class="balance-container" *ngIf="userAddress">
+    <li class="balance-container" *ngIf="isAuthenticated">
       <div class="balance-content">
         <div class="balance-header">
           <i class='bx bx-wallet'></i>
@@ -113,16 +113,16 @@
     </li>
     <li>
 
-      <div class="profile-details">
+      <div class="profile-details" *ngIf="isAuthenticated">
         <div class="profile-content">
           <img src="https://sachinsamal.netlify.app/static/media/sachin-samal.d451ea9b3c53ed984bf7.png"
             alt="profileImg">
         </div>
         <div class="name-job">
-          <div class="profile_name">{{ truncateAddress(userAddress) }}</div>
-          <div class="job">Wallet Address</div>
+          <div class="profile_name">{{ username }}</div>
+          <div class="job">{{ truncateAddress(userAddress) }}</div>
         </div>
-        <i class='bx bx-log-out' *ngIf="userAddress" (click)="disconnectWallet()" style="cursor: pointer;"></i>
+        <i class='bx bx-log-out' (click)="disconnectWallet()" style="cursor: pointer;"></i>
       </div>
     </li>
   </ul>

@@ -96,7 +96,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
       this.isInitialized = true;
       console.log('✅ Aplicación inicializada correctamente');
-
+      const web3Modal = this.walletConnectService.getWeb3Modal();
+      web3Modal.close();
     } catch (error) {
       console.error('❌ Error en inicialización de app:', error);
       this.signing = true;
@@ -180,12 +181,20 @@ export class AppComponent implements OnInit, OnDestroy {
         // DESCONEXIÓN
         console.log('🔴 DESCONEXIÓN - Procesando...');
         this.handleImmediateDisconnect();
-        this.isFirstConnection = true; // Reset para próxima conexión
+        this.isFirstConnection = true;
       } else if (!prevAddress && newAddress) {
-        // RECONEXIÓN SIN SESIÓN PERSISTIDA
-        console.log('🔵 RECONEXIÓN - Procesando...');
-        this.processFirstConnection(newAddress);
-        this.isFirstConnection = false;
+        // RECONEXION: Verificar si ya está autenticado
+        if (this.authorizationService.isAuthenticated() &&
+            this.commonService.getAccountAddress()?.toLowerCase() === newAddress) {
+          console.log('🟢 RECONEXIÓN - Usuario ya autenticado, saltando firma');
+          this.commonService.saveAccountAddress(newAddress);
+          this.commonService.updateUserAddress.next(true);
+          this.isFirstConnection = false;
+        } else {
+          console.log('🔵 RECONEXIÓN - Procesando...');
+          this.processFirstConnection(newAddress);
+          this.isFirstConnection = false;
+        }
       }
 
       this.currentAccount = newAddress;

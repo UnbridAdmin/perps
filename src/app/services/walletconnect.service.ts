@@ -91,20 +91,17 @@ export class WalletConnectService implements OnDestroy {
     try {
       console.log('🔄 Iniciando inicialización de WalletConnect...');
 
-      // 1. Inicializar AppKit PRIMERO
+      // 1. RESTAURAR ESTADO PERSISTIDO PRIMERO (antes de inicializar AppKit)
+      await this.restoreConnectionState();
+
+      // 2. Inicializar AppKit
       await this.initializeAppKit();
 
-      // 2. Dar tiempo a AppKit para inicializar completamente
+      // 3. Dar tiempo a AppKit para inicializar completamente
       await this.waitForAppKitReady();
 
-      // 3. Verificar y actualizar el estado real de conexión
+      // 4. Verificar y actualizar el estado real de conexión
       await this.updateConnectionState();
-
-      // 4. Si no hay conexión activa, restaurar estado persistido
-      const currentState = this.walletStateSubject.value;
-      if (!currentState.isConnected) {
-        await this.restoreConnectionState();
-      }
 
       this.isServiceReady = true;
       console.log('✅ WalletConnect inicializado correctamente');
@@ -130,15 +127,16 @@ export class WalletConnectService implements OnDestroy {
       // Validar que el estado guardado tenga los campos necesarios
       if (state.isConnected && state.address && state.chainId) {
         // Restaurar el estado en el BehaviorSubject
-        this.walletStateSubject.next({
+        const restoredState = {
           isConnected: true,
           isConnecting: false,
           address: state.address,
           chainId: state.chainId,
           provider: null // Se establecerá después cuando AppKit esté listo
-        });
-
-        console.log('🔄 Estado de wallet restaurado temporalmente:', state.address);
+        };
+        
+        this.walletStateSubject.next(restoredState);
+        console.log('🔄 Estado de wallet restaurado y emitido:', state.address);
       } else {
         console.log('⚠️ Estado persistido inválido, limpiando...');
         this.clearPersistedState();
