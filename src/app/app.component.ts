@@ -327,10 +327,12 @@ export class AppComponent implements OnInit, OnDestroy {
         console.log('👤 Usuario existente detectado - Solicitando firma...');
         await this.handleExistingUser({ address });
       } else {
+        const web3Modal = this.walletConnectService.getWeb3Modal();
         console.log('🆕 Nuevo usuario detectado');
         this.signing = true;
         this.commonService.saveAccountAddress(address);
         this.commonService.updateUserAddress.next(true);
+        web3Modal.close();
       }
     } catch (error) {
       console.error('❌ Error en verificación de usuario:', error);
@@ -409,7 +411,7 @@ export class AppComponent implements OnInit, OnDestroy {
       const signatureData = await this.walletConnectService.signMessage(
         `Click to sign in and accept the Unbrid Terms of Service(https://unbrid.com/privacy-policy). Login with secure code:${this.commonService.generateUniqueUUID()}`,
       );
-
+      web3Modal.close();
       try {
         await this.authorizationService.ping().toPromise();
         await this.authorizationService.logout().toPromise();

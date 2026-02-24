@@ -232,7 +232,7 @@ export class WalletConnectService implements OnDestroy {
     if (!this.appKit) return;
 
     try {
-      // 1. Suscribirse a cambios de cuenta (ESENCIAL para TrustWallet y otros)
+      // 1. Suscribirse a cambios de cuenta (ESENCIAL para TODAS las wallets)
       const unsubAccount = this.appKit.subscribeAccount(async (account: any) => {
         console.log('� AppKit Account Changed:', account.address, 'Connected:', account.isConnected);
         await this.updateConnectionState();
