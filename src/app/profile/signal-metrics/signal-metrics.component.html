@@ -1,0 +1,29 @@
+<div class="metrics-list-container">
+  <div class="metrics-header">
+    <div class="total-stat">
+      <span class="value">12</span>
+      <span class="label">Total Signals</span>
+    </div>
+    <div class="time-filters">
+      <button class="time-filter">24h</button>
+      <button class="time-filter">7d</button>
+      <button class="time-filter active">30d</button>
+      <button class="time-filter">All</button>
+    </div>
+  </div>
+
+  <div class="metrics-list">
+    <div class="metric-item" *ngFor="let item of signalsData">
+      <div class="metric-main">
+        <span class="category-name">{{ item.category }}</span>
+        <div class="stars-container">
+          <span class="star" *ngFor="let star of getStars(item.rating)" [class.filled]="star === 1">★</span>
+          <span class="rating-value">{{ item.rating }}</span>
+        </div>
+      </div>
+      <div class="metric-side">
+        <span class="signal-count">{{ item.count }} Signals</span>
+      </div>
+    </div>
+  </div>
+</div>

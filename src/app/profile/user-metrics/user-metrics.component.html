@@ -1,30 +1,18 @@
 <div class="metrics-container">
   <div class="metrics-tabs">
-    <button
-      class="metric-tab"
-      [class.active]="activeTab === 'followers'"
-      (click)="setActiveTab('followers')">
+    <button class="metric-tab" [class.active]="activeTab === 'followers'" (click)="setActiveTab('followers')">
       <span class="metric-value">3.75K</span>
       <span class="metric-label">Followers</span>
     </button>
-    <button
-      class="metric-tab"
-      [class.active]="activeTab === 'accuracy'"
-      (click)="setActiveTab('accuracy')">
+    <button class="metric-tab" [class.active]="activeTab === 'accuracy'" (click)="setActiveTab('accuracy')">
       <span class="metric-value">94.2%</span>
       <span class="metric-label">Accuracy</span>
     </button>
-    <button
-      class="metric-tab"
-      [class.active]="activeTab === 'totems'"
-      (click)="setActiveTab('totems')">
+    <button class="metric-tab" [class.active]="activeTab === 'signals'" (click)="setActiveTab('signals')">
       <span class="metric-value">12</span>
-      <span class="metric-label">Totems</span>
+      <span class="metric-label">Signals</span>
     </button>
-    <button
-      class="metric-tab"
-      [class.active]="activeTab === 'earnings'"
-      (click)="setActiveTab('earnings')">
+    <button class="metric-tab" [class.active]="activeTab === 'earnings'" (click)="setActiveTab('earnings')">
       <span class="metric-value">$21.2</span>
       <span class="metric-label">Earnings</span>
     </button>
@@ -32,17 +20,22 @@
 
   <!-- Followers Content -->
   <div *ngIf="activeTab === 'followers'" class="metric-content">
-    <app-followers-metrics></app-followers-metrics>
+    <div class="simple-metric-display">
+      <span class="value">3,752</span>
+      <span class="label">Total Followers</span>
+    </div>
   </div>
 
   <!-- Accuracy Content -->
+
   <div *ngIf="activeTab === 'accuracy'" class="metric-content">
+
     <app-accuracy-metrics></app-accuracy-metrics>
   </div>
 
   <!-- Totems Content -->
-  <div *ngIf="activeTab === 'totems'" class="metric-content">
-    <app-totems-metrics></app-totems-metrics>
+  <div *ngIf="activeTab === 'signals'" class="metric-content">
+    <app-signal-metrics></app-signal-metrics>
   </div>
 
   <!-- Earnings Content -->

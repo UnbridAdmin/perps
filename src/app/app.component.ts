@@ -60,9 +60,15 @@ export class AppComponent implements OnInit, OnDestroy {
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((e: NavigationEnd) => {
         this.currentpath = e.url;
+        const mainPath = e.url.split('?')[0]; // Remove query params
         console.log('Current path:', this.currentpath);
-        this.isHomePage = e.url === '/' || e.url === '/home';
-        this.showNewsSidebar = this.isHomePage || e.url === '/profile';
+
+        this.isHomePage = mainPath === '/' || mainPath === '/home';
+
+        // Show sidebar on home, profile, and dynamic profiles (any route that isn't trade or login)
+        this.showNewsSidebar = this.isHomePage ||
+          mainPath.startsWith('/profile') ||
+          (!mainPath.startsWith('/trade') && !mainPath.startsWith('/login'));
       });
   }
 

@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FollowersMetricsComponent } from '../followers-metrics/followers-metrics.component';
 import { AccuracyMetricsComponent } from '../accuracy-metrics/accuracy-metrics.component';
-import { TotemsMetricsComponent } from '../totems-metrics/totems-metrics.component';
+import { SignalMetricsComponent } from '../signal-metrics/signal-metrics.component';
 import { EarningsMetricsComponent } from '../earnings-metrics/earnings-metrics.component';
 
 @Component({
@@ -10,18 +9,18 @@ import { EarningsMetricsComponent } from '../earnings-metrics/earnings-metrics.c
   standalone: true,
   imports: [
     CommonModule,
-    FollowersMetricsComponent,
     AccuracyMetricsComponent,
-    TotemsMetricsComponent,
+    SignalMetricsComponent,
     EarningsMetricsComponent
   ],
   templateUrl: './user-metrics.component.html',
   styleUrl: './user-metrics.component.scss'
 })
 export class UserMetricsComponent {
-  activeTab: string = 'followers';
+  activeTab: string = 'accuracy';
 
   setActiveTab(tab: string) {
     this.activeTab = tab;
   }
 }
+

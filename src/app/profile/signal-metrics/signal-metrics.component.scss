@@ -20,7 +20,7 @@
   .value {
     font-size: 28px;
     font-weight: 700;
-    color: #5b9bd5;
+    color: #c77dff;
     line-height: 1;
   }
 
@@ -52,9 +52,9 @@
   }
 
   &.active {
-    background: #5b9bd5;
+    background: #c77dff;
     color: #fff;
-    border-color: #5b9bd5;
+    border-color: #c77dff;
   }
 }
 
@@ -66,62 +66,59 @@
 
 .metric-item {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.metric-info {
-  display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.04);
+  }
+}
+
+.metric-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 
   .category-name {
     font-size: 15px;
     font-weight: 500;
     color: #e0e0e0;
   }
-
-  .metric-count {
-    font-size: 13px;
-    color: #888;
-  }
 }
 
-.progress-bar-container {
+.stars-container {
   display: flex;
   align-items: center;
-  gap: 12px;
-  height: 8px;
+  gap: 4px;
 
-  .progress-bar-bg {
-    flex: 1;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 4px;
-    overflow: hidden;
+  .star {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.1);
+
+    &.filled {
+      color: #ffb800;
+      text-shadow: 0 0 10px rgba(255, 184, 0, 0.3);
+    }
   }
 
-  // Adding the bg since I forgot in HTML
-  position: relative;
-  flex: 1;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 4px;
-  overflow: visible;
-
-  .progress-bar {
-    height: 100%;
-    background: linear-gradient(90deg, #5b9bd5, #88bef1);
-    border-radius: 4px;
-    box-shadow: 0 0 10px rgba(91, 155, 213, 0.3);
-  }
-
-  .percentage {
-    position: absolute;
-    right: 0;
-    top: -18px;
-    font-size: 11px;
-    color: #5b9bd5;
-    font-weight: 600;
+  .rating-value {
+    font-size: 12px;
+    color: #888;
+    margin-left: 4px;
   }
 }
 
+.metric-side {
+  .signal-count {
+    font-size: 14px;
+    font-weight: 600;
+    color: #c77dff;
+    background: rgba(199, 125, 255, 0.1);
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+}

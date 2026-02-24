@@ -7,7 +7,7 @@ import { ProfileInfoComponent } from './profile-info/profile-info.component';
 import { UserMetricsComponent } from './user-metrics/user-metrics.component';
 import { FollowersMetricsComponent } from './followers-metrics/followers-metrics.component';
 import { AccuracyMetricsComponent } from './accuracy-metrics/accuracy-metrics.component';
-import { TotemsMetricsComponent } from './totems-metrics/totems-metrics.component';
+import { SignalMetricsComponent } from './signal-metrics/signal-metrics.component';
 import { EarningsMetricsComponent } from './earnings-metrics/earnings-metrics.component';
 import { UserTabsComponent } from './user-tabs/user-tabs.component';
 import { MyPredictionsComponent } from './my-predictions/my-predictions.component';
@@ -23,7 +23,7 @@ import { MyPredictionsComponent } from './my-predictions/my-predictions.componen
     UserMetricsComponent,
     FollowersMetricsComponent,
     AccuracyMetricsComponent,
-    TotemsMetricsComponent,
+    SignalMetricsComponent,
     EarningsMetricsComponent,
     UserTabsComponent,
     MyPredictionsComponent
