@@ -19,6 +19,7 @@ import { EthersAdapter } from '@reown/appkit-adapter-ethers';
 import { createAppKit } from '@reown/appkit';
 import { polygon, polygonAmoy } from '@reown/appkit/networks';
 import { environment } from '../../environments/environment';
+import { CommonService } from '../shared/commonService';
 
 /**
  * @interface WalletState
@@ -64,7 +65,10 @@ export class WalletConnectService implements OnDestroy {
   private initializationPromise: Promise<void> | null = null;
   private isServiceReady = false;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private commonService: CommonService
+  ) {
     if (isPlatformBrowser(this.platformId)) {
       this.initializeService();
     }
@@ -178,10 +182,8 @@ export class WalletConnectService implements OnDestroy {
   private async initializeAppKit(): Promise<void> {
     return new Promise((resolve) => {
       try {
+        const networks = [polygon, polygonAmoy];
         const ethersAdapter = new EthersAdapter();
-
-        // Incluir ambas redes para mayor compatibilidad
-        const networks: any = [polygon, polygonAmoy];
         const defaultNetwork = environment.MATIC.chainId === 80002 ? polygonAmoy : polygon;
 
         this.appKit = createAppKit({
@@ -192,10 +194,14 @@ export class WalletConnectService implements OnDestroy {
           projectId: this.projectId,
           features: {
             analytics: true,
-            email: false, // Desactivar si no se usa para simplificar
-            socials: false
+            allWallets: true,
+            email: false,
+            socials: false,
+            swaps: false,
+            onramp: false,
           },
-        });
+          enableAuthentication: false, // DESACTIVAR firma interna de Reown
+        } as any);
 
         console.log('🔗 AppKit creado, configurando eventos...');
         this.subscribeToAppKitEvents();
@@ -208,6 +214,14 @@ export class WalletConnectService implements OnDestroy {
         resolve();
       }
     });
+  }
+
+  private siweSignatureData: any = null;
+
+  public getSiweSignature() {
+    const data = this.siweSignatureData;
+    this.siweSignatureData = null; // Limpiar después de leer
+    return data;
   }
 
   private subscribeToAppKitEvents(): void {
@@ -234,10 +248,22 @@ export class WalletConnectService implements OnDestroy {
 
       // 3. Suscribirse a eventos generales (opcional, para logs)
       const unsubEvents = this.appKit.subscribeEvents((event: any) => {
-        console.log('📡 AppKit Event:', event.type, event.data?.event);
+        const eventName = event.type || event.event || event.data?.event;
+        console.log('📡 AppKit Event:', eventName);
 
-        if (event.data?.event === 'DISCONNECT_SUCCESS') {
+        if (eventName === 'DISCONNECT_SUCCESS') {
           this.handleDisconnection();
+        }
+
+        // ESENCIAL: Detectar cuando se firma exitosamente a través del modal de Reown
+        if (eventName === 'SIGN_MESSAGE_SUCCESS') {
+          console.log('📝 Firma de SIWE/Reown exitosa');
+          this.updateConnectionState();
+        }
+
+        if (eventName === 'SIGN_MESSAGE_ERROR') {
+          console.log('❌ Error en firma de Reown');
+          this.connectingWallet.next(false);
         }
       });
       this.appKitSubscriptions.push(unsubEvents);
@@ -276,16 +302,22 @@ export class WalletConnectService implements OnDestroy {
 
   public async updateConnectionState(): Promise<void> {
     try {
-      if (!this.appKit) {
-        console.log('⚠️ AppKit no disponible para actualizar estado');
+      if (!this.appKit) return;
+
+      // Usar un bloque try para evitar que el error de "namespace" bloquee la UI
+      let account;
+      let network;
+      try {
+        account = this.appKit.getAccount('eip155');
+        network = this.appKit.getNetwork('eip155');
+      } catch (e) {
+        console.log('ℹ️ Esperando a que el namespace eip155 esté disponible...');
         return;
       }
 
-      const account = this.appKit.getAccount();
-      const network = this.appKit.getNetwork();
       const provider = this.appKit.getWalletProvider();
 
-      if (!account.isConnected || !account.address) {
+      if (!account || !account.isConnected || !account.address) {
         if (this.walletStateSubject.value.isConnected) {
           console.log('🔌 No hay cuenta conectada, manejando desconexión...');
           this.handleDisconnection();
@@ -294,7 +326,7 @@ export class WalletConnectService implements OnDestroy {
       }
 
       const address = account.address;
-      const chainId = network.chainId ? Number(network.chainId) : null;
+      const chainId = network?.chainId ? Number(network.chainId) : null;
 
       const newState: WalletState = {
         isConnected: true,

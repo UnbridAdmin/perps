@@ -121,20 +121,17 @@ export class AppComponent implements OnInit, OnDestroy {
       });
     }
 
-    // Suscribirse a eventos del modal
+    // Suscribirse a eventos del modal (para debugging)
     if (web3Modal?.subscribeEvents) {
-      web3Modal.subscribeEvents(this.handleWalletEvents.bind(this));
+      web3Modal.subscribeEvents((event: any) => {
+        const eventName = event.type || event.event || (event.data?.event);
+        console.log("📡 Evento de modal Reown:", eventName);
+        this.handleWalletEvents(event);
+      });
     }
 
-    // Obtener cuenta inicial del modal (si existe)
-    const initialAccount = web3Modal?.getAccount();
-    const modalAddress = initialAccount?.address?.toLowerCase() || null;
-
-    // Solo establecer como cuenta actual si no hay una sesión persistida
-    if (!this.currentAccount && modalAddress) {
-      this.currentAccount = modalAddress;
-      console.log('📍 Cuenta inicial detectada del modal:', this.currentAccount);
-    }
+    // ELIMINADO: getAccount('eip155') prematuro que causaba error de namespace
+    console.log('✅ Detección de cuenta configurada (vía suscripción)');
   }
 
   private handleWalletEvents(event: any): void {
@@ -203,10 +200,21 @@ export class AppComponent implements OnInit, OnDestroy {
     try {
       console.log('🎯 Procesando primera conexión para:', address);
 
-      // 1. Guardar cuenta inmediatamente
+      // 1. CERRAR ACTIVAMENTE el modal de Reown (si está abierto)
+      // No esperamos a que se cierre solo — lo cerramos nosotros
+      const web3Modal = this.walletConnectService.getWeb3Modal();
+      if (web3Modal && web3Modal.getIsModalOpen?.()) {
+        console.log('🚪 Cerrando modal de Reown activamente...');
+        await web3Modal.close();
+      }
+
+      // Pequeño margen para animación de cierre
+      await new Promise(resolve => setTimeout(resolve, 600));
+
+      // 2. Guardar cuenta
       this.commonService.saveAccountAddress(address);
 
-      // 2. Verificar si es usuario existente o nuevo
+      // 3. Verificar si es usuario existente o nuevo
       await this.checkUserAndProceed(address);
 
     } catch (error) {
@@ -295,6 +303,15 @@ export class AppComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // Si ya estamos autenticados para esta dirección, no pedir firma de nuevo
+    if (this.authorizationService.isAuthenticated() &&
+      this.commonService.getAccountAddress()?.toLowerCase() === address.toLowerCase()) {
+      console.log('✅ Usuario ya autenticado, saltando firma.');
+      this.isLoggingIn = false;
+      this.commonService.updateUserAddress.next(true);
+      return;
+    }
+
     this.isLoggingIn = true;
     this.signing = false;
     this.commonService.signatureProcessing?.next(true);
@@ -312,7 +329,6 @@ export class AppComponent implements OnInit, OnDestroy {
       } else {
         console.log('🆕 Nuevo usuario detectado');
         this.signing = true;
-        // For perps, we don't navigate, just save address
         this.commonService.saveAccountAddress(address);
         this.commonService.updateUserAddress.next(true);
       }
@@ -330,13 +346,23 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   private async processAccountChange(previous: string, current: string): Promise<void> {
     try {
-      // 1. Limpiar sesión anterior RÁPIDO
+      console.log('⚡ Procesando cambio de cuenta...');
+
+      // 1. CERRAR ACTIVAMENTE el modal de Reown (si está abierto)
+      const web3Modal = this.walletConnectService.getWeb3Modal();
+      if (web3Modal && web3Modal.getIsModalOpen?.()) {
+        console.log('🚪 Cerrando modal de Reown activamente...');
+        await web3Modal.close();
+      }
+      await new Promise(resolve => setTimeout(resolve, 600));
+
+      // 2. Limpiar sesión anterior
       await this.quickCleanPreviousSession();
 
-      // 2. Guardar nueva cuenta
+      // 3. Guardar nueva cuenta
       this.commonService.saveAccountAddress(current);
 
-      // 3. SOLICITAR FIRMA INMEDIATAMENTE
+      // 4. Solicitar firma
       await this.checkUserAndProceed(current);
 
     } catch (error) {
@@ -369,6 +395,17 @@ export class AppComponent implements OnInit, OnDestroy {
     if (this.isDisconnecting) return;
 
     try {
+      // 1. Forzar el cierre de cualquier modal de Reown que haya quedado abierto
+      const web3Modal = this.walletConnectService.getWeb3Modal();
+      if (web3Modal && web3Modal.getIsModalOpen?.()) {
+        console.log('🚪 Cerrando modal de Reown antes de pedir nuestra firma...');
+        await web3Modal.close();
+        // Pequeño delay para que el modal termine de cerrarse visualmente
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+
+      // 2. Pedir nuestra firma (la única)
+      console.log('🔄 Solicitando nuestra firma de Unbrid...');
       const signatureData = await this.walletConnectService.signMessage(
         `Click to sign in and accept the Unbrid Terms of Service(https://unbrid.com/privacy-policy). Login with secure code:${this.commonService.generateUniqueUUID()}`,
       );
