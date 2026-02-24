@@ -113,10 +113,12 @@ export class AppComponent implements OnInit, OnDestroy {
   private setupImmediateAccountChangeDetection(): void {
     const web3Modal = this.walletConnectService.getWeb3Modal();
 
-    // Suscribirse a cambios de proveedor (PRINCIPAL)
-    if (web3Modal && typeof web3Modal.subscribeWalletInfo === 'function') {
-      console.log('🔍 Configurando detección inmediata de cambios de cuenta...');
-      web3Modal.subscribeWalletInfo(this.handleImmediateAccountChange.bind(this));
+    // Suscribirse a cambios de cuenta (FORMA CORRECTA Y ESTÁNDAR)
+    if (web3Modal && typeof web3Modal.subscribeAccount === 'function') {
+      console.log('🔍 Configurando detección de cuenta con subscribeAccount...');
+      web3Modal.subscribeAccount((account: any) => {
+        this.handleImmediateAccountChange(account);
+      });
     }
 
     // Suscribirse a eventos del modal
@@ -155,9 +157,7 @@ export class AppComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const web3Modal = this.walletConnectService.getWeb3Modal();
-    const changedAccount = web3Modal?.getAccount();
-    const newAddress = changedAccount?.address?.toLowerCase() || null;
+    const newAddress = info?.address?.toLowerCase() || null;
     const prevAddress = this.currentAccount;
 
     // Solo procesar si hay un cambio real

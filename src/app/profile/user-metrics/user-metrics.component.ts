@@ -17,7 +17,7 @@ import { EarningsMetricsComponent } from '../earnings-metrics/earnings-metrics.c
   styleUrl: './user-metrics.component.scss'
 })
 export class UserMetricsComponent {
-  activeTab: string = 'accuracy';
+  activeTab: string | null = null;
 
   setActiveTab(tab: string) {
     this.activeTab = tab;

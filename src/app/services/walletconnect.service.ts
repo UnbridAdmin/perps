@@ -179,14 +179,22 @@ export class WalletConnectService implements OnDestroy {
     return new Promise((resolve) => {
       try {
         const ethersAdapter = new EthersAdapter();
-        const network = environment.MATIC.chainId === 80002 ? polygonAmoy : polygon;
+
+        // Incluir ambas redes para mayor compatibilidad
+        const networks: any = [polygon, polygonAmoy];
+        const defaultNetwork = environment.MATIC.chainId === 80002 ? polygonAmoy : polygon;
 
         this.appKit = createAppKit({
           adapters: [ethersAdapter],
-          networks: [network],
+          networks: networks,
+          defaultNetwork: defaultNetwork,
           metadata: environment.WALLETCONNEC,
           projectId: this.projectId,
-          features: { analytics: true },
+          features: {
+            analytics: true,
+            email: false, // Desactivar si no se usa para simplificar
+            socials: false
+          },
         });
 
         console.log('🔗 AppKit creado, configurando eventos...');
@@ -210,29 +218,30 @@ export class WalletConnectService implements OnDestroy {
     if (!this.appKit) return;
 
     try {
-      const onEvents = this.appKit.subscribeEvents(async (event: any) => {
+      // 1. Suscribirse a cambios de cuenta (ESENCIAL para TrustWallet y otros)
+      const unsubAccount = this.appKit.subscribeAccount(async (account: any) => {
+        console.log('� AppKit Account Changed:', account.address, 'Connected:', account.isConnected);
+        await this.updateConnectionState();
+      });
+      this.appKitSubscriptions.push(unsubAccount);
+
+      // 2. Suscribirse a cambios de red
+      const unsubNetwork = this.appKit.subscribeNetwork(async (network: any) => {
+        console.log('🌐 AppKit Network Changed:', network.chainId);
+        await this.updateConnectionState();
+      });
+      this.appKitSubscriptions.push(unsubNetwork);
+
+      // 3. Suscribirse a eventos generales (opcional, para logs)
+      const unsubEvents = this.appKit.subscribeEvents((event: any) => {
         console.log('📡 AppKit Event:', event.type, event.data?.event);
 
-        switch (event.type) {
-          case 'accountsChanged':
-          case 'chainChanged':
-          case 'connectionChanged':
-            await this.updateConnectionState();
-            break;
-        }
-
-        if (event.data?.event === 'CONNECT_SUCCESS') {
-          console.log('🎉 Conexión exitosa detectada');
-          await this.updateConnectionState();
-        }
-
         if (event.data?.event === 'DISCONNECT_SUCCESS') {
-          console.log('👋 Desconexión detectada');
           this.handleDisconnection();
         }
       });
+      this.appKitSubscriptions.push(unsubEvents);
 
-      this.appKitSubscriptions.push(onEvents);
     } catch (error) {
       console.error('❌ Error suscribiendo a eventos AppKit:', error);
     }
@@ -272,40 +281,40 @@ export class WalletConnectService implements OnDestroy {
         return;
       }
 
+      const account = this.appKit.getAccount();
+      const network = this.appKit.getNetwork();
       const provider = this.appKit.getWalletProvider();
-      if (!provider) {
-        // Solo actualizar si actualmente creemos que estamos conectados
+
+      if (!account.isConnected || !account.address) {
         if (this.walletStateSubject.value.isConnected) {
-          console.log('🔌 Provider no disponible, desconectando...');
+          console.log('🔌 No hay cuenta conectada, manejando desconexión...');
           this.handleDisconnection();
         }
         return;
       }
 
-      const ethersProvider = new ethers.BrowserProvider(provider);
-      const signer = await ethersProvider.getSigner();
-      const address = await signer.getAddress();
-      const network = await ethersProvider.getNetwork();
-      const chainId = Number(network.chainId);
+      const address = account.address;
+      const chainId = network.chainId ? Number(network.chainId) : null;
 
       const newState: WalletState = {
         isConnected: true,
         isConnecting: false,
-        address,
-        chainId,
-        provider,
+        address: address,
+        chainId: chainId,
+        provider: provider,
       };
 
       // Solo actualizar si realmente hay cambios
       const currentState = this.walletStateSubject.value;
       if (
-        currentState.address !== newState.address ||
+        currentState.address?.toLowerCase() !== newState.address?.toLowerCase() ||
         currentState.chainId !== newState.chainId ||
         !currentState.isConnected
       ) {
         console.log('🔄 Actualizando estado de conexión:', {
           address: newState.address,
-          chainId: newState.chainId
+          chainId: newState.chainId,
+          isConnected: newState.isConnected
         });
 
         this.walletStateSubject.next(newState);
@@ -314,7 +323,6 @@ export class WalletConnectService implements OnDestroy {
 
     } catch (error) {
       console.error('❌ Error actualizando estado de conexión:', error);
-      // Solo desconectar si actualmente estamos conectados
       if (this.walletStateSubject.value.isConnected) {
         this.handleDisconnection();
       }
@@ -381,8 +389,11 @@ export class WalletConnectService implements OnDestroy {
   }
 
   async signMessage(message: string) {
-    const provider = new BrowserProvider(this.appKit.getWalletProvider());
-    const signer = await provider.getSigner();
+    const signer = await this.getSigner();
+    if (!signer) {
+      throw new Error('Signer not available. Please ensure your wallet is connected.');
+    }
+
     const signature = await signer.signMessage(message);
     return {
       signature,
