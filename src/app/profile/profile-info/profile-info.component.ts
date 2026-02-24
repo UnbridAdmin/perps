@@ -18,6 +18,7 @@ export class ProfileInfoComponent implements OnInit {
   public userProfile: UserProfileResponse | null = null;
   public isLoading: boolean = true;
   public errorMessage: string | null = null;
+  public isOwnProfile: boolean = false;
 
   constructor(
     private profileService: ProfileInfoService,
@@ -42,6 +43,8 @@ export class ProfileInfoComponent implements OnInit {
         next: (resp: any) => {
           if (resp.data && resp.data.length > 0) {
             this.userProfile = resp.data[0];
+            // Check if viewing own profile
+            this.checkIfOwnProfile();
           }
           this.isLoading = false;
         },
@@ -57,6 +60,7 @@ export class ProfileInfoComponent implements OnInit {
         next: (resp: any) => {
           if (resp.data && resp.data.length > 0) {
             this.userProfile = resp.data[0];
+            this.isOwnProfile = true;
           }
           this.isLoading = false;
         },
@@ -69,6 +73,22 @@ export class ProfileInfoComponent implements OnInit {
     } else {
       this.isLoading = false;
       this.errorMessage = 'No profile information available.';
+    }
+  }
+
+  private checkIfOwnProfile(): void {
+    if (this.authService.isAuthenticated() && this.userProfile) {
+      this.profileService.getUserProfile().subscribe({
+        next: (resp: any) => {
+          if (resp.data && resp.data.length > 0) {
+            const ownUsername = resp.data[0].username;
+            this.isOwnProfile = ownUsername === this.userProfile?.username;
+          }
+        },
+        error: () => {
+          this.isOwnProfile = false;
+        }
+      });
     }
   }
 

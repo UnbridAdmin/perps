@@ -28,7 +28,10 @@
     </div>
 
     <!-- Follow Button -->
-    <button class="follow-btn">
+    <button class="follow-btn" *ngIf="isOwnProfile">
+      <span>☰</span> Edit Profile
+    </button>
+    <button class="follow-btn" *ngIf="!isOwnProfile">
       <span>☰</span> Follow
     </button>
   </div>
