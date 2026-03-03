@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @use './styles/variables' as *;
+@use "../src/scss/components.scss";
 
 html,
 body {
@@ -69,6 +70,22 @@ body {
 
 
 /*Modal*/
+
+// Edit Profile Modal Window Overrides
+.edit-profile-modal-window {
+  .modal-dialog {
+    //max-width: 520px;
+  }
+
+  /*.modal-content {
+    background-color: #0a0a0f !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 24px !important;
+    overflow: hidden !important;
+    box-shadow: 0 32px 80px rgba(0, 0, 0, 0.6) !important;
+  }*/
+}
+
 .modal-dialog {
   //display: flex;
   //align-items: center;

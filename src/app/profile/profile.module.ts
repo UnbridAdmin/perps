@@ -11,6 +11,7 @@ import { SignalMetricsComponent } from './signal-metrics/signal-metrics.componen
 import { EarningsMetricsComponent } from './earnings-metrics/earnings-metrics.component';
 import { UserTabsComponent } from './user-tabs/user-tabs.component';
 import { MyPredictionsComponent } from './my-predictions/my-predictions.component';
+import { EditProfileModalComponent } from './edit-profile-modal/edit-profile-modal.component';
 
 
 @NgModule({
@@ -26,7 +27,8 @@ import { MyPredictionsComponent } from './my-predictions/my-predictions.componen
     SignalMetricsComponent,
     EarningsMetricsComponent,
     UserTabsComponent,
-    MyPredictionsComponent
+    MyPredictionsComponent,
+    EditProfileModalComponent
   ]
 })
 export class ProfileModule { }

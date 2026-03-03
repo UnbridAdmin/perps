@@ -28,7 +28,7 @@
     </div>
 
     <!-- Follow Button -->
-    <button class="follow-btn" *ngIf="isOwnProfile">
+    <button class="follow-btn" *ngIf="isOwnProfile" (click)="openEditProfileModal()">
       <span>☰</span> Edit Profile
     </button>
     <button class="follow-btn" *ngIf="!isOwnProfile">
@@ -38,8 +38,16 @@
 
   <!-- Profile Section -->
   <div class="profile-section">
-    <div class="profile-avatar"
-      [style.backgroundImage]="userProfile.url_avatar ? 'url(' + userProfile.url_avatar + ')' : ''"></div>
+    <div class="profile-avatar-wrapper">
+      <!-- Outer border ring -->
+      <div class="profile-avatar-ring"></div>
+      <!-- Avatar container with aspect ratio keeper -->
+      <div class="profile-avatar-container">
+        <div class="profile-avatar-aspect-ratio"></div>
+        <div class="profile-avatar"
+          [style.backgroundImage]="userProfile.url_avatar ? 'url(' + userProfile.url_avatar + ')' : ''"></div>
+      </div>
+    </div>
 
     <div class="username-container">
       <div class="username">{{ userProfile.username }}</div>

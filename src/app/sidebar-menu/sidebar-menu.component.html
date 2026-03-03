@@ -75,10 +75,16 @@
         <span class="link_name">Social</span>
       </a>
     </li>
+    <li>
+      <a href="https://app.unbrid.com" target="_blank">
+        <i class='bx bx-compass'></i>
+        <span class="link_name">RWA</span>
+      </a>
+    </li>
     <li *ngIf="isAuthenticated">
       <a [routerLink]="['/', username]">
         <i class='bx bx-cog'></i>
-        <span class="link_name">{{username}}</span>
+        <span class="link_name">Profile</span>
       </a>
     </li>
     <li>

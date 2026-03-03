@@ -1,0 +1,168 @@
+<div class="modal-wrapper">
+    <!-- Modal Header -->
+    <div class="modal-header">
+        <button class="btn-close-action" (click)="activeModal.dismiss()" aria-label="Close">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+        </button>
+        <button class="btn btn-success btn-save-action" (click)="saveProfile()">Guardar</button>
+    </div>
+
+    <!-- Media Popovers (Banner/Avatar Config) -->
+    <!-- Banner URL Popover -->
+    <div class="popover-overlay" *ngIf="showBannerPanel">
+        <div class="popover-backdrop" (click)="closeBannerPanel()"></div>
+        <div class="popover-card">
+            <div class="popover-header">
+                <h3>Imagen de portada</h3>
+                <button class="mini-close" (click)="closeBannerPanel()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
+                        <path d="M18 6L6 18M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="popover-body">
+                <p class="popover-tip">Inserta una URL directa para la nueva imagen de portada.</p>
+                <div class="dimension-info-box">
+                    <div class="dimension-item">
+                        <span class="dimension-label">Tamaño ideal:</span>
+                        <span class="dimension-value">1200 x 300 px</span>
+                    </div>
+                    <div class="dimension-hint">Proporción 4:1 para mejor visualización</div>
+                </div>
+                <div class="input-action-row">
+                    <input type="url" class="modern-input" [(ngModel)]="bannerUrlInput"
+                        [class.is-error]="bannerStatusClass === 'err'" [class.is-success]="bannerStatusClass === 'ok'"
+                        placeholder="https://example.com/banner.jpg" (keydown.enter)="applyBannerUrl()">
+                    <button class="btn-apply-action" (click)="applyBannerUrl()">Aplicar</button>
+                </div>
+                <div class="status-msg" [ngClass]="bannerStatusClass">{{ bannerStatus }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Avatar URL Popover -->
+    <div class="popover-overlay" *ngIf="showAvatarPanel">
+        <div class="popover-backdrop" (click)="closeAvatarPanel()"></div>
+        <div class="popover-card">
+            <div class="popover-header">
+                <h3>Foto de perfil</h3>
+                <button class="mini-close" (click)="closeAvatarPanel()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
+                        <path d="M18 6L6 18M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="popover-body">
+                <p class="popover-tip">Utiliza una URL para mostrar tu foto de perfil personalizada.</p>
+                <div class="dimension-info-box">
+                    <div class="dimension-item">
+                        <span class="dimension-label">Tamaño ideal:</span>
+                        <span class="dimension-value">600 x 600 px</span>
+                    </div>
+                    <div class="dimension-hint">Imagen cuadrada para máxima calidad</div>
+                </div>
+                <div class="input-action-row">
+                    <input type="url" class="modern-input" [(ngModel)]="avatarUrlInput"
+                        [class.is-error]="avatarStatusClass === 'err'" [class.is-success]="avatarStatusClass === 'ok'"
+                        placeholder="https://example.com/avatar.jpg" (keydown.enter)="applyAvatarUrl()">
+                    <button class="btn-apply-action" (click)="applyAvatarUrl()">Aplicar</button>
+                </div>
+                <div class="status-msg" [ngClass]="avatarStatusClass">{{ avatarStatus }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-scroll-area">
+
+        <!-- Profile Preview Section (Banner & Avatar) -->
+        <div class="profile-preview-section">
+            <div class="banner-wrapper" (click)="toggleBannerPanel()">
+                <div class="banner-placeholder-state" *ngIf="!editedProfile.url_banner">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.2">
+                        <rect x="3" y="3" width="18" height="18" rx="3" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <path d="M21 15l-5-5L5 21" />
+                    </svg>
+                    <span>Subir Portada</span>
+                </div>
+                <img *ngIf="editedProfile.url_banner" [src]="editedProfile.url_banner" class="banner-image"
+                    alt="Profile Banner" (error)="onImgError($event)" (load)="onImgLoad($event)">
+                <div class="banner-edit-overlay">
+                    <div class="edit-btn-pill">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" />
+                            <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" />
+                        </svg>
+                        Cambiar Portada
+                    </div>
+                </div>
+            </div>
+
+            <div class="avatar-housing">
+                <div class="avatar-outer-ring" (click)="toggleAvatarPanel()">
+                    <div class="avatar-initials" *ngIf="!editedProfile.url_avatar">
+                        {{ getInitials(editedProfile.username) }}
+                    </div>
+                    <img *ngIf="editedProfile.url_avatar" [src]="editedProfile.url_avatar" class="avatar-actual"
+                        alt="User Avatar" (error)="onImgError($event)" (load)="onImgLoad($event)">
+                    <div class="avatar-edit-overlay">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z">
+                            </path>
+                            <circle cx="12" cy="13" r="4"></circle>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="profile-meta-quick">
+                    <h4 class="profile-handle">{{ editedProfile.username }}</h4>
+                    <div class="info-badge">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M12 16v-4M12 8h.01" />
+                        </svg>
+                        Identidad visual
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <!-- Inputs Section -->
+        <div class="form-inputs-container">
+            <div class="input-stack">
+                <div class="input-box">
+                    <label class="floating-label">Username</label>
+                    <input type="text" class="form-input-control" [(ngModel)]="editedProfile.username" maxlength="50"
+                        placeholder="Tu nombre">
+                    <div class="input-footer">
+                        <span class="count-indicator" [class.near-limit]="(editedProfile.username?.length || 0) > 40">
+                            {{ editedProfile.username?.length || 0 }}/50
+                        </span>
+                    </div>
+                </div>
+
+                <div class="input-box">
+                    <label class="floating-label">Biografía</label>
+                    <textarea class="form-textarea-control" [(ngModel)]="editedProfile.description" maxlength="2500"
+                        placeholder="Escribe algo sobre ti..."></textarea>
+                    <div class="input-footer">
+                        <span class="count-indicator"
+                            [class.near-limit]="(editedProfile.description?.length || 0) > 130">
+                            {{ editedProfile.description?.length || 0 }}/2500
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

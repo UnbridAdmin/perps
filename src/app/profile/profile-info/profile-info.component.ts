@@ -5,6 +5,8 @@ import { ProfileInfoService } from './profile-info.service';
 import { AuthorizationService } from '../../services/authorization.service';
 import { WalletConnectService } from '../../services/walletconnect.service';
 import { UserProfileResponse } from '../../shared/models/user-profile.model';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { EditProfileModalComponent } from '../edit-profile-modal/edit-profile-modal.component';
 
 @Component({
   selector: 'app-profile-info',
@@ -24,7 +26,8 @@ export class ProfileInfoComponent implements OnInit {
     private profileService: ProfileInfoService,
     private authService: AuthorizationService,
     private walletService: WalletConnectService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private modalService: NgbModal
   ) { }
 
   ngOnInit(): void {
@@ -90,6 +93,29 @@ export class ProfileInfoComponent implements OnInit {
         }
       });
     }
+  }
+
+  public openEditProfileModal(): void {
+    console.log('Opening edit profile modal');
+    if (!this.userProfile) return;
+
+    const modalRef = this.modalService.open(EditProfileModalComponent, {
+      centered: true,
+      backdrop: 'static',
+      windowClass: 'edit-profile-modal-window'
+    });
+
+    modalRef.componentInstance.userProfile = this.userProfile;
+
+    modalRef.result.then((result) => {
+      if (result) {
+        console.log('Profile updated:', result);
+        // Here we would call the update service and then reload
+        this.userProfile = { ...this.userProfile, ...result };
+      }
+    }, (reason) => {
+      // Dismissed
+    });
   }
 
 }
