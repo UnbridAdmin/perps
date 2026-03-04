@@ -2,11 +2,11 @@ export const environment = {
   production: true,
   apiUrl: 'https://envision-back.unbrid.com/envision/api/',
   MATIC: {
-    chainId: 80002,
-    name: 'Polygon Testnet',
-    currency: 'MATIC',
-    explorerUrl: 'https://amoy.polygonscan.com/',
-    rpcUrl: 'https://rpc-amoy.polygon.technology/',
+    chainId: 137,
+    name: 'Polygon Mainnet',
+    currency: 'POL',
+    explorerUrl: 'https://polygonscan.com',
+    rpcUrl: 'https://polygon-rpc.com/',
   },
   ETHEREUM: {
     chainId: 11155111,
@@ -21,9 +21,9 @@ export const environment = {
     url: 'https://app.unbrid.com',
     icons: ['https://app.unbrid.com/'],
     projectId: 'f3f854530d520e7e0480a24ac2bf79c7',
-    chains: [80002],
+    chains: [137],
   },
-  VALIDCHAINS: [80002],
+  VALIDCHAINS: [137],
   NAMECHAINS: [
     {
       chainId: 11155111,
@@ -31,14 +31,14 @@ export const environment = {
       name: 'ETH',
     },
     {
-      chainId: 80002,
-      hexChainId: '0x13882',
-      name: 'MATIC',
+      chainId: 137,
+      hexChainId: '0x89',
+      name: 'POL',
     },
   ],
   CHAINPOSITION: 1,
   DECIMALSUSDT: 18,
-  DECIMALFIERCE: 18,
+  DECIMALFIERCE: 6,
   FIERCECONTRACTADDRESS: '0x443f831eDC6e87044a6E9C18a06b159B447CA13C', // TODO: Replace with actual contract address
   USDTPolyABI: [
     {
