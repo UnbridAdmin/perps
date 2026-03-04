@@ -6,7 +6,10 @@
                 <path d="M18 6L6 18M6 6l12 12" />
             </svg>
         </button>
-        <button class="btn btn-success btn-save-action" (click)="saveProfile()">Guardar</button>
+        <button class="btn btn-success btn-save-action" (click)="saveProfile()" [disabled]="isLoading">
+            <span *ngIf="!isLoading">Guardar</span>
+            <span *ngIf="isLoading">Guardando...</span>
+        </button>
     </div>
 
     <!-- Media Popovers (Banner/Avatar Config) -->
@@ -142,12 +145,16 @@
             <div class="input-stack">
                 <div class="input-box">
                     <label class="floating-label">Username</label>
-                    <input type="text" class="form-input-control" [(ngModel)]="editedProfile.username" maxlength="50"
-                        placeholder="Tu nombre">
+                    <input type="text" class="form-input-control" [(ngModel)]="editedProfile.username" maxlength="20"
+                        placeholder="Tu nombre" [class.is-error]="errorMessage !== ''">
                     <div class="input-footer">
-                        <span class="count-indicator" [class.near-limit]="(editedProfile.username?.length || 0) > 40">
-                            {{ editedProfile.username?.length || 0 }}/50
+                        <span class="count-indicator" [class.near-limit]="(editedProfile.username?.length || 0) > 15">
+                            {{ editedProfile.username?.length || 0 }}/20
                         </span>
+                    </div>
+                    <div class="error-message" *ngIf="errorMessage"
+                        style="color: #ff4d4f; font-size: 13px; margin-top: 6px; font-weight: 500;">
+                        ⚠ {{ errorMessage }}
                     </div>
                 </div>
 

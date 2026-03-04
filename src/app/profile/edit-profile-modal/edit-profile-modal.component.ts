@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { UserProfileResponse } from '../../shared/models/user-profile.model';
+import { EditProfileModalService } from './edit-profile-modal.service';
 
 @Component({
   selector: 'app-edit-profile-modal',
@@ -17,17 +18,23 @@ export class EditProfileModalComponent implements OnInit {
   public editedProfile: any = {};
   public showBannerPanel: boolean = false;
   public showAvatarPanel: boolean = false;
-  
+
   public bannerUrlInput: string = '';
   public avatarUrlInput: string = '';
-  
+
   public bannerStatus: string = '';
   public avatarStatus: string = '';
-  
+
   public bannerStatusClass: string = '';
   public avatarStatusClass: string = '';
 
-  constructor(public activeModal: NgbActiveModal) { }
+  public errorMessage: string = '';
+  public isLoading: boolean = false;
+
+  constructor(
+    public activeModal: NgbActiveModal,
+    private editProfileService: EditProfileModalService
+  ) { }
 
   ngOnInit(): void {
     if (this.userProfile) {
@@ -68,7 +75,7 @@ export class EditProfileModalComponent implements OnInit {
     }
     this.bannerStatus = '⏳ Loading preview...';
     this.bannerStatusClass = 'loading';
-    
+
     this.tryLoadImage(this.bannerUrlInput, (success) => {
       if (success) {
         this.editedProfile.url_banner = this.bannerUrlInput;
@@ -90,7 +97,7 @@ export class EditProfileModalComponent implements OnInit {
     }
     this.avatarStatus = '⏳ Loading preview...';
     this.avatarStatusClass = 'loading';
-    
+
     this.tryLoadImage(this.avatarUrlInput, (success) => {
       if (success) {
         this.editedProfile.url_avatar = this.avatarUrlInput;
@@ -112,15 +119,60 @@ export class EditProfileModalComponent implements OnInit {
   }
 
   saveProfile() {
-    // In a real scenario, we would call a service here
-    // For now we just return the edited profile to the caller
-    this.activeModal.close(this.editedProfile);
+    this.errorMessage = '';
+    const rawUsername = this.editedProfile.username || '';
+
+    if (!rawUsername.trim()) {
+      this.errorMessage = 'El nombre de usuario es requerido.';
+      return;
+    }
+
+    if (rawUsername.includes(' ')) {
+      this.errorMessage = 'El nombre de usuario no puede contener espacios.';
+      return;
+    }
+
+    if (rawUsername.length < 5 || rawUsername.length > 20) {
+      this.errorMessage = 'El nombre de usuario debe tener entre 5 y 20 caracteres.';
+      return;
+    }
+
+    const validCharsRegex = /^[a-zA-Z0-9_]+$/;
+    if (!validCharsRegex.test(rawUsername)) {
+      this.errorMessage = 'El nombre de usuario solo puede contener letras (sin acentos), números y guiones bajos.';
+      return;
+    }
+
+    this.isLoading = true;
+
+    this.editProfileService.updateProfile(this.editedProfile).subscribe({
+      next: (response: any) => {
+        this.isLoading = false;
+        this.activeModal.close(this.editedProfile);
+      },
+      error: (err: any) => {
+        this.isLoading = false;
+        const msg = err?.error?.message || '';
+        if (msg === 'USER_EXISTS' || msg.includes('409') || msg === 'USERNAME_EXISTS') {
+          this.errorMessage = 'Este nombre de usuario ya está en uso.';
+        } else if (msg === 'USERNAME_LENGTH') {
+          this.errorMessage = 'El nombre de usuario debe tener entre 5 y 20 caracteres.';
+        } else if (msg === 'USERNAME_INVALID_CHARS') {
+          this.errorMessage = 'El nombre de usuario solo puede contener letras, números y guiones bajos.';
+        } else if (msg) {
+          this.errorMessage = 'Error: ' + msg;
+        } else {
+          this.errorMessage = 'Ocurrió un error al actualizar el perfil.';
+        }
+        console.error('Error actualizando perfil:', err);
+      }
+    });
   }
-  
+
   onImgError(event: any) {
     event.target.style.display = 'none';
   }
-  
+
   onImgLoad(event: any) {
     event.target.style.display = 'block';
   }
