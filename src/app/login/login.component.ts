@@ -66,15 +66,16 @@ export class LoginComponent implements OnInit {
   constructor(
     private walletConnectService: WalletConnectService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
-    // Auto-open wallet modal when component loads
-    this.connectWallet();
+    // Prevent double execution if called immediately
+    setTimeout(() => {
+      this.connectWallet();
+    }, 500);
   }
 
   async connectWallet() {
-    const web3Modal = this.walletConnectService.getWeb3Modal();
-    await web3Modal.open();
+    await this.walletConnectService.connectWallet();
   }
 }

@@ -417,6 +417,52 @@ export class WalletConnectService implements OnDestroy {
     return this.appKit;
   }
 
+  public async connectWallet(): Promise<void> {
+    try {
+      console.log('🔗 Iniciando conexión de wallet...');
+
+      // Evita solicitudes concurrentes que causan "Connection declined"
+      if (this.walletStateSubject.value.isConnecting) {
+        console.log('⏳ Conexión ya en proceso, ignorando solicitud extra...');
+        return;
+      }
+
+      this.walletStateSubject.next({
+        ...this.walletStateSubject.value,
+        isConnecting: true
+      });
+
+      await this.initializeService();
+      await this.waitForAppKitReady();
+
+      if (!this.appKit) {
+        throw new Error('AppKit no pudo inicializarse');
+      }
+
+      await this.appKit.open();
+
+      // Permitir que se procese la conexión
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+    } catch (error) {
+      console.error('❌ Error abriendo modal de wallet:', error);
+      this.walletStateSubject.next({
+        ...INITIAL_STATE,
+        isConnecting: false
+      });
+    } finally {
+      // Si modal se cierra sin conectar, reiniciamos el flag isConnecting a false pasados unos segundos
+      setTimeout(() => {
+        if (!this.walletStateSubject.value.isConnected) {
+          this.walletStateSubject.next({
+            ...this.walletStateSubject.value,
+            isConnecting: false
+          });
+        }
+      }, 3000);
+    }
+  }
+
   async signMessage(message: string) {
     const signer = await this.getSigner();
     if (!signer) {
