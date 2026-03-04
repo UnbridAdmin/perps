@@ -32,6 +32,28 @@
   color: $text-primary;
 }
 
+.sidebar .logo-details .envision-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+
+  img {
+    max-height: 45px;
+    max-width: 180px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
+
 .sidebar .logo-details i {
   font-size: 30px;
   color: #fff;
@@ -184,13 +206,32 @@
 .balance-container {
   margin: 15px 12px;
   padding: 16px;
-  background: rgba(156, 39, 176, 0.05);
-  border: 1px solid rgba(156, 39, 176, 0.2);
   border-radius: 16px;
   display: flex;
   flex-direction: column;
   transition: all 0.5s ease;
   backdrop-filter: blur(10px);
+  border: 1px solid #222;
+  transition: background-color 0.2s;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s ease;
+
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
 
   .balance-content {
     display: flex;
@@ -223,13 +264,9 @@
     .balance-amount {
       font-size: 1.25rem;
       font-weight: 800;
-      color: #ffffff;
+      color: #9c27b0;
       margin-top: 4px;
       white-space: nowrap;
-      background: linear-gradient(90deg, #ffffff, #4ade80);
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
       display: block;
     }
   }
@@ -293,7 +330,7 @@
   height: 52px;
   width: 52px;
   object-fit: cover;
-  border-radius: 16px;
+  border-radius: 50%;
   margin: 0 14px 0 12px;
   background: rgba(0, 0, 0, 0.3);
   transition: all 0.5s ease;
@@ -352,6 +389,13 @@
   .sidebar .logo-details .logo-text {
     opacity: 0;
     pointer-events: none;
+  }
+
+  .sidebar .logo-details .envision-logo {
+    img {
+      max-height: 35px;
+      max-width: 50px;
+    }
   }
 
   .sidebar .logo-details .toggle-btn {

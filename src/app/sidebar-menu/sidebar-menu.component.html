@@ -1,16 +1,15 @@
 <div class="sidebar">
   <div class="logo-details">
-    <div class="logo-text">LOGO</div>
+    <div class="envision-logo">
+      <img alt="logo" src="/assets/img/logos/envision-logo.png" (click)="goToLogin()" />
+    </div>
   </div>
   <ul class="nav-links">
     <li>
-      <a href="#">
+      <a routerLink="/home">
         <i class='bx bx-home'></i>
         <span class="link_name">Home</span>
       </a>
-      <ul class="sub-menu blank">
-        <li><a class="link_name" href="#">Home</a></li>
-      </ul>
     </li>
     <!-- <li>
       <div class="icon-link">
@@ -87,9 +86,6 @@
         <span class="link_name">Profile</span>
       </a>
     </li>
-    <li>
-      <button class="btn-create btn-primary" (click)="openCreatePrediction()">crear</button>
-    </li>
     <!-- <li>
       <a href="#">
         <i class='bx bx-cog'></i>
@@ -118,11 +114,12 @@
       </div>
     </li>
     <li>
-
+      <button class="btn-create btn-primary" (click)="openCreatePrediction()">crear</button>
+    </li>
+    <li>
       <div class="profile-details" *ngIf="isAuthenticated">
         <div class="profile-content">
-          <img src="https://sachinsamal.netlify.app/static/media/sachin-samal.d451ea9b3c53ed984bf7.png"
-            alt="profileImg">
+          <img src="{{userProfileImage}}" alt="profileImg">
         </div>
         <div class="name-job">
           <div class="profile_name">{{ username }}</div>

@@ -23,19 +23,19 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription = new Subscription();
 
   categories = [
-    { name: 'Politics', active: true },
     { name: 'Sports', active: false },
-    { name: 'Crypto', active: false },
-    { name: 'Finance', active: false },
-    { name: 'Tech', active: false },
-    { name: 'Culture', active: false }
+    // { name: 'Politics', active: true },
+    // { name: 'Crypto', active: false },
+    // { name: 'Finance', active: false },
+    // { name: 'Tech', active: false },
+    // { name: 'Culture', active: false }
   ];
 
   constructor(
-    private commonService: CommonService, 
+    private commonService: CommonService,
     private walletConnectService: WalletConnectService,
     private authorizationService: AuthorizationService
-  ) {}
+  ) { }
 
   ngOnInit() {
     // Inicializar estado de autenticación y dirección

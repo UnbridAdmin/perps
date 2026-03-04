@@ -4,15 +4,13 @@
     <div class="header-row-1">
         <div class="logo-section">
             <nav class="categories">
-                <div *ngFor="let cat of categories.slice(0, 4); let i = index" 
-                     class="category" 
-                     [class.active]="cat.active"
-                     (click)="selectCategory(i)">
+                <div *ngFor="let cat of categories.slice(0, 4); let i = index" class="category"
+                    [class.active]="cat.active" (click)="selectCategory(i)">
                     {{cat.name}}
                 </div>
             </nav>
         </div>
-        <div class="header-actions">
+        <!-- <div class="header-actions">
             <div class="more-dropdown">
                 <button class="more-btn" (click)="toggleMoreCategories()">
                     More <i class="fas fa-chevron-down"></i>
@@ -27,7 +25,7 @@
                 </div>
             </div>
             <button class="login-btn" *ngIf="!isAuthenticated" (click)="login()">Login</button>
-        </div>
+        </div> -->
     </div>
 
     <!-- Fila 2: 2 Columnas (Tabs izquierda | Search derecha) -->
@@ -35,9 +33,10 @@
         <!-- Columna izquierda: Tabs -->
         <div class="feed-tabs">
             <div class="tab" [class.active]="activeTab === 'for-you'" (click)="setActiveTab('for-you')">For you</div>
-            <div class="tab" [class.active]="activeTab === 'trending'" (click)="setActiveTab('trending')">Trending</div>
+            <div class="tab" [class.active]="activeTab === 'trending'" (click)="setActiveTab('trending')">Following
+            </div>
         </div>
-        
+
         <!-- Columna derecha: Search -->
         <div class="search-predictions">
             <i class="fas fa-search"></i>

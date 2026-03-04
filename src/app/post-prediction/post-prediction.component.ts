@@ -95,7 +95,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     private confirmDialogService: ConfirmDialogService,
     private commonService: CommonService
-  ) {}
+  ) { }
 
   // API data properties
   predictions: Prediction[] = [];
@@ -195,12 +195,12 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
 
       // Map category ID to category name (this might need a separate API call for categories)
       const categoryMap: { [key: number]: string } = {
-        1: 'Politics',
-        2: 'Crypto',
-        3: 'Sports',
-        4: 'Tech',
-        5: 'Finance',
-        6: 'Entertainment'
+        1: 'Sports',
+        // 2: 'Politics',
+        // 3: 'Crypto',
+        // 4: 'Tech',
+        // 5: 'Finance',
+        // 6: 'Entertainment'
       };
 
       return {

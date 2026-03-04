@@ -23,7 +23,7 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
   unbridBalance: number = 0;
   username: string = '';
   isAuthenticated: boolean = false;
-
+  userProfileImage: string = 'https://ipfs.unbrid.com/app/user-profile.webp';
   private isDisconnecting: boolean = false;
   private subscriptions: Subscription = new Subscription();
 
@@ -84,6 +84,7 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
         if (response?.data) {
           this.username = response.data[0].username || '';
           this.unbridBalance = response.data[0].fierce_balance || 0;
+          this.userProfileImage = response.data[0].url_avatar || 'https://ipfs.unbrid.com/app/user-profile.webp';
         }
       },
       error: (error) => {
@@ -131,6 +132,10 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
   truncateAddress(address: string): string {
     if (!address) return 'Not Connected';
     return address.slice(0, 6) + '...' + address.slice(-4);
+  }
+
+  goToLogin(): void {
+    this.router.navigate(['/login']);
   }
 
   openPremiumDialog() {
