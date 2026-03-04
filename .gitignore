@@ -92,3 +92,5 @@ Thumbs.db
 .angular
 /angular
 /.angular
+.angular/cache/20.3.13/perps/angular-compiler.db-lock
+.angular/cache/20.3.13/perps/.tsbuildinfo
