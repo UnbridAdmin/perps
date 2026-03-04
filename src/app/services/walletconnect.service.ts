@@ -134,7 +134,7 @@ export class WalletConnectService implements OnDestroy {
           chainId: state.chainId,
           provider: null // Se establecerá después cuando AppKit esté listo
         };
-        
+
         this.walletStateSubject.next(restoredState);
         console.log('🔄 Estado de wallet restaurado y emitido:', state.address);
       } else {
@@ -180,14 +180,13 @@ export class WalletConnectService implements OnDestroy {
   private async initializeAppKit(): Promise<void> {
     return new Promise((resolve) => {
       try {
-        const networks = [polygon, polygonAmoy];
         const ethersAdapter = new EthersAdapter();
-        const defaultNetwork = environment.MATIC.chainId === 80002 ? polygonAmoy : polygon;
+        const network = environment.MATIC.chainId === 80002 ? polygonAmoy : polygon;
 
         this.appKit = createAppKit({
           adapters: [ethersAdapter],
-          networks: networks,
-          defaultNetwork: defaultNetwork,
+          networks: [network] as any,
+          defaultNetwork: network,
           metadata: environment.WALLETCONNEC,
           projectId: this.projectId,
           features: {
