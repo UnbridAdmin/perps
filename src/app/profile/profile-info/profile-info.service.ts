@@ -11,11 +11,11 @@ export class ProfileInfoService {
     constructor(private apiService: ApiServices) { }
 
     public getUserProfile(): Observable<any> {
-        return this.apiService.apiCall('/user/get-user-profile', 'GET', {});
+        return this.apiService.apiCall('user/get-user-profile', 'GET', {});
     }
 
     public getUserPublicProfile(username: string): Observable<any> {
-        return this.apiService.publicApiCall('/user/get-user-public-profile', 'GET', { username });
+        return this.apiService.publicApiCall('user/get-user-public-profile', 'GET', { username });
     }
 
 }
