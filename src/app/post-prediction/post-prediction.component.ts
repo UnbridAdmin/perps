@@ -11,7 +11,6 @@ import { VotingConfirmationModalComponent } from '../shared/voting-confirmation-
 import { ConfirmDialogService } from '../shared/confirm-dialog/confirm-dialog.service';
 import { CommonService } from '../shared/commonService';
 import { Subscription } from 'rxjs';
-import { environment } from '../../environments/environment';
 
 // API Response interfaces
 interface ApiPredictionOption {
@@ -317,20 +316,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
 
       if (!selectedOption) return;
 
-      // Check Fierce balance
-      let hasFierceBalance = false;
-      try {
-        const fierceBalance = await this.walletConnectService.getERC20Balance(
-          environment.DECIMALFIERCE,
-          environment.FIERCECONTRACTADDRESS,
-          environment.USDTPolyABI
-        );
-        hasFierceBalance = parseFloat(fierceBalance) > 0;
-      } catch (error) {
-        console.error('Error checking Fierce balance:', error);
-      }
-
-      // Show confirmation modal
+      // Show confirmation modal (balance check is handled internally by the modal)
       const modalRef = this.modalService.open(VotingConfirmationModalComponent, {
         centered: true,
         size: 'lg'
@@ -338,7 +324,6 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
 
       modalRef.componentInstance.predictionTitle = prediction.question;
       modalRef.componentInstance.optionTitle = selectedOption.prediction_option_title;
-      modalRef.componentInstance.hasFierceBalance = hasFierceBalance;
 
       const result = await modalRef.result;
 

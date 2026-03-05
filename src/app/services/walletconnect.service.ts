@@ -189,14 +189,14 @@ export class WalletConnectService implements OnDestroy {
           defaultNetwork: network,
           metadata: environment.WALLETCONNEC,
           projectId: this.projectId,
-          features: {
-            analytics: true,
-            allWallets: true,
-            email: false,
-            socials: false,
-            swaps: false,
-            onramp: false,
-          },
+          // features: {
+          //   analytics: true,
+          //   allWallets: true,
+          //   email: false,
+          //   socials: false,
+          //   swaps: false,
+          //   onramp: false,
+          // },
           enableAuthentication: false, // DESACTIVAR firma interna de Reown
         } as any);
 

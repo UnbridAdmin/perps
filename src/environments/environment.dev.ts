@@ -18,8 +18,8 @@ export const environment = {
   WALLETCONNEC: {
     name: 'Perps Development',
     description: 'Wallet Connect For Perps Development',
-    url: 'http://localhost:4201',
-    icons: ['http://localhost:4201/'],
+    url: 'http://localhost:4200',
+    icons: ['http://localhost:4200/'],
     projectId: 'f3f854530d520e7e0480a24ac2bf79c7',
     chains: [80002],
   },

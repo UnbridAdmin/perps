@@ -23,6 +23,7 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
   unbridBalance: number = 0;
   username: string = '';
   isAuthenticated: boolean = false;
+  walletConnected: boolean = false;
   userProfileImage: string = 'https://ipfs.unbrid.com/app/user-profile.webp';
   private isDisconnecting: boolean = false;
   private subscriptions: Subscription = new Subscription();
@@ -39,6 +40,9 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
   ) {
     // Initialize authentication state
     this.isAuthenticated = this.authorizationService.isAuthenticated();
+
+    // Check initial wallet connection
+    this.checkWalletConnection();
 
     // Load user profile and wallet address if authenticated
     if (this.isAuthenticated) {
@@ -62,15 +66,19 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
     // Subscribe to wallet state changes for real-time updates
     this.subscriptions.add(
       this.walletConnectService.walletState$.subscribe(state => {
+        this.walletConnected = state.isConnected;
+        
         if (state.isConnected && state.address) {
           this.userAddress = state.address;
+          this.isAuthenticated = this.authorizationService.isAuthenticated();
+          
+          if (this.isAuthenticated) {
+            this.loadUserProfile();
+          } else {
+            this.setDefaultWalletOnlyData();
+          }
         } else {
           this.userAddress = '';
-        }
-        // Update authentication state when wallet state changes
-        this.isAuthenticated = this.authorizationService.isAuthenticated();
-        if (this.isAuthenticated) {
-          this.loadUserProfile();
         }
       })
     );
@@ -84,13 +92,50 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
         if (response?.data) {
           this.username = response.data[0].username || '';
           this.unbridBalance = response.data[0].fierce_balance || 0;
-          this.userProfileImage = response.data[0].url_avatar || 'https://ipfs.unbrid.com/app/user-profile.webp';
+          this.userProfileImage = response.data[0].url_avatar || 'https://api.dicebear.com/9.x/fun-emoji/svg';
         }
       },
       error: (error) => {
         console.error('Error loading user profile:', error);
       }
     });
+  }
+
+  private setDefaultWalletOnlyData(): void {
+    const randomNum = Math.floor(Math.random() * 10000);
+    this.username = `User${randomNum}`;
+    this.unbridBalance = 0;
+    this.userProfileImage = `https://api.dicebear.com/9.x/fun-emoji/svg`;
+  }
+
+  private async checkWalletConnection(): Promise<void> {
+    try {
+      const address = await this.walletConnectService.getConnectedWalletAddress();
+      if (address) {
+        this.userAddress = address;
+        this.walletConnected = true;
+        this.isAuthenticated = this.authorizationService.isAuthenticated();
+        
+        if (this.isAuthenticated) {
+          this.loadUserProfile();
+        } else {
+          this.setDefaultWalletOnlyData();
+        }
+      }
+    } catch (error) {
+      const fallbackAddress = this.commonService.getAccountAddress();
+      if (fallbackAddress) {
+        this.userAddress = fallbackAddress;
+        this.walletConnected = true;
+        this.isAuthenticated = this.authorizationService.isAuthenticated();
+        
+        if (this.isAuthenticated) {
+          this.loadUserProfile();
+        } else {
+          this.setDefaultWalletOnlyData();
+        }
+      }
+    }
   }
 
   private async loadWalletAddress(): Promise<void> {

@@ -4,126 +4,61 @@
       <span>&times;</span>
     </button>
 
-    <!-- Loading state for balance check -->
-    <ng-container *ngIf="isCheckingBalance; else balanceCheckedTemplate">
-      <h2 class="modal-title gradient-text-expandital">Verificando Balance</h2>
+    <!-- Creating user account loading state -->
+    <ng-container *ngIf="isCreatingUser; else confirmationTemplate">
+      <h2 class="modal-title gradient-text-expandital">Creando Cuenta</h2>
       <p class="modal-subtitle">
-        Estamos verificando tu balance de Fierce tokens...
+        Estamos creando tu cuenta de usuario...
       </p>
       <div class="loading-section">
         <div class="spinner"></div>
       </div>
     </ng-container>
 
-    <ng-template #balanceCheckedTemplate>
-      <!-- Creating user account loading state -->
-      <ng-container *ngIf="isCreatingUser; else balanceContentTemplate">
-        <h2 class="modal-title gradient-text-expandital">Creando Cuenta</h2>
-        <p class="modal-subtitle">
-          Estamos creando tu cuenta de usuario...
-        </p>
-        <div class="loading-section">
-          <div class="spinner"></div>
-        </div>
-      </ng-container>
-
-      <ng-template #balanceContentTemplate>
-        <!-- Show different content based on Fierce balance -->
-        <ng-container *ngIf="hasFierceBalance; else noBalanceTemplate">
-        <!-- Has Fierce Balance - Confirmation Modal -->
-        <h2 class="modal-title gradient-text-expandital">Confirmar Voto</h2>
-
-        <p class="modal-subtitle">
-          Estás a punto de votar en la predicción comunitaria
-        </p>
-
-        <div class="content-wrapper">
-          <div class="steps-section">
-            <div class="step-item">
-              <div class="step-number">📊</div>
-              <div class="step-text">
-                <h3>Predicción</h3>
-                <p>{{ predictionTitle }}</p>
-              </div>
-            </div>
-
-            <div class="step-item">
-              <div class="step-number">🎯</div>
-              <div class="step-text">
-                <h3>Tu Voto</h3>
-                <p>{{ optionTitle }}</p>
-              </div>
-            </div>
-
-            <div class="step-item">
-              <div class="step-number">⚠️</div>
-              <div class="step-text">
-                <h3>Importante</h3>
-                <p>Solo puedes votar una vez por predicción. Esta acción no se puede deshacer.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="image-section">
-            <img src="https://ipfs.unbrid.com/landings/fierce/fierce-daapp.webp" alt="Confirmación de voto"
-              class="preview-image">
-          </div>
-        </div>
-
-        <div class="modal-actions">
-          <button class="btn-cancel" (click)="cancelVote()">Cancelar</button>
-          <button class="btn-confirm" (click)="confirmVote()">Confirmar Voto</button>
-        </div>
-        </ng-container>
-      </ng-template>
-    </ng-template>
-
-    <ng-template #noBalanceTemplate>
-      <!-- No Fierce Balance - Get Fierce Modal -->
-      <h2 class="modal-title gradient-text-expandital">¡Obtén Fierce Gratis!</h2>
+    <ng-template #confirmationTemplate>
+      <!-- Vote Confirmation Modal -->
+      <h2 class="modal-title gradient-text-expandital">Confirmar Voto</h2>
 
       <p class="modal-subtitle">
-        Para votar en predicciones comunitarias necesitas tener balance de Fierce en tu billetera
+        Estás a punto de votar en la predicción comunitaria
       </p>
 
       <div class="content-wrapper">
         <div class="steps-section">
           <div class="step-item">
-            <div class="step-number">1</div>
+            <div class="step-number">📊</div>
             <div class="step-text">
-              <h3>Juega Fierce Guardians</h3>
-              <p>Obtén Fierce tokens gratis jugando en Telegram</p>
+              <h3>Predicción</h3>
+              <p>{{ predictionTitle }}</p>
             </div>
           </div>
 
           <div class="step-item">
-            <div class="step-number">2</div>
+            <div class="step-number">🎯</div>
             <div class="step-text">
-              <h3>Gana Recompensas</h3>
-              <p>Completa misiones y desafíos diarios</p>
+              <h3>Tu Voto</h3>
+              <p>{{ optionTitle }}</p>
             </div>
           </div>
 
           <div class="step-item">
-            <div class="step-number">3</div>
+            <div class="step-number">⚠️</div>
             <div class="step-text">
-              <h3>Vota en Predicciones</h3>
-              <p>Usa tus Fierce tokens para votar en el mercado de predicciones</p>
+              <h3>Importante</h3>
+              <p>Solo puedes votar una vez por predicción. Esta acción no se puede deshacer.</p>
             </div>
-          </div>
-
-          <div class="telegram-section">
-            <button class="telegram-btn" (click)="goToTelegram()">
-              <i class="fab fa-telegram-plane"></i>
-              Ir al Juego
-            </button>
           </div>
         </div>
 
-        <div class="image-section">
-          <img src="https://ipfs.unbrid.com/landings/fierce/fierce-daapp.webp" alt="Fierce Guardians Game"
+        <!-- <div class="image-section">
+          <img src="https://ipfs.unbrid.com/landings/fierce/fierce-daapp.webp" alt="Confirmación de voto"
             class="preview-image">
-        </div>
+        </div> -->
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-cancel" (click)="cancelVote()">Cancelar</button>
+        <button class="btn btn-success" (click)="confirmVote()">Confirmar Voto</button>
       </div>
     </ng-template>
   </div>

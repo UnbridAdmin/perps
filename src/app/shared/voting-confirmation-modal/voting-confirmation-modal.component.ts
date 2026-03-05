@@ -4,7 +4,6 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthorizationService } from '../../services/authorization.service';
 import { WalletConnectService } from '../../services/walletconnect.service';
 import { ApiServices } from '../../services/api.service';
-import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-voting-confirmation-modal',
@@ -16,8 +15,6 @@ import { environment } from '../../../environments/environment';
 export class VotingConfirmationModalComponent implements OnInit {
   @Input() predictionTitle: string = '';
   @Input() optionTitle: string = '';
-  @Input() hasFierceBalance: boolean = false;
-  isCheckingBalance: boolean = false;
   isCreatingUser: boolean = false;
 
   constructor(
@@ -28,37 +25,13 @@ export class VotingConfirmationModalComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    if (!this.authorizationService.isAuthenticated()) {
-      this.checkFierceBalance();
-    }
-  }
-
-  async checkFierceBalance() {
-    this.isCheckingBalance = true;
-    try {
-      const balance = await this.walletConnectService.getERC20Balance(
-        environment.DECIMALFIERCE,
-        environment.FIERCECONTRACTADDRESS,
-        environment.USDTPolyABI
-      );
-      if (balance) {
-        const balanceNumber = parseFloat(balance);
-        this.hasFierceBalance = balanceNumber > 0;
-      } else {
-        this.hasFierceBalance = false;
-      }
-    } catch (error) {
-      console.error('Error checking Fierce balance:', error);
-      this.hasFierceBalance = false;
-    } finally {
-      this.isCheckingBalance = false;
-    }
+    // No balance verification required - user can vote freely
   }
 
   async confirmVote() {
     try {
-      // If user is not authenticated but has Fierce balance, we need to create user account first
-      if (!this.authorizationService.isAuthenticated() && this.hasFierceBalance) {
+      // If user is not authenticated, we need to create user account first
+      if (!this.authorizationService.isAuthenticated()) {
         this.isCreatingUser = true;
 
         const walletAddress = await this.walletConnectService.getConnectedWalletAddress();
@@ -103,10 +76,6 @@ export class VotingConfirmationModalComponent implements OnInit {
 
   cancelVote() {
     this.activeModal.dismiss(false);
-  }
-
-  goToTelegram() {
-    window.open('https://t.me/fierce_guardian_bot', '_blank');
   }
 
   closeModal() {

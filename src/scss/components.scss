@@ -108,7 +108,7 @@ button {
             transition: all 0.3s ease;
             //margin-bottom: 1rem;
             text-transform: uppercase;
-            border: 1px solid var(--color-secondary-7);
+            border: 1px solid #C8C3D2;
 
             &:not(:disabled):hover {
                 background: rgba(255, 255, 255, 0.2);
@@ -116,14 +116,14 @@ button {
 
             &:hover {
                 background: var(--color-secondary-18) !important;
-                color: var(--color-secondary-7);
+                color: #C8C3D2;
             }
         }
 
         &.btn-clear {
             background: transparent !important;
             border: 1px solid var(--color-secondary-3) !important;
-            color: var(--color-secondary-7);
+            color: #C8C3D2;
         }
 
         &.btn-info {
@@ -146,7 +146,7 @@ button {
         &.btn-clear-animation {
             background: transparent !important;
             border: none !important;
-            color: var(--color-secondary-7);
+            color: #C8C3D2;
 
             &:hover {
                 background: rgb(103, 54, 139) !important;
@@ -301,7 +301,7 @@ button {
     input[type="search"],
     textarea {
         width: 100%;
-        color: var(--color-secondary-7);
+        color: #C8C3D2;
         margin-top: 5px;
         border: 1px solid var(--color-secondary-10);
         outline: none !important;
@@ -492,7 +492,7 @@ button {
     //margin-top: 30px;
     //border: 1px solid var(--color-secondary-15);
     border-radius: 10px 10px 10px 10px;
-    //box-shadow: 0 0 5px 0 var(--color-secondary-7);
+    //box-shadow: 0 0 5px 0 #C8C3D2;
     background-color: var(--color-bg-card);
     box-shadow: 0 8px 20px #00000080;
     margin: 0 auto;
@@ -586,7 +586,7 @@ button {
                     }
 
                     td {
-                        color: var(--color-secondary-7);
+                        color: #C8C3D2;
                         padding: 7px;
                         text-align: center;
                         font-size: 1rem;
@@ -679,7 +679,7 @@ button {
     .dropdown-menu {
         border-radius: 25px;
         min-width: 195px;
-        box-shadow: 0 0 5px 0 var(--color-secondary-7);
+        box-shadow: 0 0 5px 0 #C8C3D2;
         margin-top: 5px;
 
         li {
@@ -721,7 +721,7 @@ button {
     .dropdown-menu {
         border-radius: 25px;
         min-width: 195px;
-        box-shadow: 0 0 5px 0 var(--color-secondary-7);
+        box-shadow: 0 0 5px 0 #C8C3D2;
         margin-top: 5px;
 
         li {
@@ -768,10 +768,10 @@ button {
         .p-highlight {
             a {
                 border: none !important;
-                color: var(--color-secondary-7);
+                color: #C8C3D2;
 
                 span {
-                    color: var(--color-secondary-7);
+                    color: #C8C3D2;
                 }
             }
         }
@@ -822,7 +822,7 @@ button {
 
     a,
     button {
-        color: var(--color-secondary-7) !important;
+        color: #C8C3D2 !important;
         display: block;
 
         //padding: .1875rem .625rem;
@@ -1071,7 +1071,7 @@ input:checked+.slider-switch .slider-text.enabled {
         border-radius: 0px !important;
         //border: 1px solid var( --color-secondary-2);
         background: var(--color-secondary-6) !important;
-        color: var(--color-secondary-7);
+        color: #C8C3D2;
         font-size: map.get($font-sizes, 'tab-mobile');
         cursor: pointer;
         transition: all 0.2s ease;

@@ -24,7 +24,9 @@
                     </div>
                 </div>
             </div> -->
-            <button class="login-btn" *ngIf="!isAuthenticated" (click)="login()">Login</button>
+            @if(!walletConnected && !userAddress){
+            <button class="login-btn" (click)="login()">Login</button>
+            }
         </div>
     </div>
 

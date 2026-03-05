@@ -20,6 +20,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   activeTab: 'for-you' | 'trending' = 'for-you';
   userAddress: string = '';
   isAuthenticated: boolean = false;
+  walletConnected: boolean = false;
   private subscriptions: Subscription = new Subscription();
 
   categories = [
@@ -40,27 +41,43 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // Inicializar estado de autenticación y dirección
     this.isAuthenticated = this.authorizationService.isAuthenticated();
-    this.userAddress = this.isAuthenticated ? (this.commonService.getAccountAddress() || '') : '';
+    this.checkInitialWalletState();
 
     // Subscribe to user address updates
     this.subscriptions.add(
       this.commonService.updateUserAddress.subscribe(() => {
         this.isAuthenticated = this.authorizationService.isAuthenticated();
-        this.userAddress = this.isAuthenticated ? (this.commonService.getAccountAddress() || '') : '';
+        this.userAddress = this.commonService.getAccountAddress() || '';
       })
     );
 
     // Subscribe to wallet state changes
     this.subscriptions.add(
       this.walletConnectService.walletState$.subscribe(state => {
-        this.isAuthenticated = this.authorizationService.isAuthenticated();
-        if (state.isConnected && state.address && this.isAuthenticated) {
+        this.walletConnected = state.isConnected;
+        
+        if (state.isConnected && state.address) {
           this.userAddress = state.address;
-        } else if (!this.isAuthenticated) {
+        } else {
           this.userAddress = '';
         }
+        
+        this.isAuthenticated = this.authorizationService.isAuthenticated();
       })
     );
+  }
+
+  private async checkInitialWalletState(): Promise<void> {
+    try {
+      const address = await this.walletConnectService.getConnectedWalletAddress();
+      if (address) {
+        this.userAddress = address;
+        this.walletConnected = true;
+      }
+    } catch (error) {
+      this.userAddress = this.commonService.getAccountAddress() || '';
+      this.walletConnected = !!this.userAddress;
+    }
   }
 
   ngOnDestroy(): void {
@@ -88,5 +105,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
   async login() {
     const web3Modal = this.walletConnectService.getWeb3Modal();
     await web3Modal.open();
+  }
+
+
+  private async loadWalletAddress(): Promise<void> {
+    try {
+      const address = await this.walletConnectService.getConnectedWalletAddress();
+      if (address) {
+        this.userAddress = address;
+      }
+    } catch (error) {
+      // Si falla, usar el address de commonService como fallback
+      this.userAddress = this.commonService.getAccountAddress() || '';
+    }
   }
 }

@@ -104,7 +104,7 @@
         <li><a class="link_name" href="#">Setting</a></li>
       </ul>
     </li> -->
-    <li class="balance-container" *ngIf="isAuthenticated">
+    <li class="balance-container" *ngIf="walletConnected || userAddress">
       <div class="balance-content">
         <div class="balance-header">
           <i class='bx bx-wallet'></i>
@@ -117,7 +117,7 @@
       <button class="btn-create btn-primary" (click)="openCreatePrediction()">crear</button>
     </li>
     <li>
-      <div class="profile-details" *ngIf="isAuthenticated">
+      <div class="profile-details" *ngIf="walletConnected || userAddress">
         <div class="profile-content">
           <img src="{{userProfileImage}}" alt="profileImg">
         </div>

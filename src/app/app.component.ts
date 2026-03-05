@@ -185,7 +185,7 @@ export class AppComponent implements OnInit, OnDestroy {
       } else if (!prevAddress && newAddress) {
         // RECONEXION: Verificar si ya está autenticado
         if (this.authorizationService.isAuthenticated() &&
-            this.commonService.getAccountAddress()?.toLowerCase() === newAddress) {
+          this.commonService.getAccountAddress()?.toLowerCase() === newAddress) {
           console.log('🟢 RECONEXIÓN - Usuario ya autenticado, saltando firma');
           this.commonService.saveAccountAddress(newAddress);
           this.commonService.updateUserAddress.next(true);
