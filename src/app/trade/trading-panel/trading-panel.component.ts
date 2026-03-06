@@ -60,37 +60,46 @@ export class TradingPanelComponent implements OnInit {
   }
 
   private updateFromOptionData() {
-    if (this.predictionType === 'BINARY' && this.options && this.options.length >= 2) {
+    // 1. Logic for BINARY predictions
+    if (this.predictionType?.toUpperCase() === 'BINARY' && this.options && this.options.length > 0) {
       const yesOption = this.options.find(o => o.option_title?.toUpperCase() === 'YES');
       const noOption = this.options.find(o => o.option_title?.toUpperCase() === 'NO');
 
-      if (yesOption) {
-        this.yesPrice = Number(yesOption.price) || 0;
-        this.predictionOptionId = yesOption.option_multiple_id;
-      }
-      if (noOption) {
-        this.noPrice = Number(noOption.price) || 0;
-        if (!this.predictionOptionId) this.predictionOptionId = noOption.option_multiple_id;
-      }
+      // Set button prices
+      if (yesOption) this.yesPrice = Number(yesOption.price) || 0;
+      if (noOption) this.noPrice = Number(noOption.price) || 0;
 
-      const activeOption = this.selectedOption === 'yes' ? yesOption : noOption;
-      if (activeOption) {
-        this.userShares = Number(activeOption.user_shares) || 0;
-        this.avgPrice = Number(activeOption.avg_buy_price) || activeOption.price;
+      // Extract data for the selected side
+      const selectedObj = this.selectedOption === 'yes' ? yesOption : noOption;
+      
+      if (selectedObj) {
+        this.predictionOptionId = selectedObj.option_multiple_id;
+        if (this.selectedOption === 'yes') {
+          this.userShares = Number(selectedObj.user_shares_yes) || 0;
+          this.avgPrice = Number(selectedObj.avg_buy_price_yes) || selectedObj.price;
+        } else {
+          this.userShares = Number(selectedObj.user_shares_no) || 0;
+          this.avgPrice = Number(selectedObj.avg_buy_price_no) || selectedObj.price;
+        }
       }
-    } else if (this.optionData) {
+    }
+    // 2. Logic for MULTIPLE predictions
+    else if (this.optionData) {
       this.yesPrice = Number(this.optionData.price) || 0;
       this.noPrice = Number((1 - this.yesPrice).toFixed(3));
       this.avgPrice = Number(this.optionData.avg_buy_price) || this.yesPrice;
       this.userShares = Number(this.optionData.user_shares) || 0;
       this.predictionOptionId = this.optionData.option_multiple_id;
-
-      // Update limits but don't reset to 1 if already set
-      if (this.sharesToSell > this.userShares) {
-        this.sharesToSell = this.userShares;
-      }
     }
 
+    // 3. Forced synchronization for SELL mode
+    if (!this.isBuyMode) {
+      this.sharesToSell = this.userShares;
+    } else if (this.sharesToSell > this.userShares) {
+      this.sharesToSell = this.userShares;
+    }
+
+    // 4. Update limits
     if (this.userBalance >= 0) {
       this.maxAmount = this.userBalance;
       if (this.amount > this.maxAmount && this.maxAmount > 0) {
@@ -99,9 +108,24 @@ export class TradingPanelComponent implements OnInit {
     }
   }
 
+  toggleMode(buyMode: boolean) {
+    this.isBuyMode = buyMode;
+    this.updateFromOptionData();
+
+    // When switching to SELL mode, auto-load shares
+    if (!buyMode) {
+      this.sharesToSell = this.userShares;
+    }
+  }
+
   selectOption(option: 'yes' | 'no') {
     this.selectedOption = option;
     this.updateFromOptionData();
+
+    // In SELL mode for BINARY predictions, auto-load the shares for the selected option
+    if (!this.isBuyMode && this.predictionType?.toUpperCase() === 'BINARY') {
+      this.sharesToSell = this.userShares;
+    }
   }
 
   predictionOptionId: number = 0;
@@ -171,8 +195,6 @@ export class TradingPanelComponent implements OnInit {
 
     const isConnected = this.walletConnectService.walletStateSubject.value.isConnected;
 
-    // If not connected, we keep it enabled only if the amount is valid,
-    // so the user can click it and see the "Wallet Required" popup
     if (!isConnected) return false;
 
     return false;

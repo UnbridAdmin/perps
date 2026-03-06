@@ -55,9 +55,13 @@ interface TradeOptionData {
   percentage: number;
   resolution: string;
   user_shares: number;
+  user_shares_yes?: number;
+  user_shares_no?: number;
   option_multiple_id: number;
   change: number;
   avg_buy_price: number;
+  avg_buy_price_yes?: number;
+  avg_buy_price_no?: number;
 }
 
 interface BuyVoteResponse {
@@ -164,9 +168,13 @@ export class TradeService {
         percentage: option.percentage,
         resolution: option.resolution,
         user_shares: option.user_shares,
+        user_shares_yes: option.user_shares_yes,
+        user_shares_no: option.user_shares_no,
         option_multiple_id: option.option_multiple_id,
         change: option.change,
-        avg_buy_price: option.avg_buy_price
+        avg_buy_price: option.avg_buy_price,
+        avg_buy_price_yes: option.avg_buy_price_yes,
+        avg_buy_price_no: option.avg_buy_price_no
       })) || [],
       user_balance: backendData.user_balance || 0
     };
