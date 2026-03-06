@@ -41,8 +41,18 @@
 .avatar {
   width: 48px;
   height: 48px;
+  aspect-ratio: 1;
   border-radius: 50%;
-  background: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
+  background-size: cover;
+  background-position: center;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.05);
+  }
 }
 
 .user-details h3 {

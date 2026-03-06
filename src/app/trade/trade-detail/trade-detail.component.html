@@ -4,17 +4,20 @@
   </div>
   <div class="prediction-header">
     <div class="user-info">
-      <div class="avatar"></div>
+      <div class="avatar"
+        [style.backgroundImage]="'url(' + (tradeData?.prediction?.creatorAvatar || 'https://api.dicebear.com/9.x/fun-emoji/svg') + ')'">
+      </div>
       <div class="user-details">
-        <h3>Polymarket</h3>
-        <p>@polymarket · 4 ene</p>
+        <h3>{{ tradeData?.prediction?.creatorUsername || 'System' }}</h3>
+        <p>@{{ tradeData?.prediction?.creatorUsername?.toLowerCase() || 'system' }} · {{
+          tradeData?.prediction?.prediction_create_at | date:'d MMM' }}</p>
       </div>
     </div>
-    <h1 class="prediction-title">¿Quién será eliminado del reality show "Durmiendo por un Sueño"?</h1>
+    <h1 class="prediction-title">{{ tradeData?.prediction?.prediction_title || 'Loading prediction...' }}</h1>
     <div class="stats">
       <div class="stat-item">
-        <span>💵</span>
-        <span>$226,326 Vol.</span>
+        <span>🔥</span>
+        <span>{{ tradeData?.prediction?.totalVolume | number:'1.0-2' }} F Vol.</span>
       </div>
     </div>
   </div>
@@ -25,7 +28,8 @@
       <app-comments></app-comments>
     </div>
     <div class="right-column">
-      <app-trading-panel [optionData]="selectedOptionData" [userBalance]="tradeData?.user_balance"></app-trading-panel>
+      <app-trading-panel [optionData]="selectedOptionData" [userBalance]="tradeData?.user_balance"
+        [predictionTitle]="tradeData?.prediction?.prediction_title"></app-trading-panel>
       <app-price-trend></app-price-trend>
     </div>
   </div>

@@ -4,7 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { TradeService } from '../trade.service';
 import { AuthorizationService } from '../../services/authorization.service';
 import moment from 'moment';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { DetailTransactionComponent } from '../detail-transaction/detail-transaction.component';
 import { WalletConnectService } from '../../services/walletconnect.service';
+import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
 
 @Component({
   selector: 'app-trading-panel',
@@ -16,6 +19,7 @@ import { WalletConnectService } from '../../services/walletconnect.service';
 export class TradingPanelComponent implements OnInit {
   @Input() optionData: any = null;
   @Input() userBalance: number = 0;
+  @Input() predictionTitle: string = '';
 
   isBuyMode = true;
   selectedOption: 'yes' | 'no' = 'yes';
@@ -32,7 +36,9 @@ export class TradingPanelComponent implements OnInit {
   constructor(
     private tradeService: TradeService,
     private authService: AuthorizationService,
-    private walletConnectService: WalletConnectService
+    private walletConnectService: WalletConnectService,
+    private confirmDialogService: ConfirmDialogService,
+    private modalService: NgbModal
   ) { }
 
   ngOnInit() {
@@ -40,24 +46,30 @@ export class TradingPanelComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['optionData'] || changes['userBalance']) {
+    if (changes['optionData'] || changes['userBalance'] || changes['predictionTitle']) {
       this.updateFromOptionData();
     }
   }
 
   private updateFromOptionData() {
     if (this.optionData) {
-      this.yesPrice = parseFloat(this.optionData.price.toFixed(3));
-      this.noPrice = parseFloat((1 - this.optionData.price).toFixed(3));
-      this.avgPrice = this.optionData.avg_buy_price > 0 ?
-        parseFloat(this.optionData.avg_buy_price.toFixed(3)) : this.yesPrice;
-      this.userShares = this.optionData.user_shares;
+      this.yesPrice = Number(this.optionData.price) || 0;
+      this.noPrice = Number((1 - this.yesPrice).toFixed(3));
+      this.avgPrice = Number(this.optionData.avg_buy_price) || this.yesPrice;
+      this.userShares = Number(this.optionData.user_shares) || 0;
       this.predictionOptionId = this.optionData.option_multiple_id;
-      this.sharesToSell = Math.min(this.sharesToSell, this.userShares);
+
+      // Update limits but don't reset to 1 if already set
+      if (this.sharesToSell > this.userShares) {
+        this.sharesToSell = this.userShares;
+      }
     }
+
     if (this.userBalance >= 0) {
       this.maxAmount = this.userBalance;
-      this.amount = Math.min(this.amount, this.maxAmount || 1);
+      if (this.amount > this.maxAmount && this.maxAmount > 0) {
+        this.amount = this.maxAmount;
+      }
     }
   }
 
@@ -65,27 +77,107 @@ export class TradingPanelComponent implements OnInit {
   userShares: number = 0;
   Math = Math;
 
-  get toWin(): number {
-    // If buying at yesPrice, potential win = (amount / price) - amount
-    // Each share is worth 1 token if it wins
-    const price = this.selectedOption === 'yes' ? this.yesPrice : this.noPrice;
-    if (price === 0) return 0;
-    return parseFloat(((this.amount / price) - this.amount).toFixed(2));
+  async checkWalletConnection(): Promise<boolean> {
+    const isConnected = await this.walletConnectService.checkConnection();
+    if (!isConnected) {
+      await this.confirmDialogService.showInfo({
+        title: 'Billetera requerida',
+        message1: 'Debes conectar tu billetera para votar en las predicciones.'
+      });
+      return false;
+    }
+    return true;
   }
 
-  setAmount(value: number) {
+  get toWin(): number {
+    const price = this.selectedOption === 'yes' ? this.yesPrice : this.noPrice;
+    if (!price || !this.amount) return 0;
+    // (Amount / Price) = Total Tokens if Win. 
+    // Potential Profit = Total Tokens - Amount
+    const profit = (Number(this.amount) / price) - Number(this.amount);
+    return parseFloat(profit.toFixed(2));
+  }
+
+  get potentialProceeds(): number {
+    const price = this.selectedOption === 'yes' ? this.yesPrice : this.noPrice;
+    if (!price || !this.sharesToSell) return 0;
+    return parseFloat((Number(this.sharesToSell) * price).toFixed(2));
+  }
+
+  async setAmount(value: number) {
+    if (!await this.checkWalletConnection()) return;
     this.amount = Math.min(this.amount + value, this.maxAmount);
   }
 
-  setMaxAmount() {
+  async setMaxAmount() {
+    if (!await this.checkWalletConnection()) return;
     this.amount = this.maxAmount;
   }
 
-  executeTrade() {
+  async setSharesToSell(value: number) {
+    if (!await this.checkWalletConnection()) return;
+    this.sharesToSell = Math.min(this.sharesToSell + value, this.userShares);
+  }
+
+  async setAllSharesToSell() {
+    if (!await this.checkWalletConnection()) return;
+    this.sharesToSell = this.userShares;
+  }
+
+  get isTradeButtonDisabled(): boolean {
+    if (this.isLoading) return true;
+
+    const isConnected = this.walletConnectService.walletStateSubject.value.isConnected;
+
+    // If not connected, we keep it enabled so the user can click it and see the "Wallet Required" popup
+    if (!isConnected) return false;
+
     if (this.isBuyMode) {
-      this.buyVote();
+      return this.amount <= 0 || this.amount > this.userBalance;
     } else {
-      this.sellVote();
+      return this.sharesToSell <= 0 || this.sharesToSell > this.userShares;
+    }
+  }
+
+  get tradeButtonText(): string {
+    if (this.isLoading) return 'Processing...';
+
+    const isConnected = this.walletConnectService.walletStateSubject.value.isConnected;
+
+    if (this.isBuyMode) {
+      if (isConnected && this.amount > this.userBalance) return 'Insufficient Balance';
+      return 'Buy';
+    } else {
+      if (isConnected && this.sharesToSell > this.userShares) return 'Insufficient Shares';
+      return 'Sell';
+    }
+  }
+
+  async executeTrade() {
+    if (!await this.checkWalletConnection()) return;
+
+    // Show confirmation modal
+    const modalRef = this.modalService.open(DetailTransactionComponent, {
+      centered: true,
+      size: 'md'
+    });
+
+    // Pass data to modal
+    modalRef.componentInstance.predictionTitle = this.predictionTitle;
+    modalRef.componentInstance.optionTitle = this.optionData.option_title;
+    modalRef.componentInstance.isBuyMode = this.isBuyMode;
+    modalRef.componentInstance.amount = this.isBuyMode ? this.amount : this.sharesToSell;
+    modalRef.componentInstance.price = this.selectedOption === 'yes' ? this.yesPrice : this.noPrice;
+    modalRef.componentInstance.potentialReturn = this.isBuyMode ? this.toWin : this.potentialProceeds;
+
+    const result = await modalRef.result;
+
+    if (result === true) {
+      if (this.isBuyMode) {
+        this.buyVote();
+      } else {
+        this.sellVote();
+      }
     }
   }
 
@@ -139,6 +231,10 @@ export class TradingPanelComponent implements OnInit {
 
           // Check buy vote success
           if (buyVoteData?.success) {
+            this.confirmDialogService.showSuccess({
+              title: 'Compra Exitosa',
+              message1: `Has comprado exitosamente por ${this.amount} Fierce.`
+            });
             console.log('Vote purchased successfully:', buyVoteData);
             // Handle success - maybe update prices, show confirmation, etc.
           } else {
@@ -147,6 +243,10 @@ export class TradingPanelComponent implements OnInit {
         } else {
           // Handle regular authenticated response
           if (response.data?.success) {
+            this.confirmDialogService.showSuccess({
+              title: 'Compra Exitosa',
+              message1: `Has comprado exitosamente por ${this.amount} Fierce.`
+            });
             console.log('Vote purchased successfully:', response.data);
             // Handle success - maybe update prices, show confirmation, etc.
           } else {
@@ -208,6 +308,10 @@ export class TradingPanelComponent implements OnInit {
       next: (response: any) => {
         this.isLoading = false;
         if (response.data?.success) {
+          this.confirmDialogService.showSuccess({
+            title: 'Venta Exitosa',
+            message1: `Has vendido exitosamente ${this.sharesToSell} acciones.`
+          });
           console.log('Shares sold successfully:', response.data);
           // Update user shares
           this.userShares = Math.max(0, this.userShares - this.sharesToSell);

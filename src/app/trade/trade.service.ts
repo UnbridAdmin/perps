@@ -39,6 +39,9 @@ interface TradeDetailsData {
     userVotedOption: number | null;
     totalParticipants: string;
     createdAt: string;
+    creatorUsername: string;
+    creatorAvatar: string;
+    totalVolume: number;
   };
   options: TradeOptionData[];
   user_balance: number;
@@ -148,7 +151,10 @@ export class TradeService {
         options: backendData.prediction.options || [],
         userVotedOption: backendData.prediction.userVotedOption,
         totalParticipants: backendData.prediction.totalParticipants,
-        createdAt: backendData.prediction.createdAt
+        createdAt: backendData.prediction.createdAt,
+        creatorUsername: backendData.prediction.creatorUsername,
+        creatorAvatar: backendData.prediction.creatorAvatar,
+        totalVolume: backendData.prediction.totalVolume
       },
       options: backendData.options?.map((option: any) => ({
         option_id: option.option_id,

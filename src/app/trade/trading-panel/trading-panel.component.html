@@ -36,27 +36,39 @@
           <button class="quick-btn max-btn" (click)="setMaxAmount()">Max</button>
         </ng-container>
         <ng-container *ngIf="!isBuyMode">
-          <button class="quick-btn" (click)="sharesToSell = Math.min(sharesToSell + 1, userShares)">+1</button>
-          <button class="quick-btn" (click)="sharesToSell = Math.min(sharesToSell + 10, userShares)">+10</button>
-          <button class="quick-btn" (click)="sharesToSell = Math.min(sharesToSell + 100, userShares)">+100</button>
-          <button class="quick-btn max-btn" (click)="sharesToSell = userShares">All</button>
+          <button class="quick-btn" (click)="setSharesToSell(1)">+1</button>
+          <button class="quick-btn" (click)="setSharesToSell(10)">+10</button>
+          <button class="quick-btn" (click)="setSharesToSell(100)">+100</button>
+          <button class="quick-btn max-btn" (click)="setAllSharesToSell()">All</button>
         </ng-container>
       </div>
     </div>
 
-    <div class="trade-info">
+    <div class="trade-info" *ngIf="isBuyMode">
       <div class="info-row">
-        <span class="info-label">To win</span>
+        <span class="info-label">To win (Profit)</span>
         <span class="info-amount">{{ toWin }} F</span>
       </div>
       <div class="avg-price-row">
-        <span class="avg-label">Avg. Price</span>
-        <span class="avg-value">{{ avgPrice }} F</span>
+        <span class="avg-label">Price per share</span>
+        <span class="avg-value">{{ (selectedOption === 'yes' ? yesPrice : noPrice) | number:'1.3-3' }} F</span>
       </div>
     </div>
 
-    <button class="btn-trade" (click)="executeTrade()" [disabled]="isLoading">
-      {{ isLoading ? 'Processing...' : (isBuyMode ? 'Buy' : 'Sell') }}
+    <div class="trade-info" *ngIf="!isBuyMode">
+      <div class="info-row">
+        <span class="info-label">Est. Proceeds</span>
+        <span class="info-amount">{{ potentialProceeds }} F</span>
+      </div>
+      <div class="avg-price-row">
+        <span class="avg-label">Avg. Buy Price</span>
+        <span class="avg-value">{{ avgPrice | number:'1.3-3' }} F</span>
+      </div>
+    </div>
+
+    <button class="btn-trade" (click)="executeTrade()" [disabled]="isTradeButtonDisabled"
+      [class.insufficient]="isTradeButtonDisabled && !isLoading">
+      {{ tradeButtonText }}
     </button>
   </div>
 </div>

@@ -1,0 +1,64 @@
+<div class="modal-body">
+    <div class="modal-container">
+        <button class="close-btn" aria-label="Cerrar" (click)="closeModal()">
+            <span>&times;</span>
+        </button>
+
+        <h2 class="modal-title gradient-text-expandital">Confirmar {{ isBuyMode ? 'Compra' : 'Venta' }}</h2>
+
+        <p class="modal-subtitle">
+            Estás a punto de ejecutar una {{ isBuyMode ? 'compra' : 'venta' }} de acciones en la predicción.
+        </p>
+
+        <div class="content-wrapper">
+            <div class="steps-section">
+                <div class="step-item">
+                    <div class="step-number">📊</div>
+                    <div class="step-text">
+                        <h3>Predicción</h3>
+                        <p>{{ predictionTitle }}</p>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">🎯</div>
+                    <div class="step-text">
+                        <h3>Opción</h3>
+                        <p>{{ optionTitle }}</p>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">{{ isBuyMode ? '💰' : '📈' }}</div>
+                    <div class="step-text">
+                        <h3>{{ isBuyMode ? 'Inversión' : 'Acciones a vender' }}</h3>
+                        <p>{{ amount }} {{ isBuyMode ? 'Fierce' : 'Shares' }}</p>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">🏷️</div>
+                    <div class="step-text">
+                        <h3>Precio</h3>
+                        <p>{{ price | number:'1.3-3' }} Fierce</p>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">💵</div>
+                    <div class="step-text">
+                        <h3>{{ isBuyMode ? 'Ganancia Potencial' : 'Ingresos Est.' }}</h3>
+                        <p>{{ potentialReturn }} Fierce</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-cancel" (click)="cancelTransaction()">Cancelar</button>
+            <button class="btn-confirm" (click)="confirmTransaction()">
+                Confirmar {{ isBuyMode ? 'Compra' : 'Venta' }}
+            </button>
+        </div>
+    </div>
+</div>
