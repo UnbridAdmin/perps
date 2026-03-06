@@ -1,5 +1,5 @@
 <div class="trading-panel">
-  <div class="selected-outcome" *ngIf="optionData">
+  <div class="selected-outcome" *ngIf="optionData && predictionType === 'MULTIPLE'">
     <span class="label">Outcome</span>
     <span class="value">{{ optionData.option_title }}</span>
   </div>
@@ -11,11 +11,11 @@
   </div>
 
   <div class="trade-options">
-    <button class="option-btn" [class.selected]="selectedOption === 'yes'" (click)="selectedOption = 'yes'">
+    <button class="option-btn" [class.selected]="selectedOption === 'yes'" (click)="selectOption('yes')">
       <span class="option-label">Yes</span>
       <span class="option-price">{{ yesPrice | number:'1.2-2' }} F</span>
     </button>
-    <button class="option-btn option-btn-no" [class.selected]="selectedOption === 'no'" (click)="selectedOption = 'no'">
+    <button class="option-btn option-btn-no" [class.selected]="selectedOption === 'no'" (click)="selectOption('no')">
       <span class="option-label">No</span>
       <span class="option-price">{{ noPrice | number:'1.2-2' }} F</span>
     </button>

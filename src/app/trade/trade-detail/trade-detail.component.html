@@ -29,7 +29,8 @@
     </div>
     <div class="right-column">
       <app-trading-panel [optionData]="selectedOptionData" [userBalance]="tradeData?.user_balance"
-        [predictionTitle]="tradeData?.prediction?.prediction_title"></app-trading-panel>
+        [predictionTitle]="tradeData?.prediction?.prediction_title"
+        [predictionType]="tradeData?.prediction?.prediction_type" [options]="tradeData?.options"></app-trading-panel>
       <app-price-trend></app-price-trend>
     </div>
   </div>

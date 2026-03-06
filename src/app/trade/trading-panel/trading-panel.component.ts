@@ -20,6 +20,8 @@ export class TradingPanelComponent implements OnInit {
   @Input() optionData: any = null;
   @Input() userBalance: number = 0;
   @Input() predictionTitle: string = '';
+  @Input() predictionType: string = 'MULTIPLE';
+  @Input() options: any[] = [];
 
   isBuyMode = true;
   selectedOption: 'yes' | 'no' = 'yes';
@@ -46,13 +48,37 @@ export class TradingPanelComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['optionData'] || changes['userBalance'] || changes['predictionTitle']) {
+    if (changes['optionData'] && this.predictionType === 'BINARY' && this.optionData) {
+      const title = this.optionData.option_title?.toUpperCase();
+      if (title === 'YES') this.selectedOption = 'yes';
+      else if (title === 'NO') this.selectedOption = 'no';
+    }
+
+    if (changes['optionData'] || changes['userBalance'] || changes['predictionTitle'] || changes['options'] || changes['predictionType']) {
       this.updateFromOptionData();
     }
   }
 
   private updateFromOptionData() {
-    if (this.optionData) {
+    if (this.predictionType === 'BINARY' && this.options && this.options.length >= 2) {
+      const yesOption = this.options.find(o => o.option_title?.toUpperCase() === 'YES');
+      const noOption = this.options.find(o => o.option_title?.toUpperCase() === 'NO');
+
+      if (yesOption) {
+        this.yesPrice = Number(yesOption.price) || 0;
+        this.predictionOptionId = yesOption.option_multiple_id;
+      }
+      if (noOption) {
+        this.noPrice = Number(noOption.price) || 0;
+        if (!this.predictionOptionId) this.predictionOptionId = noOption.option_multiple_id;
+      }
+
+      const activeOption = this.selectedOption === 'yes' ? yesOption : noOption;
+      if (activeOption) {
+        this.userShares = Number(activeOption.user_shares) || 0;
+        this.avgPrice = Number(activeOption.avg_buy_price) || activeOption.price;
+      }
+    } else if (this.optionData) {
       this.yesPrice = Number(this.optionData.price) || 0;
       this.noPrice = Number((1 - this.yesPrice).toFixed(3));
       this.avgPrice = Number(this.optionData.avg_buy_price) || this.yesPrice;
@@ -71,6 +97,11 @@ export class TradingPanelComponent implements OnInit {
         this.amount = this.maxAmount;
       }
     }
+  }
+
+  selectOption(option: 'yes' | 'no') {
+    this.selectedOption = option;
+    this.updateFromOptionData();
   }
 
   predictionOptionId: number = 0;
@@ -176,7 +207,11 @@ export class TradingPanelComponent implements OnInit {
 
     // Pass data to modal
     modalRef.componentInstance.predictionTitle = this.predictionTitle;
-    modalRef.componentInstance.optionTitle = this.optionData.option_title;
+    if (this.predictionType === 'BINARY') {
+      modalRef.componentInstance.optionTitle = this.selectedOption === 'yes' ? 'YES' : 'NO';
+    } else {
+      modalRef.componentInstance.optionTitle = this.optionData?.option_title;
+    }
     modalRef.componentInstance.isBuyMode = this.isBuyMode;
     modalRef.componentInstance.amount = this.isBuyMode ? this.amount : this.sharesToSell;
     modalRef.componentInstance.price = this.selectedOption === 'yes' ? this.yesPrice : this.noPrice;
