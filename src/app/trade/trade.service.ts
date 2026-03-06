@@ -5,7 +5,7 @@ import { ApiServices } from '../services/api.service';
 interface BuyVoteParams {
   prediction_option_multiple_id: number;
   side: string;
-  amount_usd: number;
+  amount_token: number;
   message?: string;
   signature?: string;
   coin_id?: number;
@@ -41,6 +41,7 @@ interface TradeDetailsData {
     createdAt: string;
   };
   options: TradeOptionData[];
+  user_balance: number;
 }
 
 interface TradeOptionData {
@@ -51,6 +52,9 @@ interface TradeOptionData {
   percentage: number;
   resolution: string;
   user_shares: number;
+  option_multiple_id: number;
+  change: number;
+  avg_buy_price: number;
 }
 
 interface BuyVoteResponse {
@@ -153,8 +157,12 @@ export class TradeService {
         volume: option.volume,
         percentage: option.percentage,
         resolution: option.resolution,
-        user_shares: option.user_shares
-      })) || []
+        user_shares: option.user_shares,
+        option_multiple_id: option.option_multiple_id,
+        change: option.change,
+        avg_buy_price: option.avg_buy_price
+      })) || [],
+      user_balance: backendData.user_balance || 0
     };
   }
 
@@ -162,10 +170,11 @@ export class TradeService {
    * Calculate potential payout for a buy transaction
    */
   public calculatePotentialPayout(amount: number, price: number): number {
-    // amount / (price/100) gives the number of shares
-    // then shares * 100 gives potential payout if option wins
-    const shares = amount / (price / 100);
-    return Math.round(shares * 100 * 100) / 100; // Round to 2 decimal places
+    // amount / price gives the number of shares
+    // each share is worth 1 token if it wins
+    if (price === 0) return 0;
+    const shares = amount / price;
+    return Math.round(shares * 100) / 100; // Round to 2 decimal places
   }
 
   /**
@@ -179,14 +188,14 @@ export class TradeService {
    * Format price for display (convert to cents)
    */
   public formatPrice(price: number): string {
-    return `${(price * 100).toFixed(1)}¢`;
+    return `${price.toFixed(3)} Fierce`;
   }
 
   /**
    * Format currency amount
    */
   public formatCurrency(amount: number): string {
-    return `$${amount.toFixed(2)}`;
+    return `${amount.toFixed(2)} Fierce`;
   }
 
   /**

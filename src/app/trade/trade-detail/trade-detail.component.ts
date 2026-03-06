@@ -19,6 +19,7 @@ import { WalletConnectService } from '../../services/walletconnect.service';
 export class TradeDetailComponent implements OnInit {
   predictionId: number = 0;
   tradeData: any = null;
+  selectedOptionData: any = null;
   isLoading = false;
 
   constructor(
@@ -27,7 +28,7 @@ export class TradeDetailComponent implements OnInit {
     private tradeService: TradeService,
     private authService: AuthorizationService,
     private walletConnectService: WalletConnectService
-  ) {}
+  ) { }
 
   ngOnInit() {
     // Get prediction ID from route params
@@ -55,6 +56,9 @@ export class TradeDetailComponent implements OnInit {
         this.isLoading = false;
         if (response.data?.success) {
           this.tradeData = this.tradeService.mapTradeDetailsResponse(response);
+          if (this.tradeData && this.tradeData.options && this.tradeData.options.length > 0) {
+            this.selectedOptionData = this.tradeData.options[0];
+          }
         } else {
           console.error('Error loading trade details:', response.data?.message);
         }

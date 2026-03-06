@@ -21,11 +21,11 @@
 
   <div class="main-content">
     <div class="left-column">
-      <app-outcome [tradeData]="tradeData"></app-outcome>
+      <app-outcome [tradeData]="tradeData" (onSelectOption)="selectedOptionData = $event"></app-outcome>
       <app-comments></app-comments>
     </div>
     <div class="right-column">
-      <app-trading-panel></app-trading-panel>
+      <app-trading-panel [optionData]="selectedOptionData" [userBalance]="tradeData?.user_balance"></app-trading-panel>
       <app-price-trend></app-price-trend>
     </div>
   </div>

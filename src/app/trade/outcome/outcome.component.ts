@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GraphComponent } from '../graph/graph.component';
 import { OrderBookComponent } from '../order-book/order-book.component';
@@ -13,6 +13,9 @@ interface TradeOptionData {
   percentage: number;
   resolution: string;
   user_shares: number;
+  option_multiple_id: number;
+  change: number;
+  avg_buy_price: number;
 }
 
 @Component({
@@ -26,12 +29,13 @@ export class OutcomeComponent implements OnInit, OnChanges {
   Math = Math;
 
   @Input() tradeData: any = null;
+  @Output() onSelectOption = new EventEmitter<any>();
 
   outcomes: any[] = [];
 
   activeTab: { [key: string]: string } = {};
 
-  constructor(private tradeService: TradeService) {}
+  constructor(private tradeService: TradeService) { }
 
   ngOnInit() {
     this.mapOptionsToOutcomes();
@@ -50,7 +54,7 @@ export class OutcomeComponent implements OnInit, OnChanges {
           date: option.option_title,
           volume: `$${option.volume.toFixed(2)} Vol.`,
           percentage: Math.round(option.percentage),
-          change: 0, // For now, set to 0. Could be calculated based on price changes
+          change: option.change || 0, // Use real change from backend
           expanded: index === 0, // Expand first option by default
           optionData: option // Keep original option data for further use
         };
@@ -72,6 +76,7 @@ export class OutcomeComponent implements OnInit, OnChanges {
       } else {
         this.outcomes.forEach(o => o.expanded = false);
         outcome.expanded = true;
+        this.onSelectOption.emit(outcome.optionData);
       }
     }
   }

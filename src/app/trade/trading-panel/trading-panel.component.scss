@@ -8,6 +8,30 @@
   margin-bottom: 20px;
 }
 
+.selected-outcome {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: rgba($primary-color, 0.05);
+  border-left: 4px solid $primary-color;
+  border-radius: 4px;
+
+  .label {
+    font-size: 11px;
+    color: $text-muted;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+
+  .value {
+    font-size: 18px;
+    color: $text-primary;
+    font-weight: 700;
+  }
+}
+
 .tabs {
   display: flex;
   background: $background-color;

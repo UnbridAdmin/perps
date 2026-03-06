@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TradeService } from '../trade.service';
@@ -14,18 +14,18 @@ import { WalletConnectService } from '../../services/walletconnect.service';
   styleUrl: './trading-panel.component.scss',
 })
 export class TradingPanelComponent implements OnInit {
-  @Input() predictionOptionId: number = 1;
-  @Input() userShares: number = 0;
+  @Input() optionData: any = null;
+  @Input() userBalance: number = 0;
 
   isBuyMode = true;
   selectedOption: 'yes' | 'no' = 'yes';
-  amount = 2;
-  sharesToSell = 1;
-  maxAmount = 100;
+  amount = 1;
+  sharesToSell = 0;
+  maxAmount = 0;
 
-  yesPrice = 97.4;
-  noPrice = 3.7;
-  avgPrice = 97.4;
+  yesPrice = 0;
+  noPrice = 0;
+  avgPrice = 0;
 
   isLoading = false;
 
@@ -33,16 +33,44 @@ export class TradingPanelComponent implements OnInit {
     private tradeService: TradeService,
     private authService: AuthorizationService,
     private walletConnectService: WalletConnectService
-  ) {}
+  ) { }
 
   ngOnInit() {
-    // Initialize component
+    this.updateFromOptionData();
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['optionData'] || changes['userBalance']) {
+      this.updateFromOptionData();
+    }
+  }
+
+  private updateFromOptionData() {
+    if (this.optionData) {
+      this.yesPrice = parseFloat(this.optionData.price.toFixed(3));
+      this.noPrice = parseFloat((1 - this.optionData.price).toFixed(3));
+      this.avgPrice = this.optionData.avg_buy_price > 0 ?
+        parseFloat(this.optionData.avg_buy_price.toFixed(3)) : this.yesPrice;
+      this.userShares = this.optionData.user_shares;
+      this.predictionOptionId = this.optionData.option_multiple_id;
+      this.sharesToSell = Math.min(this.sharesToSell, this.userShares);
+    }
+    if (this.userBalance >= 0) {
+      this.maxAmount = this.userBalance;
+      this.amount = Math.min(this.amount, this.maxAmount || 1);
+    }
+  }
+
+  predictionOptionId: number = 0;
+  userShares: number = 0;
+  Math = Math;
+
   get toWin(): number {
-    // If buying at yesPrice, potential win = amount / (yesPrice/100)
+    // If buying at yesPrice, potential win = (amount / price) - amount
+    // Each share is worth 1 token if it wins
     const price = this.selectedOption === 'yes' ? this.yesPrice : this.noPrice;
-    return parseFloat(((this.amount / (price / 100)) - this.amount).toFixed(2));
+    if (price === 0) return 0;
+    return parseFloat(((this.amount / price) - this.amount).toFixed(2));
   }
 
   setAmount(value: number) {
@@ -78,7 +106,7 @@ export class TradingPanelComponent implements OnInit {
     const buyVoteParams: any = {
       prediction_option_multiple_id: this.predictionOptionId,
       side: this.selectedOption.toUpperCase(),
-      amount_usd: this.amount
+      amount_token: this.amount
     };
 
     // If user is wallet-connected but not token-authenticated, add signature data
@@ -141,7 +169,7 @@ export class TradingPanelComponent implements OnInit {
       const walletAddress = await this.walletConnectService.getConnectedWalletAddress();
 
       // Create a message for signing
-      const message = `Buy vote for prediction option ${this.predictionOptionId} with ${this.amount} USD at ${new Date().toISOString()}`;
+      const message = `Buy vote for prediction option ${this.predictionOptionId} with ${this.amount} Fierce at ${new Date().toISOString()}`;
 
       // Sign the message
       const signatureData = await this.walletConnectService.signMessage(message);

@@ -1,4 +1,8 @@
 <div class="trading-panel">
+  <div class="selected-outcome" *ngIf="optionData">
+    <span class="label">Outcome</span>
+    <span class="value">{{ optionData.option_title }}</span>
+  </div>
   <div class="trading-header">
     <div class="tabs">
       <button class="tab" [class.active]="isBuyMode" (click)="isBuyMode = true">Buy</button>
@@ -9,24 +13,26 @@
   <div class="trade-options">
     <button class="option-btn" [class.selected]="selectedOption === 'yes'" (click)="selectedOption = 'yes'">
       <span class="option-label">Yes</span>
-      <span class="option-price">{{ yesPrice }}¢</span>
+      <span class="option-price">{{ yesPrice }} F</span>
     </button>
     <button class="option-btn option-btn-no" [class.selected]="selectedOption === 'no'" (click)="selectedOption = 'no'">
       <span class="option-label">No</span>
-      <span class="option-price">{{ noPrice }}¢</span>
+      <span class="option-price">{{ noPrice }} F</span>
     </button>
   </div>
 
   <div class="trade-section">
     <div class="amount-section">
       <label class="section-title">{{ isBuyMode ? 'Amount' : 'Shares' }}</label>
-      <input *ngIf="isBuyMode" type="number" class="amount-input" [(ngModel)]="amount" min="1" max="{{ maxAmount }}" placeholder="$0" />
-      <input *ngIf="!isBuyMode" type="number" class="amount-input" [(ngModel)]="sharesToSell" min="1" max="{{ userShares }}" placeholder="0" />
+      <input *ngIf="isBuyMode" type="number" class="amount-input" [(ngModel)]="amount" min="1" max="{{ maxAmount }}"
+        placeholder="0" />
+      <input *ngIf="!isBuyMode" type="number" class="amount-input" [(ngModel)]="sharesToSell" min="1"
+        max="{{ userShares }}" placeholder="0" />
       <div class="quick-amounts">
         <ng-container *ngIf="isBuyMode">
-          <button class="quick-btn" (click)="setAmount(1)">+$1</button>
-          <button class="quick-btn" (click)="setAmount(20)">+$20</button>
-          <button class="quick-btn" (click)="setAmount(100)">+$100</button>
+          <button class="quick-btn" (click)="setAmount(1)">+1</button>
+          <button class="quick-btn" (click)="setAmount(20)">+20</button>
+          <button class="quick-btn" (click)="setAmount(100)">+100</button>
           <button class="quick-btn max-btn" (click)="setMaxAmount()">Max</button>
         </ng-container>
         <ng-container *ngIf="!isBuyMode">
@@ -41,11 +47,11 @@
     <div class="trade-info">
       <div class="info-row">
         <span class="info-label">To win</span>
-        <span class="info-amount">${{ toWin }}</span>
+        <span class="info-amount">{{ toWin }} F</span>
       </div>
       <div class="avg-price-row">
         <span class="avg-label">Avg. Price</span>
-        <span class="avg-value">{{ avgPrice }}¢</span>
+        <span class="avg-value">{{ avgPrice }} F</span>
       </div>
     </div>
 
