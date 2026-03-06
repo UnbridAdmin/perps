@@ -1,6 +1,8 @@
-<div class="prediction-list" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScroll()">
+<div class="prediction-list" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50"
+  (scrolled)="onScroll()">
   <!-- Popover Backdrop -->
-  <div class="popover-backdrop" *ngIf="activeMarketPopover !== null || activeSentimentPopover !== null" (click)="closePopover()"></div>
+  <div class="popover-backdrop" *ngIf="activeMarketPopover !== null || activeSentimentPopover !== null"
+    (click)="closePopover()"></div>
 
   <!-- Loading indicator -->
   <div class="loading-indicator" *ngIf="isLoading && predictions.length === 0">
@@ -9,9 +11,11 @@
 
   <div class="prediction-card" *ngFor="let prediction of predictions; let i = index">
     <div class="prediction-header">
-      <div class="prediction-avatar"></div>
+      <div class="prediction-avatar"
+        [style.backgroundImage]="'url(' + (prediction.creatorAvatar || 'https://api.dicebear.com/9.x/fun-emoji/svg') + ')'">
+      </div>
       <div class="prediction-info">
-        <h3>{{ prediction.creator }}</h3>
+        <h3 [routerLink]="['/', prediction.creator]">{{ prediction.creator }}</h3>
         <p>{{ prediction.category }} • {{ prediction.timeAgo }} • {{ prediction.participants }} participants</p>
       </div>
     </div>
@@ -36,7 +40,8 @@
 
       <!-- Voting Options - Not Voted State -->
       <div class="sentiment-options" *ngIf="!hasUserVoted(prediction.prediction_id)">
-        <div class="sentiment-vote-btn" *ngFor="let option of prediction.options" (click)="voteOnPrediction(i, option.id)">
+        <div class="sentiment-vote-btn" *ngFor="let option of prediction.options"
+          (click)="voteOnPrediction(i, option.id)">
           <div class="percentage-bar" [style.width.%]="option.percentage"></div>
           <span class="vote-btn-text">{{ option.title }}</span>
           <span class="vote-percentage">{{ option.percentage }}%</span>
@@ -45,7 +50,8 @@
 
       <!-- Results - Voted State -->
       <div class="sentiment-results" *ngIf="hasUserVoted(prediction.prediction_id)">
-        <div class="result-option" *ngFor="let option of prediction.options" [class.selected]="getUserVotedOptionId(prediction.prediction_id) === option.id">
+        <div class="result-option" *ngFor="let option of prediction.options"
+          [class.selected]="getUserVotedOptionId(prediction.prediction_id) === option.id">
           <span class="result-label">{{ option.title }}</span>
           <span class="result-percentage">{{ option.percentage }}%</span>
         </div>
@@ -61,7 +67,7 @@
         👁️ {{ prediction.actions.likes | number:'1.0-0' }}
       </button>
       <button class="action-btn market-btn" (click)="toggleMarketPopover(i)" [class.active]="activeMarketPopover === i">
-        💰 $138K
+        💰 {{ prediction.totalVolume | number:'1.0-0' }} F
       </button>
       <button class="predict-btn btn-primary" (click)="navigateToTrade(prediction)">🎯 Trade</button>
     </div>
@@ -70,7 +76,8 @@
     <div class="market-popover" *ngIf="activeMarketPopover === i && prediction.marketInfo">
       <div class="popover-header">
         <span class="popover-title">💰 Mercado Oficial</span>
-        <span class="popover-participants">{{ prediction.marketInfo.participants | number:'1.0-0' }} participantes</span>
+        <span class="popover-participants">{{ prediction.marketInfo.participants | number:'1.0-0' }}
+          participantes</span>
       </div>
       <div class="popover-pool">{{ prediction.marketInfo.poolAmount }}</div>
       <div class="popover-distribution">
@@ -90,7 +97,8 @@
       </div>
       <div class="popover-content">
         <p><strong>¿Qué es Intuición Fierce?</strong></p>
-        <p>Es una votación popular exclusiva para holders de tokens Fierce. Los holders predicen el futuro simplemente manteniendo sus tokens en la wallet.</p>
+        <p>Es una votación popular exclusiva para holders de tokens Fierce. Los holders predicen el futuro simplemente
+          manteniendo sus tokens en la wallet.</p>
 
         <p><strong>¿Cómo funciona?</strong></p>
         <ul>

@@ -45,9 +45,19 @@
 .prediction-avatar {
   width: 40px;
   height: 40px;
+  aspect-ratio: 1;
   border-radius: 50%;
-  background: linear-gradient(135deg, #1d9bf0, #7856ff);
+  background-size: cover;
+  background-position: center;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease;
+  cursor: pointer;
   flex-shrink: 0;
+
+  &:hover {
+    transform: scale(1.05);
+  }
 }
 
 .prediction-info h3 {
@@ -55,6 +65,13 @@
   font-weight: 700;
   color: #e7e9ea;
   margin: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    text-decoration: underline;
+    color: $primary-color;
+  }
 }
 
 .prediction-info p {
@@ -354,7 +371,7 @@
   background: transparent;
   border: none;
   font-weight: 600;
-  color: #4ade80;
+  color: #9c27b0;
   //font-size: 15px;
   cursor: pointer;
   border-radius: 20px;

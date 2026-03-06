@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { HttpClientModule } from '@angular/common/http';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -32,6 +32,9 @@ interface ApiPrediction {
   userVotedOption: number | null;
   totalParticipants: string;
   createdAt: string;
+  creatorUsername: string;
+  creatorAvatar: string;
+  totalVolume: number;
 }
 
 interface GetPredictionsResponse {
@@ -44,11 +47,13 @@ interface GetPredictionsResponse {
 interface Prediction {
   prediction_id: number; // Add this for voting functionality
   creator: string;
+  creatorAvatar?: string;
   category: string;
   timeAgo: string;
   participants: string;
   question: string;
   imageUrl?: string;
+  totalVolume?: number;
   options: Array<{
     id: number;
     title: string;
@@ -77,7 +82,7 @@ interface Prediction {
 @Component({
   selector: 'app-post-prediction',
   standalone: true,
-  imports: [CommonModule, InfiniteScrollModule, HttpClientModule],
+  imports: [CommonModule, RouterModule, InfiniteScrollModule, HttpClientModule],
   templateUrl: './post-prediction.component.html',
   styleUrls: ['./post-prediction.component.scss']
 })
@@ -204,12 +209,14 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
 
       return {
         prediction_id: apiPred.prediction_id,
-        creator: 'Prediction Market', // This could come from a separate user API
+        creator: apiPred.creatorUsername || 'Prediction Market',
+        creatorAvatar: apiPred.creatorAvatar || undefined,
         category: categoryMap[apiPred.prediction_category_id] || 'General',
         timeAgo: this.calculateTimeAgo(new Date(apiPred.prediction_create_at)),
         participants: apiPred.totalParticipants,
         question: apiPred.prediction_title,
         imageUrl: apiPred.prediction_image || undefined,
+        totalVolume: apiPred.totalVolume || 0,
         options,
         sentimentVotes: {
           total: totalVotes
@@ -226,7 +233,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
         actions: {
           comments: 0, // This would need comments API
           likes: 0,    // This would need likes API
-          volume: '$0'  // This would need volume API
+          volume: `$${apiPred.totalVolume || 0}`  // This would need volume API
         }
       };
     });
