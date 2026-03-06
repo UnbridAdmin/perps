@@ -86,10 +86,17 @@ export class TradingPanelComponent implements OnInit {
     // 2. Logic for MULTIPLE predictions
     else if (this.optionData) {
       this.yesPrice = Number(this.optionData.price) || 0;
-      this.noPrice = Number((1 - this.yesPrice).toFixed(3));
-      this.avgPrice = Number(this.optionData.avg_buy_price) || this.yesPrice;
-      this.userShares = Number(this.optionData.user_shares) || 0;
+      this.noPrice = Number((1 - this.yesPrice).toFixed(5));
       this.predictionOptionId = this.optionData.option_multiple_id;
+      
+      // Handle YES/NO shares and avg prices for MULTIPLE
+      if (this.selectedOption === 'yes') {
+        this.userShares = Number(this.optionData.user_shares_yes) || 0;
+        this.avgPrice = Number(this.optionData.avg_buy_price_yes) || this.yesPrice;
+      } else {
+        this.userShares = Number(this.optionData.user_shares_no) || 0;
+        this.avgPrice = Number(this.optionData.avg_buy_price_no) || this.noPrice;
+      }
     }
 
     // 3. Forced synchronization for SELL mode
@@ -122,8 +129,8 @@ export class TradingPanelComponent implements OnInit {
     this.selectedOption = option;
     this.updateFromOptionData();
 
-    // In SELL mode for BINARY predictions, auto-load the shares for the selected option
-    if (!this.isBuyMode && this.predictionType?.toUpperCase() === 'BINARY') {
+    // In SELL mode, auto-load the shares for the selected option
+    if (!this.isBuyMode) {
       this.sharesToSell = this.userShares;
     }
   }
