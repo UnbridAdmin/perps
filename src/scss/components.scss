@@ -136,8 +136,8 @@ button {
         }
 
         &:disabled {
-            background: var(--color-secondary-22) !important;
-            color: var(--color-secondary-10) !important;
+            background: rgb(70, 70, 70) !important;
+            color: #C8C3D2 !important;
             border: none !important;
             opacity: unset !important;
             font-weight: 600;

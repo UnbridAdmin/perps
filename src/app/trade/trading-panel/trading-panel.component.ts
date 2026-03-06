@@ -127,28 +127,40 @@ export class TradingPanelComponent implements OnInit {
   get isTradeButtonDisabled(): boolean {
     if (this.isLoading) return true;
 
-    const isConnected = this.walletConnectService.walletStateSubject.value.isConnected;
-
-    // If not connected, we keep it enabled so the user can click it and see the "Wallet Required" popup
-    if (!isConnected) return false;
+    const amount = Number(this.amount) || 0;
+    const userBalance = Number(this.userBalance) || 0;
+    const sharesToSell = Number(this.sharesToSell) || 0;
+    const userShares = Number(this.userShares) || 0;
 
     if (this.isBuyMode) {
-      return this.amount <= 0 || this.amount > this.userBalance;
+      if (amount <= 0 || amount > userBalance) return true;
     } else {
-      return this.sharesToSell <= 0 || this.sharesToSell > this.userShares;
+      if (sharesToSell <= 0 || sharesToSell > userShares) return true;
     }
+
+    const isConnected = this.walletConnectService.walletStateSubject.value.isConnected;
+
+    // If not connected, we keep it enabled only if the amount is valid,
+    // so the user can click it and see the "Wallet Required" popup
+    if (!isConnected) return false;
+
+    return false;
   }
 
   get tradeButtonText(): string {
     if (this.isLoading) return 'Processing...';
 
     const isConnected = this.walletConnectService.walletStateSubject.value.isConnected;
+    const amount = Number(this.amount) || 0;
+    const userBalance = Number(this.userBalance) || 0;
+    const sharesToSell = Number(this.sharesToSell) || 0;
+    const userShares = Number(this.userShares) || 0;
 
     if (this.isBuyMode) {
-      if (isConnected && this.amount > this.userBalance) return 'Insufficient Balance';
+      if (amount > userBalance) return 'Insufficient Balance';
       return 'Buy';
     } else {
-      if (isConnected && this.sharesToSell > this.userShares) return 'Insufficient Shares';
+      if (sharesToSell > userShares) return 'Insufficient Shares';
       return 'Sell';
     }
   }

@@ -75,10 +75,10 @@
 .option-btn {
   flex: 1;
   padding: 16px 20px;
-  border: 2px solid transparent;
+  border: 2px solid #00BA7C;
   border-radius: 16px;
   background: transparent;
-  color: $text-primary;
+  color: #00BA7C;
   font-size: 18px;
   font-weight: 600;
   cursor: pointer;
@@ -93,11 +93,11 @@
   background: linear-gradient(135deg, #00BA7C, #00A569);
   color: white;
   border-color: #00BA7C;
+  box-shadow: 0 4px 12px rgba(0, 186, 124, 0.4);
 }
 
 .option-btn:hover:not(.selected) {
   background: rgba(0, 186, 124, 0.1);
-  border-color: #00BA7C;
 }
 
 .option-label {
@@ -111,17 +111,19 @@
 }
 
 .option-btn-no {
-  background: linear-gradient(135deg, #F4212E, #D91B29);
-  color: white;
+  border-color: #F4212E;
+  color: #F4212E;
 }
 
 .option-btn-no.selected {
-  background: linear-gradient(135deg, #E01A26, #C01723);
+  background: linear-gradient(135deg, #F4212E, #D91B29);
+  color: white;
+  border-color: #F4212E;
   box-shadow: 0 4px 12px rgba(244, 33, 46, 0.4);
 }
 
 .option-btn-no:hover:not(.selected) {
-  background: linear-gradient(135deg, #E01A26, #C01723);
+  background: rgba(244, 33, 46, 0.1);
 }
 
 .trading-header {
@@ -322,15 +324,6 @@
 
 .btn-trade {
   width: 100%;
-  padding: 16px;
-  border-radius: 24px;
-  border: none;
-  background: $primary-color;
-  color: white;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  margin-top: 16px;
 }
 
 .btn-trade:hover {
