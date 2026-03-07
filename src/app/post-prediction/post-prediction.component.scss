@@ -80,6 +80,19 @@
   margin: 4px 0 0 0;
 }
 
+.category-link {
+  color: #9c27b0;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  text-decoration: none;
+
+  &:hover {
+    color: #ba68c8;
+    text-decoration: underline;
+  }
+}
+
 .prediction-question {
   font-size: 30px;
   margin-bottom: 16px;

@@ -12,6 +12,10 @@ export class CategoryService {
     private filterCategoryIdSubject = new BehaviorSubject<number | null>(null);
     filterCategoryId$ = this.filterCategoryIdSubject.asObservable();
 
+    /** IDs de nodos que deben expandirse en el sidebar */
+    private expandedNodeIdsSubject = new BehaviorSubject<number[]>([]);
+    expandedNodeIds$ = this.expandedNodeIdsSubject.asObservable();
+
     /** Árbol completo disponible para el header */
     readonly tree: Category[] = CATEGORIES_TREE;
 
@@ -23,8 +27,13 @@ export class CategoryService {
         this.filterCategoryIdSubject.next(categoryId);
     }
 
+    setExpandedNodeIds(nodeIds: number[]): void {
+        this.expandedNodeIdsSubject.next(nodeIds);
+    }
+
     clearSelection(): void {
         this.selectedCategorySubject.next(null);
         this.filterCategoryIdSubject.next(null);
+        this.expandedNodeIdsSubject.next([]);
     }
 }

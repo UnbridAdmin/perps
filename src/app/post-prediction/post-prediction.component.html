@@ -16,8 +16,10 @@
       </div>
       <div class="prediction-info">
         <h3 [routerLink]="['/', prediction.creator]">{{ prediction.creator }}</h3>
-        <!-- <p>{{ prediction.category }} • {{ prediction.timeAgo }} • {{ prediction.participants }} participants</p> -->
-        <p>{{ prediction.category }} • {{ prediction.participants }} participants</p>
+        <p>
+          <span class="category-link" (click)="navigateToCategory(prediction.prediction_category_id)">{{ prediction.category }}</span>
+          <span> • {{ prediction.participants }} participants</span>
+        </p>
       </div>
     </div>
     <div class="prediction-question">

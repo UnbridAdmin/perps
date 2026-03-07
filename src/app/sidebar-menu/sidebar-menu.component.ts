@@ -114,6 +114,13 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
       })
     );
 
+    // Suscribirse a cambios de nodos expandidos
+    this.subscriptions.add(
+      this.categoryService.expandedNodeIds$.subscribe(nodeIds => {
+        this.expandedNodeIds = new Set(nodeIds);
+      })
+    );
+
     // Detectar cambios de ruta para resetear categorías si no estamos en home
     this.subscriptions.add(
       this.router.events.pipe(

@@ -47,7 +47,8 @@ interface GetPredictionsResponse {
 
 // Frontend interface
 interface Prediction {
-  prediction_id: number; // Add this for voting functionality
+  prediction_id: number;
+  prediction_category_id: number; // Add category ID
   creator: string;
   creatorAvatar?: string;
   category: string;
@@ -220,6 +221,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
 
       return {
         prediction_id: apiPred.prediction_id,
+        prediction_category_id: apiPred.prediction_category_id,
         creator: apiPred.creatorUsername || 'Prediction Market',
         creatorAvatar: apiPred.creatorAvatar || undefined,
         category: apiPred.categoryName || 'General',
@@ -233,7 +235,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
           total: totalVotes
         },
         marketInfo: {
-          poolAmount: '$0 USDT', // This would need market data API
+          poolAmount: '$0 USDT',
           participants: totalParticipants,
           options: apiPred.options.map(opt => ({
             label: opt.prediction_option_title,
@@ -242,9 +244,9 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
           }))
         },
         actions: {
-          comments: 0, // This would need comments API
-          likes: 0,    // This would need likes API
-          volume: `$${apiPred.totalVolume || 0}`  // This would need volume API
+          comments: 0,
+          likes: 0,
+          volume: `$${apiPred.totalVolume || 0}`
         }
       };
     });
@@ -459,5 +461,52 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
   // Navigate to trade detail page
   navigateToTrade(prediction: any): void {
     this.router.navigate(['/trade', prediction.prediction_id]);
+  }
+
+  // Navigate to category and activate filters
+  navigateToCategory(categoryId: number): void {
+    // Ensure we're on home page
+    if (this.router.url !== '/home' && this.router.url !== '/') {
+      this.router.navigate(['/home']).then(() => {
+        this.activateCategoryById(categoryId);
+      });
+    } else {
+      this.activateCategoryById(categoryId);
+    }
+  }
+
+  private activateCategoryById(categoryId: number): void {
+    // Import category tree to find parent and activate
+    import('../shared/category.model').then(module => {
+      const tree = module.CATEGORIES_TREE;
+      const result = this.findCategoryPathWithIds(categoryId, tree);
+      
+      if (result) {
+        // Activate parent category in header
+        this.categoryService.selectCategory(result.parent);
+        // Expand all parent nodes in the path
+        this.categoryService.setExpandedNodeIds(result.pathIds);
+        // Set filter to the specific category
+        this.categoryService.setFilterCategoryId(categoryId);
+      }
+    });
+  }
+
+  private findCategoryPathWithIds(targetId: number, categories: any[], parent: any = null, pathIds: number[] = []): { parent: any, pathIds: number[] } | null {
+    for (const cat of categories) {
+      const currentPath = [...pathIds];
+      
+      if (cat.id === targetId) {
+        return { parent: parent || cat, pathIds: currentPath };
+      }
+      
+      if (cat.children && cat.children.length > 0) {
+        // Add current category to path before exploring children
+        currentPath.push(cat.id);
+        const result = this.findCategoryPathWithIds(targetId, cat.children, parent || cat, currentPath);
+        if (result) return result;
+      }
+    }
+    return null;
   }
 }
