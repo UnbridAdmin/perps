@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { ProfileInfoService } from './profile-info.service';
@@ -21,6 +21,7 @@ export class ProfileInfoComponent implements OnInit {
   public isLoading: boolean = true;
   public errorMessage: string | null = null;
   public isOwnProfile: boolean = false;
+  @Output() userIdLoaded = new EventEmitter<number>();
 
   constructor(
     private profileService: ProfileInfoService,
@@ -46,6 +47,7 @@ export class ProfileInfoComponent implements OnInit {
         next: (resp: any) => {
           if (resp.data && resp.data.length > 0) {
             this.userProfile = resp.data[0];
+            this.userIdLoaded.emit(this.userProfile.user_id);
             // Check if viewing own profile
             this.checkIfOwnProfile();
           }
@@ -63,6 +65,7 @@ export class ProfileInfoComponent implements OnInit {
         next: (resp: any) => {
           if (resp.data && resp.data.length > 0) {
             this.userProfile = resp.data[0];
+            this.userIdLoaded.emit(this.userProfile.user_id);
             this.isOwnProfile = true;
           }
           this.isLoading = false;

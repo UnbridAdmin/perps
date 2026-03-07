@@ -1,21 +1,21 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MyPredictionsComponent } from '../my-predictions/my-predictions.component';
-import { SignalsContainerComponent } from '../signals/signals-container/signals-container.component';
+import { PostPredictionComponent } from '../../shared/post-prediction/post-prediction.component';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-user-tabs',
   standalone: true,
   imports: [
     CommonModule,
-    MyPredictionsComponent,
-    SignalsContainerComponent
+    PostPredictionComponent
   ],
   templateUrl: './user-tabs.component.html',
   styleUrl: './user-tabs.component.scss'
 })
 export class UserTabsComponent {
   activeTab: string = 'predictions';
+  @Input() userId?: number;
 
   setActiveTab(tab: string) {
     this.activeTab = tab;

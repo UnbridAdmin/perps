@@ -17,5 +17,9 @@ import { UserTabsComponent } from '../user-tabs/user-tabs.component';
   styleUrl: './profile-detail.component.scss'
 })
 export class ProfileDetailComponent {
+  profileUserId?: number;
 
+  onUserIdLoaded(userId: number): void {
+    this.profileUserId = userId;
+  }
 }

@@ -5,13 +5,13 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { HttpClientModule } from '@angular/common/http';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PostPredictionService } from './post-prediction.service';
-import { AuthorizationService } from '../services/authorization.service';
-import { WalletConnectService } from '../services/walletconnect.service';
-import { VotingConfirmationModalComponent } from '../shared/voting-confirmation-modal/voting-confirmation-modal.component';
-import { ConfirmDialogService } from '../shared/confirm-dialog/confirm-dialog.service';
-import { CommonService } from '../shared/commonService';
-import { CategoryService } from '../shared/category.service';
 import { Subscription } from 'rxjs';
+import { AuthorizationService } from '../../services/authorization.service';
+import { WalletConnectService } from '../../services/walletconnect.service';
+import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
+import { CommonService } from '../commonService';
+import { CategoryService } from '../category.service';
+import { VotingConfirmationModalComponent } from '../voting-confirmation-modal/voting-confirmation-modal.component';
 
 // API Response interfaces
 interface ApiPredictionOption {
@@ -90,6 +90,7 @@ interface Prediction {
   styleUrls: ['./post-prediction.component.scss']
 })
 export class PostPredictionComponent implements OnInit, OnDestroy {
+  @Input() userId?: number; // Optional: filter by user ID
   @Input() tab: 'for-you' | 'trending' = 'for-you';
 
   private subscriptions: Subscription = new Subscription();
@@ -158,6 +159,11 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     // Add category filter if selected
     if (this.selectedCategoryId !== null) {
       params.category = this.selectedCategoryId;
+    }
+
+    // Add user_id filter if provided
+    if (this.userId) {
+      params.user_id = this.userId;
     }
 
     // Check both authentication and wallet connection
@@ -477,10 +483,10 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
 
   private activateCategoryById(categoryId: number): void {
     // Import category tree to find parent and activate
-    import('../shared/category.model').then(module => {
+    import('../category.model').then(module => {
       const tree = module.CATEGORIES_TREE;
       const result = this.findCategoryPathWithIds(categoryId, tree);
-      
+
       if (result) {
         // Activate parent category in header
         this.categoryService.selectCategory(result.parent);
@@ -495,11 +501,11 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
   private findCategoryPathWithIds(targetId: number, categories: any[], parent: any = null, pathIds: number[] = []): { parent: any, pathIds: number[] } | null {
     for (const cat of categories) {
       const currentPath = [...pathIds];
-      
+
       if (cat.id === targetId) {
         return { parent: parent || cat, pathIds: currentPath };
       }
-      
+
       if (cat.children && cat.children.length > 0) {
         // Add current category to path before exploring children
         currentPath.push(cat.id);

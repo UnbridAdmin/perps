@@ -9,9 +9,9 @@
 
 <div class="posts-content">
   <div *ngIf="activeTab === 'predictions'">
-    <app-my-predictions></app-my-predictions>
+    <app-post-prediction [userId]="userId"></app-post-prediction>
   </div>
   <div *ngIf="activeTab === 'future'">
-    <app-signals-container></app-signals-container>
+    <p>Signals coming soon...</p>
   </div>
 </div>

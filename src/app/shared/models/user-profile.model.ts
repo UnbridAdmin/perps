@@ -7,4 +7,5 @@ export interface UserProfileResponse {
     subscribers: number;
     description?: string;
     fierce_balance?: number;
+    user_id: number;
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ApiServices } from '../services/api.service';
+import { ApiServices } from '../../services/api.service';
 
 interface GetPredictionsParams {
   page: number;
