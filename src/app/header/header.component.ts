@@ -65,6 +65,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.isAuthenticated = this.authorizationService.isAuthenticated();
       })
     );
+
+    // Subscribe to category changes from CategoryService
+    this.subscriptions.add(
+      this.categoryService.selectedCategory$.subscribe(category => {
+        this.activeCategoryId = category?.id || null;
+      })
+    );
   }
 
   private async checkInitialWalletState(): Promise<void> {
