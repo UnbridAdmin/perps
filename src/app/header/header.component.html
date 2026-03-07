@@ -5,7 +5,7 @@
         <div class="logo-section">
             <nav class="categories">
                 <div *ngFor="let cat of categories.slice(0, 4); let i = index" class="category"
-                    [class.active]="cat.active" (click)="selectCategory(i)">
+                    [class.active]="cat.id === activeCategoryId" (click)="selectCategory(i)">
                     {{cat.name}}
                 </div>
             </nav>

@@ -5,6 +5,8 @@ import { CommonService } from '../shared/commonService';
 import { WalletConnectService } from '../services/walletconnect.service';
 import { AuthorizationService } from '../services/authorization.service';
 import { SidebarMenuService } from './sidebar-menu.service';
+import { CategoryService } from '../shared/category.service';
+import { Category } from '../shared/category.model';
 import { Subscription } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PremiumUpgradeDialogComponent } from '../premium-upgrade-dialog.component';
@@ -28,6 +30,11 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
   private isDisconnecting: boolean = false;
   private subscriptions: Subscription = new Subscription();
 
+  /** Categoría principal seleccionada desde el Header */
+  activeCategory: Category | null = null;
+  /** Conjunto de IDs de nodos expandidos en el árbol del sidebar */
+  expandedNodeIds: Set<number> = new Set();
+
   constructor(
     private el: ElementRef,
     private renderer: Renderer2,
@@ -35,6 +42,7 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
     private walletConnectService: WalletConnectService,
     private authorizationService: AuthorizationService,
     private sidebarMenuService: SidebarMenuService,
+    private categoryService: CategoryService,
     private router: Router,
     private modalService: NgbModal
   ) {
@@ -67,11 +75,11 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
     this.subscriptions.add(
       this.walletConnectService.walletState$.subscribe(state => {
         this.walletConnected = state.isConnected;
-        
+
         if (state.isConnected && state.address) {
           this.userAddress = state.address;
           this.isAuthenticated = this.authorizationService.isAuthenticated();
-          
+
           if (this.isAuthenticated) {
             this.loadUserProfile();
           } else {
@@ -79,6 +87,17 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
           }
         } else {
           this.userAddress = '';
+        }
+      })
+    );
+    // Suscribirse a cambios de categoría desde el Header
+    this.subscriptions.add(
+      this.categoryService.selectedCategory$.subscribe(cat => {
+        this.activeCategory = cat;
+        // Al cambiar la categoría principal, expandir todos los hijos de primer nivel
+        this.expandedNodeIds = new Set();
+        if (cat?.children) {
+          cat.children.forEach(child => this.expandedNodeIds.add(child.id));
         }
       })
     );
@@ -115,7 +134,7 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
         this.userAddress = address;
         this.walletConnected = true;
         this.isAuthenticated = this.authorizationService.isAuthenticated();
-        
+
         if (this.isAuthenticated) {
           this.loadUserProfile();
         } else {
@@ -128,7 +147,7 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
         this.userAddress = fallbackAddress;
         this.walletConnected = true;
         this.isAuthenticated = this.authorizationService.isAuthenticated();
-        
+
         if (this.isAuthenticated) {
           this.loadUserProfile();
         } else {
@@ -181,6 +200,20 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
 
   goToLogin(): void {
     this.router.navigate(['/login']);
+  }
+
+  /** Alterna la expansión de un nodo del árbol de subcategorías */
+  toggleExpand(nodeId: number, event: Event): void {
+    event.stopPropagation();
+    if (this.expandedNodeIds.has(nodeId)) {
+      this.expandedNodeIds.delete(nodeId);
+    } else {
+      this.expandedNodeIds.add(nodeId);
+    }
+  }
+
+  isExpanded(nodeId: number): boolean {
+    return this.expandedNodeIds.has(nodeId);
   }
 
   openPremiumDialog() {

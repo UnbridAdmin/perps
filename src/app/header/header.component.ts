@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { CommonService } from '../shared/commonService';
 import { WalletConnectService } from '../services/walletconnect.service';
 import { AuthorizationService } from '../services/authorization.service';
+import { CategoryService } from '../shared/category.service';
+import { Category, CATEGORIES_TREE } from '../shared/category.model';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -23,19 +25,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
   walletConnected: boolean = false;
   private subscriptions: Subscription = new Subscription();
 
-  categories = [
-    { name: 'Sports', active: false },
-    // { name: 'Politics', active: true },
-    // { name: 'Crypto', active: false },
-    // { name: 'Finance', active: false },
-    // { name: 'Tech', active: false },
-    // { name: 'Culture', active: false }
-  ];
+  /** Árbol completo de categorías para el header */
+  categories: Category[] = CATEGORIES_TREE;
+  activeCategoryId: number | null = null;
 
   constructor(
     private commonService: CommonService,
     private walletConnectService: WalletConnectService,
-    private authorizationService: AuthorizationService
+    private authorizationService: AuthorizationService,
+    private categoryService: CategoryService
   ) { }
 
   ngOnInit() {
@@ -55,13 +53,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.walletConnectService.walletState$.subscribe(state => {
         this.walletConnected = state.isConnected;
-        
+
         if (state.isConnected && state.address) {
           this.userAddress = state.address;
         } else {
           this.userAddress = '';
         }
-        
+
         this.isAuthenticated = this.authorizationService.isAuthenticated();
       })
     );
@@ -89,7 +87,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   selectCategory(index: number) {
-    this.categories.forEach((cat, i) => cat.active = i === index);
+    const cat = this.categories[index];
+    if (!cat) return;
+
+    // Toggle: si ya estaba activa, deseleccionar
+    if (this.activeCategoryId === cat.id) {
+      this.activeCategoryId = null;
+      this.categoryService.clearSelection();
+    } else {
+      this.activeCategoryId = cat.id;
+      this.categoryService.selectCategory(cat);
+    }
   }
 
   setActiveTab(tab: 'for-you' | 'trending') {

@@ -80,6 +80,49 @@
         <span class="link_name">RWA</span>
       </a>
     </li>
+
+    <!-- ========== SUBCATEGORÍAS DINÁMICAS ========== -->
+    <ng-container *ngIf="activeCategory && activeCategory.children && activeCategory.children.length > 0">
+
+      <!-- ng-template para renderizado recursivo del árbol -->
+      <ng-template #categoryTree let-nodes="nodes" let-depth="depth">
+        <li *ngFor="let node of nodes" class="subcategory-item"
+          [class.has-children]="node.children && node.children.length > 0" [class.expanded]="isExpanded(node.id)"
+          [attr.data-depth]="depth">
+
+          <div class="subcategory-row" (click)="toggleExpand(node.id, $event)">
+            <div class="subcategory-label">
+              <i [class]="node.icon || 'bx bx-chevron-right'" class="subcategory-icon"></i>
+              <span class="link_name">{{ node.name }}</span>
+            </div>
+            <i *ngIf="node.children && node.children.length > 0" class="bx subcategory-chevron"
+              [class.bx-chevron-down]="isExpanded(node.id)" [class.bx-chevron-right]="!isExpanded(node.id)">
+            </i>
+          </div>
+
+          <!-- Nodos hijos (recursivo via ng-container) -->
+          <ul class="subcategory-children" *ngIf="node.children && node.children.length > 0 && isExpanded(node.id)">
+            <ng-container *ngTemplateOutlet="categoryTree; context: { nodes: node.children, depth: depth + 1 }">
+            </ng-container>
+          </ul>
+        </li>
+      </ng-template>
+
+      <!-- Cabecera de la sección -->
+      <li class="subcategory-header">
+        <div class="subcategory-header-content">
+          <i [class]="activeCategory.icon || 'bx bx-category'"></i>
+          <span class="link_name">{{ activeCategory.name }}</span>
+        </div>
+      </li>
+
+      <!-- Renderizar el árbol de subcategorías -->
+      <ng-container *ngTemplateOutlet="categoryTree; context: { nodes: activeCategory.children, depth: 1 }">
+      </ng-container>
+
+    </ng-container>
+    <!-- ========== FIN SUBCATEGORÍAS ========== -->
+
     <li *ngIf="isAuthenticated">
       <a [routerLink]="['/', username]">
         <i class='bx bx-cog'></i>

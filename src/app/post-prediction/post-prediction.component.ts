@@ -35,6 +35,7 @@ interface ApiPrediction {
   creatorUsername: string;
   creatorAvatar: string;
   totalVolume: number;
+  categoryName: string | null;
 }
 
 interface GetPredictionsResponse {
@@ -197,21 +198,11 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
       // Calculate total votes for sentiment section
       const totalVotes = apiPred.options.reduce((sum, opt) => sum + (opt.prediction_intuition_votes || 0), 0);
 
-      // Map category ID to category name (this might need a separate API call for categories)
-      const categoryMap: { [key: number]: string } = {
-        1: 'Sports',
-        // 2: 'Politics',
-        // 3: 'Crypto',
-        // 4: 'Tech',
-        // 5: 'Finance',
-        // 6: 'Entertainment'
-      };
-
       return {
         prediction_id: apiPred.prediction_id,
         creator: apiPred.creatorUsername || 'Prediction Market',
         creatorAvatar: apiPred.creatorAvatar || undefined,
-        category: categoryMap[apiPred.prediction_category_id] || 'General',
+        category: apiPred.categoryName || 'General',
         timeAgo: this.calculateTimeAgo(new Date(apiPred.prediction_create_at)),
         participants: apiPred.totalParticipants,
         question: apiPred.prediction_title,
