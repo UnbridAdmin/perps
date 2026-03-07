@@ -82,12 +82,14 @@
     </li>
 
     <!-- ========== SUBCATEGORÍAS DINÁMICAS ========== -->
-    <ng-container *ngIf="activeCategory && activeCategory.children && activeCategory.children.length > 0">
+    <ng-container *ngIf="isHomePage && activeCategory && activeCategory.children && activeCategory.children.length > 0">
 
       <!-- ng-template para renderizado recursivo del árbol -->
       <ng-template #categoryTree let-nodes="nodes" let-depth="depth">
         <li *ngFor="let node of nodes" class="subcategory-item"
-          [class.has-children]="node.children && node.children.length > 0" [class.expanded]="isExpanded(node.id)"
+          [class.has-children]="node.children && node.children.length > 0" 
+          [class.expanded]="isExpanded(node.id)"
+          [class.selected]="isSelected(node.id)"
           [attr.data-depth]="depth">
 
           <div class="subcategory-row" (click)="toggleExpand(node.id, $event)">

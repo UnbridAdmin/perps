@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Output, Input, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { CommonService } from '../shared/commonService';
 import { WalletConnectService } from '../services/walletconnect.service';
 import { AuthorizationService } from '../services/authorization.service';
@@ -33,7 +34,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private commonService: CommonService,
     private walletConnectService: WalletConnectService,
     private authorizationService: AuthorizationService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -89,6 +91,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
   selectCategory(index: number) {
     const cat = this.categories[index];
     if (!cat) return;
+
+    // Si no estamos en home, redirigir primero
+    const currentUrl = this.router.url;
+    if (currentUrl !== '/home' && currentUrl !== '/') {
+      this.router.navigate(['/home']).then(() => {
+        // Después de navegar, seleccionar la categoría
+        this.activeCategoryId = cat.id;
+        this.categoryService.selectCategory(cat);
+      });
+      return;
+    }
 
     // Toggle: si ya estaba activa, deseleccionar
     if (this.activeCategoryId === cat.id) {

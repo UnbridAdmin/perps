@@ -1,6 +1,6 @@
 import { Component, AfterViewInit, ElementRef, Renderer2, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { CommonService } from '../shared/commonService';
 import { WalletConnectService } from '../services/walletconnect.service';
 import { AuthorizationService } from '../services/authorization.service';
@@ -8,6 +8,7 @@ import { SidebarMenuService } from './sidebar-menu.service';
 import { CategoryService } from '../shared/category.service';
 import { Category } from '../shared/category.model';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PremiumUpgradeDialogComponent } from '../premium-upgrade-dialog.component';
 import { CreatePredictionComponent } from '../shared/create-prediction.component';
@@ -34,6 +35,10 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
   activeCategory: Category | null = null;
   /** Conjunto de IDs de nodos expandidos en el árbol del sidebar */
   expandedNodeIds: Set<number> = new Set();
+  /** ID de la categoría seleccionada (filtro activo) */
+  selectedCategoryId: number | null = null;
+  /** Indica si estamos en la página home */
+  isHomePage: boolean = false;
 
   constructor(
     private el: ElementRef,
@@ -101,6 +106,31 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
         }
       })
     );
+
+    // Suscribirse a cambios de filtro de categoría
+    this.subscriptions.add(
+      this.categoryService.filterCategoryId$.subscribe(categoryId => {
+        this.selectedCategoryId = categoryId;
+      })
+    );
+
+    // Detectar cambios de ruta para resetear categorías si no estamos en home
+    this.subscriptions.add(
+      this.router.events.pipe(
+        filter(event => event instanceof NavigationEnd)
+      ).subscribe((event: any) => {
+        this.isHomePage = event.url === '/home' || event.url === '/';
+        if (!this.isHomePage) {
+          this.categoryService.clearSelection();
+        }
+      })
+    );
+
+    // Verificar ruta inicial
+    this.isHomePage = this.router.url === '/home' || this.router.url === '/';
+    if (!this.isHomePage) {
+      this.categoryService.clearSelection();
+    }
   }
 
   private loadUserProfile(): void {
@@ -206,6 +236,12 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
   toggleExpand(nodeId: number, event: Event): void {
     event.stopPropagation();
     
+    // Si no estamos en home, redirigir primero
+    if (!this.isHomePage) {
+      this.router.navigate(['/home']);
+      return;
+    }
+
     // Si el nodo no tiene hijos, es una categoría final -> aplicar filtro
     const node = this.findNodeById(nodeId, this.activeCategory?.children || []);
     if (node && (!node.children || node.children.length === 0)) {
@@ -234,6 +270,10 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
 
   isExpanded(nodeId: number): boolean {
     return this.expandedNodeIds.has(nodeId);
+  }
+
+  isSelected(nodeId: number): boolean {
+    return this.selectedCategoryId === nodeId;
   }
 
   openPremiumDialog() {

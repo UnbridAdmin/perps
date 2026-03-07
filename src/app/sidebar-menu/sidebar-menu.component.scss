@@ -326,6 +326,23 @@
     }
   }
 
+  // Estado seleccionado (filtro activo)
+  &.selected>.subcategory-row {
+    background: rgba(156, 39, 176, 0.15);
+    border-left: 3px solid #9c27b0;
+
+    .subcategory-label {
+      .subcategory-icon {
+        color: #9c27b0;
+      }
+
+      .link_name {
+        color: #9c27b0;
+        font-weight: 600;
+      }
+    }
+  }
+
   // Hijos: lista anidada
   .subcategory-children {
     padding: 0;
