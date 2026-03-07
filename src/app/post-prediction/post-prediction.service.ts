@@ -4,6 +4,8 @@ import { ApiServices } from '../services/api.service';
 interface GetPredictionsParams {
   page: number;
   limit: number;
+  category?: number;
+  user_id?: number;
 }
 
 interface CastIntuitionVoteParams {

@@ -205,11 +205,31 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
   /** Alterna la expansión de un nodo del árbol de subcategorías */
   toggleExpand(nodeId: number, event: Event): void {
     event.stopPropagation();
+    
+    // Si el nodo no tiene hijos, es una categoría final -> aplicar filtro
+    const node = this.findNodeById(nodeId, this.activeCategory?.children || []);
+    if (node && (!node.children || node.children.length === 0)) {
+      this.categoryService.setFilterCategoryId(nodeId);
+      return;
+    }
+
+    // Si tiene hijos, expandir/colapsar
     if (this.expandedNodeIds.has(nodeId)) {
       this.expandedNodeIds.delete(nodeId);
     } else {
       this.expandedNodeIds.add(nodeId);
     }
+  }
+
+  private findNodeById(id: number, nodes: Category[]): Category | null {
+    for (const node of nodes) {
+      if (node.id === id) return node;
+      if (node.children) {
+        const found = this.findNodeById(id, node.children);
+        if (found) return found;
+      }
+    }
+    return null;
   }
 
   isExpanded(nodeId: number): boolean {

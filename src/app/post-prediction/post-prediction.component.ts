@@ -10,6 +10,7 @@ import { WalletConnectService } from '../services/walletconnect.service';
 import { VotingConfirmationModalComponent } from '../shared/voting-confirmation-modal/voting-confirmation-modal.component';
 import { ConfirmDialogService } from '../shared/confirm-dialog/confirm-dialog.service';
 import { CommonService } from '../shared/commonService';
+import { CategoryService } from '../shared/category.service';
 import { Subscription } from 'rxjs';
 
 // API Response interfaces
@@ -99,7 +100,8 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     private walletConnectService: WalletConnectService,
     private modalService: NgbModal,
     private confirmDialogService: ConfirmDialogService,
-    private commonService: CommonService
+    private commonService: CommonService,
+    private categoryService: CategoryService
   ) { }
 
   // API data properties
@@ -109,6 +111,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
   pageSize = 10;
   isLoading = false;
   hasMoreData = true;
+  selectedCategoryId: number | null = null;
 
   ngOnInit(): void {
     this.loadPredictions();
@@ -116,14 +119,26 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     // Subscribe to authentication changes to refresh predictions when user logs in
     this.subscriptions.add(
       this.commonService.updateUserAddress.subscribe(() => {
-        this.currentPage = 1;
-        this.predictions = [];
-        this.apiPredictions = [];
-        this.hasMoreData = true;
-        this.isLoading = false;
-        this.loadPredictions();
+        this.resetAndReload();
       })
     );
+
+    // Subscribe to category filter changes
+    this.subscriptions.add(
+      this.categoryService.filterCategoryId$.subscribe(categoryId => {
+        this.selectedCategoryId = categoryId;
+        this.resetAndReload();
+      })
+    );
+  }
+
+  private resetAndReload(): void {
+    this.currentPage = 1;
+    this.predictions = [];
+    this.apiPredictions = [];
+    this.hasMoreData = true;
+    this.isLoading = false;
+    this.loadPredictions();
   }
 
   ngOnDestroy(): void {
@@ -134,10 +149,15 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     if (this.isLoading || !this.hasMoreData) return;
 
     this.isLoading = true;
-    const params = {
+    const params: any = {
       page: this.currentPage,
       limit: this.pageSize
     };
+
+    // Add category filter if selected
+    if (this.selectedCategoryId !== null) {
+      params.category = this.selectedCategoryId;
+    }
 
     // Check both authentication and wallet connection
     const isAuthenticated = this.authService.isAuthenticated();

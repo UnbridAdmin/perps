@@ -35,7 +35,7 @@ export const CATEGORIES_TREE: Category[] = [
                         name: 'International',
                         icon: 'bx bx-globe',
                         children: [
-                            { id: 1100, name: 'FIFA World Cup', icon: 'bx bx-world' },
+                            { id: 4, name: 'FIFA World Cup', icon: 'bx bx-world' },
                             { id: 1101, name: 'UEFA Champions League', icon: 'bx bx-medal' },
                             { id: 1102, name: 'Copa América', icon: 'bx bx-medal' }
                         ]
