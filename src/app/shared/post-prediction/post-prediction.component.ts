@@ -276,6 +276,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
   // Popover state
   activeMarketPopover: number | null = null;
   activeSentimentPopover: number | null = null;
+  activeBetPopover: number | null = null;
 
   // Voting state - tracks user's votes based on API data
   userVotes: { [predictionId: number]: number | null } = {};
@@ -290,10 +291,16 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     this.activeSentimentPopover = this.activeSentimentPopover === index ? null : index;
   }
 
+  // Toggle bet popover
+  toggleBetPopover(index: number): void {
+    this.activeBetPopover = this.activeBetPopover === index ? null : index;
+  }
+
   // Close popover when clicking outside
   closePopover(): void {
     this.activeMarketPopover = null;
     this.activeSentimentPopover = null;
+    this.activeBetPopover = null;
   }
 
   // Vote on sentiment poll - now with real API integration
@@ -353,13 +360,17 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
 
       const result = await modalRef.result;
 
-      if (result) {
+      if (result && result.confirmed) {
         // User confirmed, cast the vote
+        const betAmount = result.betAmount || 0;
+
         const voteParams = {
           predictionId: apiPrediction.prediction_id,
-          optionId: selectedOption.prediction_option_id
+          optionId: selectedOption.prediction_option_id,
+          betAmount: betAmount
         };
 
+        // Note: betAmount is included in voteParams for the backend to process the bet mechanic.
         this.postPredictionService.castIntuitionVote(voteParams).subscribe({
           next: async (response: any) => {
             if (response.data?.success) {

@@ -17,7 +17,8 @@
       <div class="prediction-info">
         <h3 [routerLink]="['/', prediction.creator]">{{ prediction.creator }}</h3>
         <p>
-          <span class="category-link" (click)="navigateToCategory(prediction.prediction_category_id)">{{ prediction.category }}</span>
+          <span class="category-link" (click)="navigateToCategory(prediction.prediction_category_id)">{{
+            prediction.category }}</span>
           <span> • {{ prediction.participants }} participants</span>
         </p>
       </div>
@@ -63,22 +64,55 @@
 
     <!-- Action Buttons -->
     <div class="prediction-actions" *ngIf="prediction.actions">
-      <button class="action-btn">
-        💬 {{ prediction.actions.comments | number:'1.0-0' }}
+      <!-- Mechanic 1: Free Vote -->
+      <button class="action-btn" (click)="toggleSentimentPopover(i)" [class.active]="activeSentimentPopover === i"
+        title="Votos libres">
+        🔮 {{ prediction.sentimentVotes.total | number:'1.0-0' }}
       </button>
-      <button class="action-btn">
-        👁️ {{ prediction.actions.likes | number:'1.0-0' }}
+      <!-- Mechanic 2: Bet/Pot -->
+      <button class="action-btn bet-btn" (click)="toggleBetPopover(i)" [class.active]="activeBetPopover === i"
+        title="Pool de apuestas">
+        🎲 {{ prediction.marketInfo?.poolAmount || '0' }}
       </button>
-      <button class="action-btn market-btn" (click)="toggleMarketPopover(i)" [class.active]="activeMarketPopover === i">
-        💰 {{ prediction.totalVolume | number:'1.0-0' }} F
+      <!-- Mechanic 3: Trading Market -->
+      <button class="action-btn market-btn" (click)="toggleMarketPopover(i)" [class.active]="activeMarketPopover === i"
+        title="Mercado Trading">
+        📊 {{ prediction.totalVolume | number:'1.0-0' }} F
       </button>
       <button class="predict-btn btn-primary" (click)="navigateToTrade(prediction)">🎯 Trade</button>
+    </div>
+
+    <!-- Bet Collapsible Panel (Inline) -->
+    <div class="bet-collapsible-panel" *ngIf="activeBetPopover === i">
+      <div class="panel-header">
+        <span class="panel-title">🎲 Pool de Apuestas Mutuas</span>
+        <span class="panel-participants">{{ prediction.sentimentVotes?.total || 0 | number:'1.0-0' }} apostadores</span>
+      </div>
+
+      <div class="panel-pool-info">
+        <span class="pool-label">Pozo Acumulado</span>
+        <span class="pool-amount">{{ prediction.marketInfo?.poolAmount || '0 F' }}</span>
+      </div>
+
+      <div class="panel-instruction">
+        Selecciona una opción a continuación e ingresa el monto de Fierce que deseas inyectar a tu predicción.
+      </div>
+
+      <div class="betting-options">
+        <div class="bet-option-btn" *ngFor="let option of prediction.options" (click)="voteOnPrediction(i, option.id)">
+          <div class="bet-percentage-bar" [style.width.%]="option.percentage"></div>
+          <div class="bet-option-content">
+            <span class="bet-option-title">{{ option.title }}</span>
+            <span class="bet-option-stats">{{ option.votes }} votos ({{ option.percentage }}%)</span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Market Popover -->
     <div class="market-popover" *ngIf="activeMarketPopover === i && prediction.marketInfo">
       <div class="popover-header">
-        <span class="popover-title">💰 Mercado Oficial</span>
+        <span class="popover-title">📊 Mercado Oficial</span>
         <span class="popover-participants">{{ prediction.marketInfo.participants | number:'1.0-0' }}
           participantes</span>
       </div>
@@ -92,6 +126,8 @@
       </div>
       <button class="popover-bet-btn btn-primary" (click)="navigateToTrade(prediction)">🎯 Trade</button>
     </div>
+
+
 
     <!-- Sentiment Popover -->
     <div class="sentiment-popover" *ngIf="activeSentimentPopover === i">

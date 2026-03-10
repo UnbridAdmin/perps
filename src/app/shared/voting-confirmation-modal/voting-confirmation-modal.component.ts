@@ -4,18 +4,20 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthorizationService } from '../../services/authorization.service';
 import { WalletConnectService } from '../../services/walletconnect.service';
 import { ApiServices } from '../../services/api.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-voting-confirmation-modal',
   templateUrl: './voting-confirmation-modal.component.html',
   styleUrls: ['./voting-confirmation-modal.component.scss'],
   standalone: true,
-  imports: [CommonModule]
+  imports: [CommonModule, FormsModule]
 })
 export class VotingConfirmationModalComponent implements OnInit {
   @Input() predictionTitle: string = '';
   @Input() optionTitle: string = '';
   isCreatingUser: boolean = false;
+  betAmount: number | null = null;
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -65,12 +67,12 @@ export class VotingConfirmationModalComponent implements OnInit {
         this.isCreatingUser = false;
       }
 
-      this.activeModal.close(true);
+      this.activeModal.close({ confirmed: true, betAmount: this.betAmount || 0 });
     } catch (error) {
       console.error('Error in confirmVote:', error);
       this.isCreatingUser = false;
       // Still close modal to allow vote attempt
-      this.activeModal.close(true);
+      this.activeModal.close({ confirmed: true, betAmount: this.betAmount || 0 });
     }
   }
 

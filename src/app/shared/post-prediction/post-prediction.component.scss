@@ -691,3 +691,132 @@
     }
   }
 }
+
+// Collapsible Panel Styles
+.bet-collapsible-panel {
+  margin-top: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 16px;
+  animation: slideDown 0.3s ease-out;
+  border-left: 3px solid #ff9800; // Distinct accent color for betting
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+  .panel-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #ff9800;
+  }
+
+  .panel-participants {
+    font-size: 12px;
+    color: #71767b;
+  }
+}
+
+.panel-pool-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+
+  .pool-label {
+    font-size: 12px;
+    color: #b0b0b0;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .pool-amount {
+    font-size: 24px;
+    font-weight: 700;
+    color: #4ade80;
+    text-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
+  }
+}
+
+.panel-instruction {
+  font-size: 13px;
+  color: #a0aab0;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.betting-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  .bet-option-btn {
+    position: relative;
+    background: transparent;
+    border: 1px solid rgba(255, 152, 0, 0.3);
+    border-radius: 8px;
+    min-height: 44px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: #ff9800;
+      box-shadow: 0 4px 12px rgba(255, 152, 0, 0.15);
+      transform: translateY(-1px);
+    }
+  }
+
+  .bet-percentage-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: rgba(255, 152, 0, 0.15);
+    z-index: 0;
+  }
+
+  .bet-option-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    width: 100%;
+
+    .bet-option-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    .bet-option-stats {
+      font-size: 13px;
+      color: #ffb74d;
+      font-weight: 500;
+    }
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

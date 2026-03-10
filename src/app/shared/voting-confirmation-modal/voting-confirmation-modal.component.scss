@@ -270,3 +270,46 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+.bet-input-container {
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+  position: relative;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 0.5rem 1rem;
+  transition: all 0.3s ease;
+
+  &:focus-within {
+    border-color: #667EEA;
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+  }
+
+  .bet-input {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    width: 100%;
+    outline: none;
+    
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.3);
+    }
+    
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+
+  .currency-label {
+    color: #F7D044;
+    font-weight: 700;
+    margin-left: 0.5rem;
+  }
+}

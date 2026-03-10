@@ -48,6 +48,19 @@
               <p>Solo puedes votar una vez por predicción. Esta acción no se puede deshacer.</p>
             </div>
           </div>
+
+          <div class="step-item">
+            <div class="step-number">🎲</div>
+            <div class="step-text">
+              <h3>Apuesta (Opcional)</h3>
+              <p>Ingresa la cantidad de Fierce que deseas apostar al pool de la predicción. Déjalo en 0 para un voto
+                gratuito.</p>
+              <div class="bet-input-container">
+                <input type="number" class="form-control bet-input" [(ngModel)]="betAmount" min="0" placeholder="0 F">
+                <span class="currency-label">Fierce</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- <div class="image-section">
