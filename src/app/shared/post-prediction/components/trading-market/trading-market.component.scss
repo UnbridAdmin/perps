@@ -1,0 +1,198 @@
+.market-collapsible-panel {
+    margin-top: 16px;
+    background: #111315;
+    border: 1px solid #1f2328;
+    border-radius: 12px;
+    padding: 16px;
+    animation: slideDown 0.3s ease-out;
+    border-left: 3px solid #4ade80;
+    font-family: 'Inter', sans-serif;
+}
+
+.pro-badge {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(74, 222, 128, 0.1);
+    padding: 4px 10px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(74, 222, 128, 0.2);
+
+    .pro-icon {
+        font-size: 12px;
+        margin-right: 6px;
+    }
+
+    .pro-text {
+        font-size: 11px;
+        color: #4ade80;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #1f2328;
+
+    .panel-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #4ade80;
+    }
+}
+
+.close-panel-btn {
+    background: none;
+    border: none;
+    color: #71767b;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+    margin-left: auto;
+
+    &:hover {
+        color: #fff;
+    }
+}
+
+.market-stats {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+
+    .stat-box {
+        flex: 1;
+        background: #16181c;
+        border: 1px solid #1f2328;
+        border-radius: 8px;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .stat-label {
+            font-size: 11px;
+            color: #71767b;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #e7e9ea;
+        }
+    }
+}
+
+.market-order-book {
+    background: #16181c;
+    border: 1px solid #1f2328;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 16px;
+
+    .order-book-header {
+        display: flex;
+        padding: 8px 12px;
+        background: #1f2328;
+        font-size: 11px;
+        font-weight: 600;
+        color: #a0aab0;
+        text-transform: uppercase;
+    }
+
+    .order-item {
+        display: flex;
+        padding: 10px 12px;
+        border-bottom: 1px solid #1f2328;
+        align-items: center;
+        font-size: 13px;
+        color: #e7e9ea;
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+    }
+
+    .col-asset {
+        flex: 2;
+        font-weight: 500;
+    }
+
+    .col-price {
+        flex: 1;
+        font-family: monospace;
+        color: #4ade80;
+        font-weight: 600;
+    }
+
+    .col-trend {
+        flex: 2;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .trend-bar-container {
+            flex: 1;
+            height: 6px;
+            background: #1f2328;
+            border-radius: 3px;
+            overflow: hidden;
+
+            .trend-bar {
+                height: 100%;
+                background: #4ade80;
+            }
+        }
+
+        .trend-text {
+            font-size: 12px;
+            color: #71767b;
+            min-width: 32px;
+            text-align: right;
+        }
+    }
+}
+
+.trade-action-btn {
+    width: 100%;
+    background: #22c55e;
+    color: #000;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background: #16a34a;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

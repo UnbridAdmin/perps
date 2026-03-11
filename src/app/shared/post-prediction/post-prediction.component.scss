@@ -113,189 +113,6 @@
   }
 }
 
-// Sentiment section styles
-.sentiment-section {
-  //background: rgba(156, 39, 176, 0.05);
-  border: 1px solid $border-color;
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 16px;
-}
-
-.sentiment-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.sentiment-title-section {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.sentiment-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #9c27b0;
-}
-
-.how-it-works-link {
-  font-size: 12px;
-  color: #9c27b0;
-  cursor: pointer;
-  transition: all 0.2s;
-  text-decoration: underline;
-  font-weight: 500;
-
-  &:hover {
-    color: #ba68c8;
-    text-decoration: none;
-  }
-}
-
-.sentiment-total {
-  font-size: 12px;
-  color: #71767b;
-}
-
-.sentiment-options {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.sentiment-vote-btn {
-  background: transparent;
-  border: 2px solid #9c27b0;
-  border-radius: 20px;
-  padding: 10px 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 48px;
-  position: relative;
-  overflow: hidden;
-
-  &:hover {
-    border-color: #ba68c8;
-    transform: translateY(-1px);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-}
-
-.vote-btn-text {
-  font-size: 15px;
-  font-weight: 600;
-  color: #fff;
-}
-
-.vote-percentage {
-  font-size: 16px;
-  font-weight: bold;
-  color: #fff;
-}
-
-.percentage-bar {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  background: rgba(156, 39, 176, 0.4);
-  border-radius: 0;
-  //z-index: -1;
-}
-
-.sentiment-results {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.result-option {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  border-radius: 20px;
-  border: 2px solid #2f3336;
-  transition: all 0.2s;
-  position: relative;
-  background: transparent;
-  min-height: 40px;
-
-  &.selected {
-    background: rgba(156, 39, 176, 0.1);
-    border: 2px solid $border-color;
-  }
-
-  &.selected::before {
-    content: '✓';
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: #9c27b0;
-    color: white;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: bold;
-  }
-
-  &.selected {
-    padding-left: 38px;
-  }
-}
-
-.result-label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #e7e9ea;
-  min-width: 30px;
-}
-
-.result-percentage {
-  font-size: 16px;
-  font-weight: bold;
-  color: #9c27b0;
-  margin-left: auto;
-}
-
-
-
-.sentiment-bar {
-  width: 100%;
-  height: 6px;
-  background: #2f3336;
-  border-radius: 3px;
-  overflow: hidden;
-  margin-bottom: 8px;
-}
-
-.sentiment-bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #9c27b0 0%, #ba68c8 100%);
-  border-radius: 3px;
-}
-
-.sentiment-stats {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: #71767b;
-}
 
 // Market section styles
 .market-section {
@@ -368,241 +185,67 @@
   }
 }
 
-// Action buttons styles
-.prediction-actions {
+// Tabs styles
+.prediction-tabs-container {
   display: flex;
-  justify-content: space-around;
-  //padding-top: 10px;
-  //border-top: 1px solid #2f3336;
+  justify-content: space-between;
+  align-items: center;
+  //border-bottom: 1px solid #2f3336;
+  margin-bottom: 16px;
+  padding-bottom: 4px;
 }
 
-.action-btn {
+.prediction-tabs {
   display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  background: transparent;
-  border: none;
-  font-weight: 600;
-  color: #9c27b0;
-  //font-size: 15px;
-  cursor: pointer;
-  border-radius: 20px;
-  transition: all 0.2s;
-  font-size: 14px;
+  gap: 8px;
 
-  &:hover {
-    color: #ff6b35;
-    background: rgba(255, 107, 53, 0.1);
-  }
-
-  &.volume-btn {
+  .tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    font-size: 14px;
     font-weight: 600;
-    color: #4ade80;
-    font-size: 15px;
+    color: #71767b;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+    border-radius: 8px 8px 0 0;
 
     &:hover {
-      color: #22c55e;
-      background: rgba(74, 222, 128, 0.1);
+      color: #e7e9ea;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    &.active {
+      color: #e7e9ea;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -5px; // Push it to the container's bottom border
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: #9c27b0;
+        border-radius: 3px 3px 0 0;
+      }
+    }
+
+    // Custom active colors for each mechanic based on their theme
+    &:nth-child(2).active::after {
+      background: #ff9800; // Bet pool theme color
+    }
+
+    &:nth-child(3).active::after {
+      background: #4ade80; // Market theme color
     }
   }
 }
 
 // Popover styles
-.popover-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-  backdrop-filter: blur(2px);
-}
 
-.market-popover {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: #16181c;
-  border: 1px solid #2f3336;
-  border-radius: 12px;
-  padding: 24px;
-  min-width: 320px;
-  max-width: 400px;
-  z-index: 1001;
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
-  animation: popoverFadeIn 0.2s ease-out;
-}
 
-.popover-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.popover-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #4ade80;
-}
-
-.popover-participants {
-  font-size: 12px;
-  color: #71767b;
-}
-
-.popover-pool {
-  font-size: 24px;
-  font-weight: bold;
-  color: #4ade80;
-  text-align: center;
-  margin: 12px 0 16px 0;
-}
-
-.popover-distribution {
-  margin-bottom: 16px;
-}
-
-.distribution-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 0;
-  border-bottom: 1px solid rgba(47, 51, 54, 0.3);
-
-  &:last-child {
-    border-bottom: none;
-  }
-}
-
-.distribution-label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #ff6b35;
-  min-width: 40px;
-}
-
-.distribution-arrow {
-  font-size: 14px;
-  color: #71767b;
-  font-weight: 400;
-}
-
-.distribution-amount {
-  font-size: 14px;
-  font-weight: 500;
-  color: #4ade80;
-  margin-left: auto;
-}
-
-.popover-bet-btn {
-  width: 100%;
-  background: transparent;
-  border: 1px solid #4ade80;
-  color: #4ade80;
-  border-radius: 20px;
-  padding: 10px;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-size: 14px;
-  font-weight: 600;
-
-  &:hover {
-    background: rgba(74, 222, 128, 0.1);
-    transform: translateY(-1px);
-  }
-}
-
-.sentiment-popover {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: #16181c;
-  border: 1px solid #2f3336;
-  border-radius: 12px;
-  padding: 24px;
-  min-width: 320px;
-  max-width: 500px;
-  z-index: 1001;
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
-  animation: popoverFadeIn 0.2s ease-out;
-}
-
-.sentiment-popover .popover-title {
-  color: #9c27b0;
-}
-
-.popover-content {
-  color: #e7e9ea;
-  line-height: 1.6;
-
-  p {
-    margin: 12px 0;
-
-    &:first-child {
-      margin-top: 0;
-    }
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
-
-  strong {
-    color: #9c27b0;
-    font-weight: 600;
-  }
-
-  ul {
-    margin: 8px 0;
-    padding-left: 20px;
-
-    li {
-      margin: 6px 0;
-      list-style-type: none;
-      position: relative;
-
-      &::before {
-        content: '';
-        position: absolute;
-        left: -20px;
-        top: 8px;
-        width: 6px;
-        height: 6px;
-        background: #9c27b0;
-        border-radius: 50%;
-      }
-    }
-  }
-
-  em {
-    color: #ba68c8;
-    font-style: italic;
-  }
-}
-
-// Market button active state
-.market-btn.active {
-  color: #4ade80;
-  background: rgba(74, 222, 128, 0.1);
-}
-
-// Animations
-@keyframes popoverFadeIn {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.9);
-  }
-
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-}
 
 // Responsive design
 @media (max-width: 768px) {
@@ -614,47 +257,6 @@
     padding: 12px;
   }
 
-  .sentiment-options {
-    grid-template-columns: 1fr;
-  }
-
-  .sentiment-vote-btn {
-    min-height: 56px;
-    padding: 14px 16px;
-
-    .vote-btn-text {
-      font-size: 16px;
-    }
-  }
-
-  .sentiment-results {
-    gap: 12px;
-  }
-
-  .result-option {
-    padding: 16px 14px;
-    gap: 16px;
-
-    &.selected {
-      padding-left: 50px;
-    }
-
-    &.selected::before {
-      left: 16px;
-      width: 24px;
-      height: 24px;
-      font-size: 14px;
-    }
-  }
-
-  .result-label {
-    font-size: 16px;
-    min-width: 35px;
-  }
-
-  .result-percentage {
-    font-size: 18px;
-  }
 
   .info-icon {
     width: 22px;
@@ -666,146 +268,30 @@
     grid-template-columns: 1fr;
   }
 
-  .prediction-actions {
-    justify-content: space-between;
+  .prediction-tabs-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    border-bottom: none;
   }
 
-  .action-btn {
-    padding: 6px 8px;
-    font-size: 12px;
+  .prediction-tabs {
+    justify-content: space-between;
+    border-bottom: 1px solid #2f3336;
+
+    .tab {
+      padding: 10px 8px;
+      font-size: 12px;
+
+      &.active::after {
+        bottom: -2px;
+      }
+    }
   }
 
   .predict-btn {
     padding: 14px 20px;
     font-size: 18px;
-  }
-
-  .market-popover {
-    min-width: 280px;
-    max-width: 320px;
-    padding: 20px;
-    margin: 20px;
-
-    .popover-pool {
-      font-size: 20px;
-    }
-  }
-}
-
-// Collapsible Panel Styles
-.bet-collapsible-panel {
-  margin-top: 16px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 16px;
-  animation: slideDown 0.3s ease-out;
-  border-left: 3px solid #ff9800; // Distinct accent color for betting
-}
-
-.panel-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-
-  .panel-title {
-    font-size: 15px;
-    font-weight: 600;
-    color: #ff9800;
-  }
-
-  .panel-participants {
-    font-size: 12px;
-    color: #71767b;
-  }
-}
-
-.panel-pool-info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: rgba(0, 0, 0, 0.2);
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 16px;
-
-  .pool-label {
-    font-size: 12px;
-    color: #b0b0b0;
-    margin-bottom: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .pool-amount {
-    font-size: 24px;
-    font-weight: 700;
-    color: #4ade80;
-    text-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
-  }
-}
-
-.panel-instruction {
-  font-size: 13px;
-  color: #a0aab0;
-  margin-bottom: 16px;
-  text-align: center;
-}
-
-.betting-options {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-
-  .bet-option-btn {
-    position: relative;
-    background: transparent;
-    border: 1px solid rgba(255, 152, 0, 0.3);
-    border-radius: 8px;
-    min-height: 44px;
-    cursor: pointer;
-    overflow: hidden;
-    transition: all 0.2s ease;
-
-    &:hover {
-      border-color: #ff9800;
-      box-shadow: 0 4px 12px rgba(255, 152, 0, 0.15);
-      transform: translateY(-1px);
-    }
-  }
-
-  .bet-percentage-bar {
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    background: rgba(255, 152, 0, 0.15);
-    z-index: 0;
-  }
-
-  .bet-option-content {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 16px;
-    width: 100%;
-
-    .bet-option-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: #ffffff;
-    }
-
-    .bet-option-stats {
-      font-size: 13px;
-      color: #ffb74d;
-      font-weight: 500;
-    }
   }
 }
 

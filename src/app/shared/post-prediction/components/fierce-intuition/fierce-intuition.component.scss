@@ -1,0 +1,227 @@
+@use '../../../../../styles/variables' as *;
+
+.sentiment-section {
+    border: 1px solid $border-color;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.sentiment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.sentiment-title-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sentiment-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #9c27b0;
+}
+
+.how-it-works-link {
+    font-size: 12px;
+    color: #9c27b0;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: underline;
+    font-weight: 500;
+
+    &:hover {
+        color: #ba68c8;
+        text-decoration: none;
+    }
+}
+
+.sentiment-total {
+    font-size: 12px;
+    color: #71767b;
+}
+
+.sentiment-options {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.sentiment-vote-btn {
+    background: transparent;
+    border: 2px solid #9c27b0;
+    border-radius: 20px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 48px;
+    position: relative;
+    overflow: hidden;
+
+    &:hover {
+        border-color: #ba68c8;
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+.vote-btn-text {
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    z-index: 1;
+}
+
+.vote-percentage {
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    z-index: 1;
+}
+
+.percentage-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: rgba(156, 39, 176, 0.4);
+    border-radius: 0;
+    z-index: 0;
+}
+
+.sentiment-results {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.result-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 20px;
+    border: 2px solid #2f3336;
+    transition: all 0.2s;
+    position: relative;
+    background: transparent;
+    min-height: 40px;
+
+    &.selected {
+        background: rgba(156, 39, 176, 0.1);
+        border: 2px solid $border-color;
+        padding-left: 38px;
+    }
+
+    &.selected::before {
+        content: '✓';
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #9c27b0;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+    }
+}
+
+.result-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #e7e9ea;
+    min-width: 30px;
+}
+
+.result-percentage {
+    font-size: 16px;
+    font-weight: bold;
+    color: #9c27b0;
+    margin-left: auto;
+}
+
+.view-more-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+
+    .view-more-btn {
+        background: none;
+        border: none;
+        color: #ba68c8;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 6px 12px;
+        border-radius: 12px;
+        transition: all 0.2s;
+
+        &:hover {
+            background: rgba(156, 39, 176, 0.1);
+            color: #df8cf0;
+        }
+    }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+    .sentiment-options {
+        grid-template-columns: 1fr;
+    }
+
+    .sentiment-vote-btn {
+        min-height: 56px;
+        padding: 14px 16px;
+
+        .vote-btn-text {
+            font-size: 16px;
+        }
+    }
+
+    .sentiment-results {
+        gap: 12px;
+    }
+
+    .result-option {
+        padding: 16px 14px;
+        gap: 16px;
+
+        &.selected {
+            padding-left: 50px;
+        }
+
+        &.selected::before {
+            left: 16px;
+            width: 24px;
+            height: 24px;
+            font-size: 14px;
+        }
+    }
+
+    .result-label {
+        font-size: 16px;
+        min-width: 35px;
+    }
+
+    .result-percentage {
+        font-size: 18px;
+    }
+}

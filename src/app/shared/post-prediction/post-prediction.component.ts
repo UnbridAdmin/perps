@@ -12,6 +12,11 @@ import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
 import { CommonService } from '../commonService';
 import { CategoryService } from '../category.service';
 import { VotingConfirmationModalComponent } from '../voting-confirmation-modal/voting-confirmation-modal.component';
+import { FierceIntuitionComponent } from './components/fierce-intuition/fierce-intuition.component';
+import { HowItWorkIntuitionComponent } from './components/how-it-work-intuition/how-it-work-intuition.component';
+import { FeaturedCommentComponent } from './components/featured-comment/featured-comment.component';
+import { BetPoolComponent } from './components/bet-pool/bet-pool.component';
+import { TradingMarketComponent } from './components/trading-market/trading-market.component';
 
 // API Response interfaces
 interface ApiPredictionOption {
@@ -75,6 +80,12 @@ interface Prediction {
       percentage: number;
     }>;
   };
+  featuredComment?: {
+    user: string;
+    avatar: string;
+    text: string;
+    burnedAmount: number;
+  };
   actions?: {
     comments: number;
     likes: number;
@@ -85,7 +96,7 @@ interface Prediction {
 @Component({
   selector: 'app-post-prediction',
   standalone: true,
-  imports: [CommonModule, RouterModule, InfiniteScrollModule, HttpClientModule],
+  imports: [CommonModule, RouterModule, InfiniteScrollModule, HttpClientModule, FierceIntuitionComponent, FeaturedCommentComponent, BetPoolComponent, TradingMarketComponent],
   templateUrl: './post-prediction.component.html',
   styleUrls: ['./post-prediction.component.scss']
 })
@@ -283,17 +294,44 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
 
   // Toggle market popover
   toggleMarketPopover(index: number): void {
-    this.activeMarketPopover = this.activeMarketPopover === index ? null : index;
+    if (this.activeMarketPopover === index) {
+      this.activeMarketPopover = null;
+    } else {
+      this.activeMarketPopover = index;
+      this.activeSentimentPopover = null;
+      this.activeBetPopover = null;
+    }
   }
 
   // Toggle sentiment popover
   toggleSentimentPopover(index: number): void {
-    this.activeSentimentPopover = this.activeSentimentPopover === index ? null : index;
+    if (this.activeSentimentPopover === index) {
+      this.activeSentimentPopover = null;
+    } else {
+      this.activeSentimentPopover = index;
+      this.activeMarketPopover = null;
+      this.activeBetPopover = null;
+    }
   }
 
   // Toggle bet popover
   toggleBetPopover(index: number): void {
-    this.activeBetPopover = this.activeBetPopover === index ? null : index;
+    if (this.activeBetPopover === index) {
+      this.activeBetPopover = null;
+    } else {
+      this.activeBetPopover = index;
+      this.activeMarketPopover = null;
+      this.activeSentimentPopover = null;
+    }
+  }
+
+  // Open How it Works modal
+  openHowItWorksModal(): void {
+    this.modalService.open(HowItWorkIntuitionComponent, {
+      centered: true,
+      size: 'md',
+      windowClass: 'dark-modal'
+    });
   }
 
   // Close popover when clicking outside
@@ -301,6 +339,16 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     this.activeMarketPopover = null;
     this.activeSentimentPopover = null;
     this.activeBetPopover = null;
+  }
+
+  // Open modal / logic to overthrow the featured comment
+  openOverthrowModal(index: number): void {
+    // To be implemented: open a modal where the user inputs their text and the amount of Fierce to burn
+    console.log('Overthrowing featured comment for prediction:', this.predictions[index].prediction_id);
+    this.confirmDialogService.showInfo({
+      title: 'Destronar Comentario',
+      message1: 'Próximamente: Ingresa tu mensaje y quema Fierce para destacarlo aquí.'
+    });
   }
 
   // Vote on sentiment poll - now with real API integration

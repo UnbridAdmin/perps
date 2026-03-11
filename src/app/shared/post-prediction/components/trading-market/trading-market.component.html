@@ -1,0 +1,51 @@
+<div class="market-collapsible-panel fade-in">
+    <!-- Pro Badge -->
+    <div class="pro-badge">
+        <span class="pro-icon">⚡</span>
+        <span class="pro-text">Mercado Pro / Para usuarios experimentados</span>
+    </div>
+
+    <div class="panel-header">
+        <span class="panel-title">📊 Mercado Oficial (Trading)</span>
+        <button class="close-panel-btn" (click)="onClose()">×</button>
+    </div>
+
+    <div class="market-stats">
+        <div class="stat-box">
+            <span class="stat-label">Volumen Total</span>
+            <span class="stat-value">{{ prediction.totalVolume | number:'1.0-0' }} F</span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-label">Liquidez (Pool)</span>
+            <span class="stat-value">{{ prediction.marketInfo?.poolAmount || '0' }}</span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-label">Traders</span>
+            <span class="stat-value">{{ prediction.marketInfo?.participants || 0 }}</span>
+        </div>
+    </div>
+
+    <div class="market-order-book">
+        <div class="order-book-header">
+            <div class="col-asset">Activo (Opción)</div>
+            <div class="col-price">Precio/Acción</div>
+            <div class="col-trend">Prob.</div>
+        </div>
+
+        <div class="order-item" *ngFor="let option of prediction.marketInfo?.options">
+            <div class="col-asset">{{ option.label }}</div>
+            <!-- Derived a mock price based on percentage: 50% = 0.50 F -->
+            <div class="col-price">{{ (option.percentage / 100) | number:'1.2-2' }} F</div>
+            <div class="col-trend">
+                <div class="trend-bar-container">
+                    <div class="trend-bar" [style.width.%]="option.percentage"></div>
+                </div>
+                <span class="trend-text">{{ option.percentage }}%</span>
+            </div>
+        </div>
+    </div>
+
+    <button class="trade-action-btn" (click)="onTrade()">
+        Ir a Operar al Mercado Completo 🎯
+    </button>
+</div>

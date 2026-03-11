@@ -1,0 +1,159 @@
+.featured-comment-container {
+    background: linear-gradient(145deg, rgba(255, 107, 53, 0.05) 0%, rgba(20, 20, 20, 0.4) 100%);
+    border: 1px solid rgba(255, 107, 53, 0.2);
+    border-radius: 12px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    position: relative;
+
+    &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 3px;
+        height: 100%;
+        background: linear-gradient(to bottom, #ff6b35, #ff9800);
+    }
+}
+
+.burn-banner {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(255, 107, 53, 0.1);
+    border-bottom: 1px solid rgba(255, 107, 53, 0.1);
+
+    .burn-icon {
+        font-size: 14px;
+        margin-right: 6px;
+    }
+
+    .burn-text {
+        font-size: 11px;
+        color: #ff6b35;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .info-tooltip {
+        position: relative;
+        margin-left: auto;
+        cursor: pointer;
+
+        .info-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: rgba(255, 107, 53, 0.2);
+            color: #ff6b35;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .tooltip-text {
+            visibility: hidden;
+            width: 220px;
+            background-color: #111315;
+            color: #a0aab0;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 10;
+            bottom: 125%;
+            right: 0;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 11px;
+            border: 1px solid #2f3336;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        &:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+    }
+}
+
+.comment-content {
+    padding: 12px 16px;
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+
+        .avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            margin-right: 10px;
+            border: 1px solid rgba(255, 107, 53, 0.3);
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+
+            .username {
+                font-size: 13px;
+                font-weight: 700;
+                color: #e7e9ea;
+            }
+
+            .burned-amount {
+                font-size: 11px;
+                color: #ff6b35;
+                font-weight: 600;
+            }
+        }
+    }
+
+    .comment-text {
+        font-size: 14px;
+        color: #e7e9ea;
+        margin: 0 0 12px 0;
+        line-height: 1.4;
+        font-style: italic;
+    }
+}
+
+.be-first-content {
+    padding: 16px;
+    text-align: center;
+
+    .empty-text {
+        font-size: 13px;
+        color: #71767b;
+        margin: 0 0 10px 0;
+    }
+}
+
+.overthrow-btn {
+    background: transparent;
+    border: 1px solid #ff6b35;
+    color: #ff6b35;
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+
+    &:hover {
+        background: rgba(255, 107, 53, 0.1);
+        transform: translateY(-1px);
+    }
+
+    &.first-btn {
+        width: auto;
+        padding: 8px 16px;
+    }
+}

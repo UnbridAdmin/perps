@@ -1,8 +1,6 @@
 <div class="prediction-list" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50"
   (scrolled)="onScroll()">
-  <!-- Popover Backdrop -->
-  <div class="popover-backdrop" *ngIf="activeMarketPopover !== null || activeSentimentPopover !== null"
-    (click)="closePopover()"></div>
+  <!-- No backdrop needed for inline panels -->
 
   <!-- Loading indicator -->
   <div class="loading-indicator" *ngIf="isLoading && predictions.length === 0">
@@ -33,129 +31,45 @@
     </div>
 
     <!-- Sentiment Voting Section -->
-    <div class="sentiment-section" *ngIf="prediction.options && prediction.options.length > 0">
-      <div class="sentiment-header">
-        <div class="sentiment-title-section">
-          <span class="sentiment-title">🔥 Intuición Fierce</span>
-          <a class="how-it-works-link" (click)="toggleSentimentPopover(i)">How it works?</a>
-        </div>
-        <span class="sentiment-total">{{ prediction.sentimentVotes.total | number:'1.0-0' }} votos</span>
-      </div>
-
-      <!-- Voting Options - Not Voted State -->
-      <div class="sentiment-options" *ngIf="!hasUserVoted(prediction.prediction_id)">
-        <div class="sentiment-vote-btn" *ngFor="let option of prediction.options"
-          (click)="voteOnPrediction(i, option.id)">
-          <div class="percentage-bar" [style.width.%]="option.percentage"></div>
-          <span class="vote-btn-text">{{ option.title }}</span>
-          <span class="vote-percentage">{{ option.percentage }}%</span>
-        </div>
-      </div>
-
-      <!-- Results - Voted State -->
-      <div class="sentiment-results" *ngIf="hasUserVoted(prediction.prediction_id)">
-        <div class="result-option" *ngFor="let option of prediction.options"
-          [class.selected]="getUserVotedOptionId(prediction.prediction_id) === option.id">
-          <span class="result-label">{{ option.title }}</span>
-          <span class="result-percentage">{{ option.percentage }}%</span>
-        </div>
-      </div>
-    </div>
+    <app-fierce-intuition [prediction]="prediction" [hasVoted]="hasUserVoted(prediction.prediction_id)"
+      [votedOptionId]="getUserVotedOptionId(prediction.prediction_id)" (vote)="voteOnPrediction(i, $event)"
+      (showHowItWorks)="openHowItWorksModal()">
+    </app-fierce-intuition>
 
     <!-- Action Buttons -->
-    <div class="prediction-actions" *ngIf="prediction.actions">
-      <!-- Mechanic 1: Free Vote -->
-      <button class="action-btn" (click)="toggleSentimentPopover(i)" [class.active]="activeSentimentPopover === i"
-        title="Votos libres">
-        🔮 {{ prediction.sentimentVotes.total | number:'1.0-0' }}
-      </button>
-      <!-- Mechanic 2: Bet/Pot -->
-      <button class="action-btn bet-btn" (click)="toggleBetPopover(i)" [class.active]="activeBetPopover === i"
-        title="Pool de apuestas">
-        🎲 {{ prediction.marketInfo?.poolAmount || '0' }}
-      </button>
-      <!-- Mechanic 3: Trading Market -->
-      <button class="action-btn market-btn" (click)="toggleMarketPopover(i)" [class.active]="activeMarketPopover === i"
-        title="Mercado Trading">
-        📊 {{ prediction.totalVolume | number:'1.0-0' }} F
-      </button>
-      <button class="predict-btn btn-primary" (click)="navigateToTrade(prediction)">🎯 Trade</button>
-    </div>
-
-    <!-- Bet Collapsible Panel (Inline) -->
-    <div class="bet-collapsible-panel" *ngIf="activeBetPopover === i">
-      <div class="panel-header">
-        <span class="panel-title">🎲 Pool de Apuestas Mutuas</span>
-        <span class="panel-participants">{{ prediction.sentimentVotes?.total || 0 | number:'1.0-0' }} apostadores</span>
-      </div>
-
-      <div class="panel-pool-info">
-        <span class="pool-label">Pozo Acumulado</span>
-        <span class="pool-amount">{{ prediction.marketInfo?.poolAmount || '0 F' }}</span>
-      </div>
-
-      <div class="panel-instruction">
-        Selecciona una opción a continuación e ingresa el monto de Fierce que deseas inyectar a tu predicción.
-      </div>
-
-      <div class="betting-options">
-        <div class="bet-option-btn" *ngFor="let option of prediction.options" (click)="voteOnPrediction(i, option.id)">
-          <div class="bet-percentage-bar" [style.width.%]="option.percentage"></div>
-          <div class="bet-option-content">
-            <span class="bet-option-title">{{ option.title }}</span>
-            <span class="bet-option-stats">{{ option.votes }} votos ({{ option.percentage }}%)</span>
-          </div>
+    <div class="prediction-tabs-container" *ngIf="prediction.actions">
+      <div class="prediction-tabs">
+        <!-- Mechanic 1: Free Vote -->
+        <div class="tab" (click)="toggleSentimentPopover(i)"
+          [class.active]="activeMarketPopover !== i && activeBetPopover !== i" title="Votos libres">
+          🔮 {{ prediction.sentimentVotes.total | number:'1.0-0' }}
+        </div>
+        <!-- Mechanic 2: Bet/Pot -->
+        <div class="tab" (click)="toggleBetPopover(i)" [class.active]="activeBetPopover === i" title="Pool de apuestas">
+          🎲 {{ prediction.marketInfo?.poolAmount || '0' }}
+        </div>
+        <!-- Mechanic 3: Trading Market -->
+        <div class="tab" (click)="toggleMarketPopover(i)" [class.active]="activeMarketPopover === i"
+          title="Mercado Trading">
+          📊 {{ prediction.totalVolume | number:'1.0-0' }} F
         </div>
       </div>
+      <!-- <button class="predict-btn btn-primary" (click)="navigateToTrade(prediction)">🎯 Trade</button> -->
     </div>
 
-    <!-- Market Popover -->
-    <div class="market-popover" *ngIf="activeMarketPopover === i && prediction.marketInfo">
-      <div class="popover-header">
-        <span class="popover-title">📊 Mercado Oficial</span>
-        <span class="popover-participants">{{ prediction.marketInfo.participants | number:'1.0-0' }}
-          participantes</span>
-      </div>
-      <div class="popover-pool">{{ prediction.marketInfo.poolAmount }}</div>
-      <div class="popover-distribution">
-        <div class="distribution-item" *ngFor="let option of prediction.marketInfo.options">
-          <span class="distribution-label">{{ option.label }}</span>
-          <span class="distribution-arrow">→</span>
-          <span class="distribution-amount">{{ option.amount }} ({{ option.percentage }}%)</span>
-        </div>
-      </div>
-      <button class="popover-bet-btn btn-primary" (click)="navigateToTrade(prediction)">🎯 Trade</button>
-    </div>
+    <!-- Expanded Panels -->
+    <app-trading-market *ngIf="activeMarketPopover === i" [prediction]="prediction"
+      (trade)="navigateToTrade(prediction)" (close)="closePopover()">
+    </app-trading-market>
 
+    <app-bet-pool *ngIf="activeBetPopover === i" [prediction]="prediction" (vote)="voteOnPrediction(i, $event)"
+      (close)="closePopover()">
+    </app-bet-pool>
 
-
-    <!-- Sentiment Popover -->
-    <div class="sentiment-popover" *ngIf="activeSentimentPopover === i">
-      <div class="popover-header">
-        <span class="popover-title">🔥 Cómo Funciona Intuición Fierce</span>
-      </div>
-      <div class="popover-content">
-        <p><strong>¿Qué es Intuición Fierce?</strong></p>
-        <p>Es una votación popular exclusiva para holders de tokens Fierce. Los holders predicen el futuro simplemente
-          manteniendo sus tokens en la wallet.</p>
-
-        <p><strong>¿Cómo funciona?</strong></p>
-        <ul>
-          <li>🔮 Tu intuición se registra automáticamente</li>
-          <li>🆓 No requiere apostar dinero real</li>
-          <li>🎯 No afecta los resultados del mercado oficial</li>
-        </ul>
-
-        <p><strong>Beneficios:</strong></p>
-        <ul>
-          <li>🎁 Participa en predicciones comunitarias</li>
-          <li>💰 Gana xp por intuición acertada</li>
-          <li>🌐 Forma parte del futuro del protocolo</li>
-        </ul>
-
-        <p><em>¡Tu intuición vale oro! Cada token cuenta.</em></p>
-      </div>
-    </div>
+    <!-- Featured Comment / King of the Hill -->
+    <app-featured-comment *ngIf="activeMarketPopover !== i && activeBetPopover !== i"
+      [comment]="prediction.featuredComment" (overthrow)="openOverthrowModal(i)">
+    </app-featured-comment>
   </div>
 
   <!-- Loading more indicator -->

@@ -1,0 +1,33 @@
+<div class="sentiment-section" *ngIf="prediction?.options && prediction.options.length > 0">
+    <div class="sentiment-header">
+        <div class="sentiment-title-section">
+            <span class="sentiment-title">🔥 Intuición Fierce</span>
+            <a class="how-it-works-link" (click)="onShowHowItWorks()">How it works?</a>
+        </div>
+        <span class="sentiment-total">{{ prediction.sentimentVotes?.total || 0 | number:'1.0-0' }} votos</span>
+    </div>
+
+    <!-- Voting Options - Not Voted State -->
+    <div class="sentiment-options" *ngIf="!hasVoted">
+        <div class="sentiment-vote-btn" *ngFor="let option of visibleOptions" (click)="onVote(option.id)">
+            <div class="percentage-bar" [style.width.%]="option.percentage"></div>
+            <span class="vote-btn-text">{{ option.title }}</span>
+            <span class="vote-percentage">{{ option.percentage }}%</span>
+        </div>
+    </div>
+
+    <!-- Results - Voted State -->
+    <div class="sentiment-results" *ngIf="hasVoted">
+        <div class="result-option" *ngFor="let option of visibleOptions" [class.selected]="votedOptionId === option.id">
+            <span class="result-label">{{ option.title }}</span>
+            <span class="result-percentage">{{ option.percentage }}%</span>
+        </div>
+    </div>
+
+    <!-- View More Button -->
+    <div class="view-more-container" *ngIf="remainingOptionsCount > 0">
+        <button class="view-more-btn" (click)="showAllOptions = !showAllOptions">
+            {{ showAllOptions ? 'Colapsar opciones ▲' : '... ver ' + remainingOptionsCount + ' opciones más ▼' }}
+        </button>
+    </div>
+</div>

@@ -1,0 +1,26 @@
+<div class="bet-collapsible-panel fade-in">
+    <div class="panel-header">
+        <span class="panel-title">🎲 Pool de Apuestas Mutuas</span>
+        <span class="panel-participants">{{ prediction.sentimentVotes?.total || 0 | number:'1.0-0' }} apostadores</span>
+        <button class="close-panel-btn" (click)="onClose()">×</button>
+    </div>
+
+    <div class="panel-pool-info">
+        <span class="pool-label">Pozo Acumulado</span>
+        <span class="pool-amount">{{ prediction.marketInfo?.poolAmount || '0 F' }}</span>
+    </div>
+
+    <div class="panel-instruction">
+        Selecciona una opción a continuación e ingresa el monto de Fierce que deseas inyectar a tu predicción.
+    </div>
+
+    <div class="betting-options">
+        <div class="bet-option-btn" *ngFor="let option of prediction.options" (click)="onVote(option.id)">
+            <div class="bet-percentage-bar" [style.width.%]="option.percentage"></div>
+            <div class="bet-option-content">
+                <span class="bet-option-title">{{ option.title }}</span>
+                <span class="bet-option-stats">{{ option.votes }} votos ({{ option.percentage }}%)</span>
+            </div>
+        </div>
+    </div>
+</div>
