@@ -1,0 +1,29 @@
+<div class="pl-card">
+  <div class="card-header">
+    <div class="title">
+      <span class="dot"></span> Profit/Loss
+    </div>
+    <div class="range-selector">
+      <span *ngFor="let r of ranges" 
+            [class.active]="r === timeRange" 
+            (click)="setRange(r)">
+        {{ r }}
+      </span>
+    </div>
+  </div>
+
+  <div class="pl-value-section">
+    <div class="value">${{ totalPL | number:'1.2-2' }}</div>
+    <div class="source">
+      <img src="https://ipfs.unbrid.com/envision/envision-logo.png" alt="Unbrid" class="mini-logo">
+      Unbrid
+    </div>
+  </div>
+
+  <div class="sub-label">Past Month</div>
+
+  <div class="chart-placeholder">
+    <!-- Mini visualization placeholder -->
+    <div class="gradient-line"></div>
+  </div>
+</div>

@@ -65,10 +65,11 @@ export class AppComponent implements OnInit, OnDestroy {
 
         this.isHomePage = mainPath === '/' || mainPath === '/home';
 
-        // Show sidebar on home, profile, and dynamic profiles (any route that isn't trade or login)
-        this.showNewsSidebar = this.isHomePage ||
+        // Show sidebar on home, profile, and dynamic profiles (any route that isn't trade, login, or balance-activity)
+        this.showNewsSidebar = (this.isHomePage ||
           mainPath.startsWith('/profile') ||
-          (!mainPath.startsWith('/trade') && !mainPath.startsWith('/login'));
+          (!mainPath.startsWith('/trade') && !mainPath.startsWith('/login'))) &&
+          !mainPath.startsWith('/balance-activity');
       });
   }
 

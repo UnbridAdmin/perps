@@ -1,0 +1,28 @@
+<div class="balance-card">
+  <div class="card-header">
+    <span class="label">Portfolio <i class='bx bx-expand-alt'></i></span>
+    <span class="available-label">Available to trade</span>
+  </div>
+
+  <div class="card-values">
+    <div class="portfolio-section">
+      <div class="value">${{ portfolioValue | number:'1.2-2' }} <i class='bx bx-low-vision invisible-toggle'></i></div>
+      <div class="change" [class.negative]="dailyChange < 0" [class.positive]="dailyChange > 0">
+        ${{ dailyChange | number:'1.2-2' }} (0%) past day
+      </div>
+    </div>
+
+    <div class="available-section">
+      <div class="value">${{ availableToTrade | number:'1.2-2' }}</div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="action-btn deposit" (click)="onDeposit()">
+      <i class='bx bx-download'></i> Deposit
+    </button>
+    <button class="action-btn withdraw" (click)="onWithdraw()">
+      <i class='bx bx-upload'></i> Exchange
+    </button>
+  </div>
+</div>

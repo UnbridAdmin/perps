@@ -1,0 +1,64 @@
+<div class="history-section">
+  <div class="tabs-header">
+    <div class="tab" [class.active]="activeTab === 'intuition'" (click)="setTab('intuition')">
+      Votos Intuitivos
+    </div>
+    <div class="tab" [class.active]="activeTab === 'pool'" (click)="setTab('pool')">
+      Pool de Apuestas
+    </div>
+    <div class="tab" [class.active]="activeTab === 'trading'" (click)="setTab('trading')">
+      Mercado Trading
+    </div>
+  </div>
+
+  <div class="filters-bar">
+    <div class="search-container">
+      <i class='bx bx-search'></i>
+      <input type="text" placeholder="Search" [(ngModel)]="searchQuery">
+    </div>
+    
+    <div class="filter-buttons">
+      <button class="filter-btn"><i class='bx bx-filter-alt'></i> All</button>
+      <button class="filter-btn"><i class='bx bx-sort-alt-2'></i> Newest</button>
+      <button class="filter-btn"><i class='bx bx-calendar'></i> Date</button>
+      <button class="filter-btn"><i class='bx bx-export'></i> Export</button>
+    </div>
+  </div>
+
+  <div class="activity-table">
+    <div class="table-header">
+      <div class="col">ACTIVITY</div>
+      <div class="col">MARKET</div>
+      <div class="col text-right">VALUE</div>
+      <div class="col text-right">TIME</div>
+    </div>
+
+    <div class="table-row" *ngFor="let item of activities">
+      <div class="col activity-type">
+        <span class="icon-circle" [class.negative]="item.value < 0" [class.positive]="item.value > 0">
+          <i class='bx' [ngClass]="item.icon || (item.value < 0 ? 'bx-minus' : 'bx-plus')"></i>
+        </span>
+        {{ item.type }}
+      </div>
+      
+      <div class="col market-info">
+        <div class="market-img" *ngIf="item.image" [style.backgroundImage]="'url(' + item.image + ')'"></div>
+        <div class="market-details">
+          <div class="market-name">{{ item.market }}</div>
+          <div class="market-subtext" *ngIf="item.option">
+            <span class="option">{{ item.option }}</span>
+            <span class="shares">{{ item.shares }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col value text-right" [class.negative]="item.value < 0" [class.positive]="item.value > 0">
+        {{ item.value < 0 ? '-' : '+' }}${{ (item.value < 0 ? -item.value : item.value) | number:'1.2-2' }}
+      </div>
+
+      <div class="col time text-right">
+        {{ item.time }}
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,25 @@
+<div class="balance-activity-container">
+  <!-- Header similar to profile -->
+  <header class="page-header">
+    <div class="header-content">
+      <button routerLink="/home" class="back-btn">
+        <i class='bx bx-left-arrow-alt'></i>
+      </button>
+      <div class="page-info">
+        <h1 class="page-title">Portfolio</h1>
+        <p class="page-subtitle">Manage your assets and view activity</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="main-layout">
+    <div class="top-row">
+      <app-balance-overview></app-balance-overview>
+      <!-- <app-profit-loss></app-profit-loss> -->
+    </div>
+
+    <app-you-won></app-you-won>
+
+    <app-history></app-history>
+  </div>
+</div>

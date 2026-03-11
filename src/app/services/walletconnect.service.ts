@@ -49,7 +49,7 @@ const INITIAL_STATE: WalletState = {
 export class WalletConnectService implements OnDestroy {
   public appKit: any;
   private appKitSubscriptions: (() => void)[] = [];
-
+  private stateMonitoringInterval: any = null;
   /**
    * @property walletState$
    * Es la ÚNICA FUENTE DE VERDAD sobre el estado de la billetera.
@@ -94,6 +94,9 @@ export class WalletConnectService implements OnDestroy {
       // 1. RESTAURAR ESTADO PERSISTIDO PRIMERO (antes de inicializar AppKit)
       await this.restoreConnectionState();
 
+      // 2. Pequeño delay para permitir que los suscriptores procesen el estado persistido
+      await new Promise(resolve => setTimeout(resolve, 100));
+
       // 2. Inicializar AppKit
       await this.initializeAppKit();
 
@@ -103,6 +106,9 @@ export class WalletConnectService implements OnDestroy {
       // 4. Verificar y actualizar el estado real de conexión
       await this.updateConnectionState();
 
+      // 6. Iniciar monitoreo periódico de estado
+      this.startStateMonitoring();
+
       this.isServiceReady = true;
       console.log('✅ WalletConnect inicializado correctamente');
 
@@ -111,6 +117,22 @@ export class WalletConnectService implements OnDestroy {
       this.clearPersistedState();
       this.walletStateSubject.next(INITIAL_STATE);
     }
+  }
+
+  private startStateMonitoring(): void {
+    if (this.stateMonitoringInterval) {
+      clearInterval(this.stateMonitoringInterval);
+    }
+
+    this.stateMonitoringInterval = setInterval(async () => {
+      try {
+        await this.updateConnectionState();
+      } catch (error) {
+        console.error('❌ Error en monitoreo de estado:', error);
+      }
+    }, 5000); // Verificar cada 5 segundos
+
+    console.log('🔍 Monitoreo de estado iniciado (intervalo: 5s)');
   }
 
   private async restoreConnectionState(): Promise<void> {
@@ -189,14 +211,14 @@ export class WalletConnectService implements OnDestroy {
           defaultNetwork: network,
           metadata: environment.WALLETCONNEC,
           projectId: this.projectId,
-          // features: {
-          //   analytics: true,
-          //   allWallets: true,
-          //   email: false,
-          //   socials: false,
-          //   swaps: false,
-          //   onramp: false,
-          // },
+          features: {
+            analytics: true,
+            allWallets: true,
+            email: false,
+            socials: false,
+            swaps: false,
+            onramp: false,
+          },
           enableAuthentication: false, // DESACTIVAR firma interna de Reown
         } as any);
 
@@ -553,6 +575,9 @@ export class WalletConnectService implements OnDestroy {
 
   ngOnDestroy(): void {
     this.appKitSubscriptions.forEach(unsubscribe => unsubscribe());
-    this.clearPersistedState();
+    //this.clearPersistedState();
+    if (this.stateMonitoringInterval) {
+      clearInterval(this.stateMonitoringInterval);
+    }
   }
 }

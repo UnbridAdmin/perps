@@ -1,0 +1,11 @@
+<div class="you-won-banner">
+  <div class="winner-content">
+    <div class="market-thumbnail" [style.backgroundImage]="'url(' + marketImage + ')'"></div>
+    <div class="winner-message">
+      You won <span class="amount">${{ amount | number:'1.2-2' }}</span>
+    </div>
+  </div>
+  <button class="claim-btn" (click)="onClaim()">
+    <i class='bx bx-party'></i> Claim
+  </button>
+</div>
