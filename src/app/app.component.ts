@@ -273,18 +273,10 @@ export class AppComponent implements OnInit, OnDestroy {
    * DESCONEXIÓN INMEDIATA
    */
   private handleImmediateDisconnect(): void {
-    console.log('🔴 Desconexión inmediata detectada');
     this.isFirstConnection = true;
-
-    // Invalidar la cookie appSecurityToken en el backend
-    this.authorizationService.logout().subscribe({
-      next: () => console.log('✅ Cookie appSecurityToken invalidada en desconexión'),
-      error: () => console.log('⚠️ Sesión ya expirada o no existente')
-    });
-
-    this.clearAllStorage();
-    this.clearApplicationState();
+    this.authorizationService.clearSession();
     this.signing = true;
+
 
     // Redirigir inmediatamente
     this.router.navigate(['/']);
@@ -387,20 +379,12 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   private async quickCleanPreviousSession(): Promise<void> {
     try {
-      // Limpiar storage local inmediatamente
-      sessionStorage.clear();
-      localStorage.removeItem('accountAddress');
-      localStorage.removeItem('signatureData');
-      localStorage.removeItem('expirationDate');
-
-      // Logout en segundo plano (no esperar)
-      this.authorizationService.logout().subscribe({
-        next: () => console.log('✅ Sesión anterior limpiada'),
-        error: () => console.log('⚠️ Sesión anterior ya limpiada')
-      });
+      this.authorizationService.clearSession();
+      console.log('✅ Sesión anterior limpiada');
     } catch (error) {
       console.log('⚠️ Error en limpieza rápida:', error);
     }
+
   }
 
   private async handleExistingUser(info: any): Promise<void> {
@@ -468,8 +452,8 @@ export class AppComponent implements OnInit, OnDestroy {
     this.isLoggingIn = false;
     this.commonService.saveAccountAddress(info.address);
     this.walletConnectService.updateBalance.next(true);
-    localStorage.setItem('expirationDate', resp.data[0].expires);
-    this.authorizationService.scheduleRefresh();
+    this.authorizationService.setSession(resp.data[0].expires, info.address);
+
     // Use the component property instead of missing connectingWallet
     this.isProcessingLogin = false;
 

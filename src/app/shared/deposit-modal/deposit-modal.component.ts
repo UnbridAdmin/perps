@@ -90,17 +90,17 @@ export class DepositModalComponent implements OnInit {
     this.isProcessing = true;
     try {
       await this.depositService.depositFierce(this.amount);
-
+      
       this.isProcessing = false;
-      this.sidebarMenuService.notifyBalanceUpdate(); // Notify other components
+      this.sidebarMenuService.notifyBalanceUpdate(); // Notify other components to refresh balance
 
-      // Close the deposit modal first so the confirmation dialog is not blocked
-      this.activeModal.close(true);
-
+      // The modal closing and success message should be coordinated
       await this.confirmDialogService.showSuccess({
         title: 'Depósito exitoso',
         message1: `Tu depósito de ${this.amount} FIERCE ha sido acreditado.`
       });
+      
+      this.activeModal.close(true);
     } catch (error: any) {
       this.isProcessing = false;
       console.error('Deposit error:', error);

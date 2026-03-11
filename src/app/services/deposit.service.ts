@@ -33,7 +33,18 @@ export class DepositService {
     const fierceAddress = environment.FIERCECONTRACTADDRESS;
     const decimals = environment.DECIMALFIERCE || 18;
 
-    // 1. Perform the blockchain transaction
+    // 0. If NOT authenticated, request signature FIRST
+    const isAuthenticated = this.authService.isAuthenticated();
+    let signResult = null;
+    let message = '';
+
+    if (!isAuthenticated) {
+      message = `I authorize the deposit of ${amount} FIERCE particles in perps platform`;
+      console.log('Requesting signature before transaction...');
+      signResult = await this.walletService.signMessage(message);
+    }
+
+    // 1. Perform the blockchain transaction (Confirm amount)
     const provider = await this.walletService.getWeb3Modal().getWalletProvider();
     const ethersProvider = new ethers.BrowserProvider(provider);
     const signer = await ethersProvider.getSigner();
@@ -50,16 +61,16 @@ export class DepositService {
     const tx = await fierceContract['transfer'](vaultAddress, parsedAmount);
     console.log('Transaction sent:', tx.hash);
     
-    // Wait for 4 confirmations as requested
+    // 2. Wait for 4 confirmations as requested
     console.log('Waiting for 4 confirmations...');
     await tx.wait(4); 
     console.log('Transaction confirmed with 4 blocks.');
 
-    // 2. Call the backend with the hash
-    return this.notifyBackend(tx.hash, amount, walletAddress);
+    // 3. Call the backend with the hash and signature
+    return this.notifyBackend(tx.hash, amount, walletAddress, signResult, message);
   }
 
-  private async notifyBackend(hash: string, amount: string, walletAddress: string): Promise<any> {
+  private async notifyBackend(hash: string, amount: string, walletAddress: string, signResult?: any, signedMessage?: string): Promise<any> {
     const isAuthenticated = this.authService.isAuthenticated();
 
     if (isAuthenticated) {
@@ -71,16 +82,13 @@ export class DepositService {
       return this.apiService.apiCall('/user/deposit-funds', 'POST', payload).toPromise();
     } else {
       // For unauthenticated users, use /user/secure-deposit-funds
-      // Requires signature
-      const message = `Deposit ${amount} FIERCE with hash ${hash}`;
-      const signResult = await this.walletService.signMessage(message);
-
+      // Uses the signature obtained at the beginning
       const payload = {
         hash: hash,
         amount: amount,
         signature: signResult.signature,
-        message: message,
-        coin_id: 1 // Assuming 1 is FIERCE or specific coin ID
+        message: signedMessage,
+        coin_id: 1 // Assuming 1 is FIERCE
       };
 
       return this.apiService.publicApiCall('/user/secure-deposit-funds', 'POST', payload).toPromise();

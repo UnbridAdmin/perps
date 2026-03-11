@@ -10,6 +10,7 @@ export class AuthorizationService {
     logoutEvent: EventEmitter<any> = new EventEmitter();
     constructor(private apiService: ApiServices,
         private router: Router) {
+        this.checkExpiredSession();
         this.scheduleRefresh();
     }
 
@@ -46,24 +47,53 @@ export class AuthorizationService {
                                     this.scheduleRefresh(); // Programar la próxima actualización
                                 },
                                 error: (error: any) => {
-                                    this.router.navigate(['/']);
-                                    sessionStorage.clear();
-                                    localStorage.clear();
+                                    this.clearSession();
                                 }
                             });
                         }, timeUntilRefresh);
                     } else {
-                        this.router.navigate(['/']);
-                        sessionStorage.clear();
-                        localStorage.clear();
+                        this.clearSession();
                     }
                 } else {
-                    this.router.navigate(['/']);
-                    sessionStorage.clear();
-                    localStorage.clear();
+                    this.clearSession();
                 }
             }
         }
+    }
+
+    public checkExpiredSession(): boolean {
+        const expirationDateString = localStorage.getItem('expirationDate');
+        if (expirationDateString) {
+            const expirationDate = moment(expirationDateString, 'ddd MMM DD HH:mm:ss Z YYYY');
+            if (expirationDate.isValid() && moment().isAfter(expirationDate)) {
+                this.clearSession();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public clearSession(): void {
+        const keysToRemove = ['expirationDate', 'signatureData', 'accountAddress', 'sessionAddress'];
+        keysToRemove.forEach(key => localStorage.removeItem(key));
+
+        sessionStorage.removeItem('accountAddress');
+        sessionStorage.clear();
+
+        this.logout().subscribe({
+            next: () => console.log('✅ Session cleared'),
+            error: () => console.log('⚠️ Session already invalid')
+        });
+
+        if (!this.router.url.includes('/login') && this.router.url !== '/') {
+            this.router.navigate(['/']);
+        }
+    }
+
+    public setSession(expires: string, address: string): void {
+        localStorage.setItem('expirationDate', expires);
+        localStorage.setItem('sessionAddress', address.toLowerCase());
+        this.scheduleRefresh();
     }
 
     public existUser(data) {
@@ -73,6 +103,13 @@ export class AuthorizationService {
     public isAuthenticated(): boolean {
         const expirationDateString = localStorage.getItem('expirationDate');
         if (!expirationDateString) return false;
+
+        const sessionAddress = localStorage.getItem('sessionAddress');
+        const currentAddress = sessionStorage.getItem('accountAddress');
+
+        if (sessionAddress && currentAddress && sessionAddress.toLowerCase() !== currentAddress.toLowerCase()) {
+            return false;
+        }
 
         const expirationDate = moment(expirationDateString, 'ddd MMM DD HH:mm:ss Z YYYY');
         const currentDate = moment();

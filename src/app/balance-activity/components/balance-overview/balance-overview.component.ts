@@ -35,7 +35,20 @@ export class BalanceOverviewComponent {
         this.fetchData();
       })
     );
+
+    // Listen for wallet changes
+    this.subscriptions.add(
+      this.walletService.walletState$.subscribe((state) => {
+        if (state.isConnected) {
+          this.fetchData();
+        } else {
+          this.availableToTrade = 0;
+          this.portfolioValue = 0;
+        }
+      })
+    );
   }
+
 
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
