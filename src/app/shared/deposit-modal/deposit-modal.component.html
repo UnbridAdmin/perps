@@ -1,0 +1,81 @@
+<div class="modal-container">
+  <div class="modal-header">
+    <div class="header-content">
+      <h2 class="modal-title">Deposit</h2>
+      <p class="balance-text">Platform Balance: ${{ unbridBalance | number:'1.2-2' }}</p>
+    </div>
+    <button type="button" class="close-btn" (click)="close()">
+      <i class="bx bx-x"></i>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <!-- Wallet Option -->
+    <div class="option-card active" [class.processing]="isProcessing">
+      <div class="option-icon">
+        <i class="bx bx-wallet"></i>
+      </div>
+      <div class="option-details">
+        <div class="option-name">Wallet</div>
+        <div class="option-meta">{{ fierceBalance | number:'1.2-2' }} FIERCE • Instant</div>
+      </div>
+    </div>
+
+    <!-- More alternatives (UI only for now) -->
+    <div class="divider">
+      <span>more</span>
+    </div>
+
+    <div class="option-card disabled">
+      <div class="option-icon">
+        <i class="bx bx-transfer"></i>
+      </div>
+      <div class="option-details">
+        <div class="option-name">Transfer Crypto</div>
+        <div class="option-meta">No limit • Coming Soon</div>
+      </div>
+      <div class="badge-logos">
+        <img src="https://cryptologos.cc/logos/ethereum-eth-logo.png" alt="ETH">
+        <img src="https://cryptologos.cc/logos/polygon-matic-logo.png" alt="MATIC">
+      </div>
+    </div>
+
+    <div class="option-card disabled">
+      <div class="option-icon">
+        <i class="bx bx-credit-card"></i>
+      </div>
+      <div class="option-details">
+        <div class="option-name">Deposit with Card</div>
+        <div class="option-meta">$20,000 • 5 min</div>
+      </div>
+      <div class="badge-logos">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard">
+      </div>
+    </div>
+
+    <!-- Amount Input Section (Specific to Wallet Deposit) -->
+    <div class="input-section mt-4" *ngIf="selectedMethod === 'fierce'">
+      <label class="input-label">Amount to Deposit</label>
+      <div class="input-wrapper">
+        <input type="number" [(ngModel)]="amount" placeholder="0.00" class="amount-input" [disabled]="isProcessing">
+        <span class="currency-label">FIERCE</span>
+      </div>
+      <div class="percent-shortcuts">
+        <button type="button" (click)="setAmount(25)" [disabled]="isProcessing">25%</button>
+        <button type="button" (click)="setAmount(50)" [disabled]="isProcessing">50%</button>
+        <button type="button" (click)="setAmount(75)" [disabled]="isProcessing">75%</button>
+        <button type="button" (click)="setAmount(100)" [disabled]="isProcessing">MAX</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="deposit-btn" (click)="confirmDeposit()" [disabled]="isProcessing || !amount">
+      <span *ngIf="!isProcessing">Confirm Deposit</span>
+      <span *ngIf="isProcessing">
+        <i class="bx bx-loader-alt bx-spin"></i> Processing...
+      </span>
+    </button>
+  </div>
+</div>

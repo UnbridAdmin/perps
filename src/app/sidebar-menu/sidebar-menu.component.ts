@@ -12,6 +12,7 @@ import { filter } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PremiumUpgradeDialogComponent } from '../premium-upgrade-dialog.component';
 import { CreatePredictionComponent } from '../shared/create-prediction.component';
+import { DepositModalComponent } from '../shared/deposit-modal/deposit-modal.component';
 
 @Component({
   selector: 'app-sidebar-menu',
@@ -297,6 +298,24 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
       backdrop: 'static',
       windowClass: 'full-screen-modal'
     });
+  }
+
+  openDepositModal(event?: Event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    const modalRef = this.modalService.open(DepositModalComponent, {
+      centered: true,
+      size: 'md',
+      windowClass: 'dark-modal'
+    });
+
+    modalRef.result.then((result) => {
+      if (result) {
+        this.loadUserProfile(); // Refresh balance
+      }
+    }, () => {});
   }
 
   async disconnectWallet(): Promise<void> {

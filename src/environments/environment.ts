@@ -39,7 +39,8 @@ export const environment = {
   CHAINPOSITION: 1,
   DECIMALSUSDT: 18,
   DECIMALFIERCE: 18,
-  FIERCECONTRACTADDRESS: '0x443f831eDC6e87044a6E9C18a06b159B447CA13C', // TODO: Replace with actual contract address
+  FIERCECONTRACTADDRESS: '0x443f831eDC6e87044a6E9C18a06b159B447CA13C',
+  VAULT_ADDRESS: '0xdac17f958d2ee523a2206206994597c13d831ec7', // Example address, please replace with real one if needed
   USDTPolyABI: [
     {
       inputs: [],
