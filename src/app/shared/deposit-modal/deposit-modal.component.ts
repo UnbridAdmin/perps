@@ -29,7 +29,7 @@ export class DepositModalComponent implements OnInit {
     private depositService: DepositService,
     private confirmDialogService: ConfirmDialogService,
     private sidebarMenuService: SidebarMenuService
-  ) {}
+  ) { }
 
   async ngOnInit() {
     await this.loadBalances();
@@ -90,15 +90,17 @@ export class DepositModalComponent implements OnInit {
     this.isProcessing = true;
     try {
       await this.depositService.depositFierce(this.amount);
-      
+
       this.isProcessing = false;
       this.sidebarMenuService.notifyBalanceUpdate(); // Notify other components
 
+      // Close the deposit modal first so the confirmation dialog is not blocked
+      this.activeModal.close(true);
+
       await this.confirmDialogService.showSuccess({
         title: 'Depósito exitoso',
-        message1: `Tu depósito de ${this.amount} FIERCE ha sido enviado y está siendo procesado.`
+        message1: `Tu depósito de ${this.amount} FIERCE ha sido acreditado.`
       });
-      this.activeModal.close(true);
     } catch (error: any) {
       this.isProcessing = false;
       console.error('Deposit error:', error);
