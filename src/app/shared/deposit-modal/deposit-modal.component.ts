@@ -92,6 +92,8 @@ export class DepositModalComponent implements OnInit {
       await this.depositService.depositFierce(this.amount);
       
       this.isProcessing = false;
+      this.sidebarMenuService.notifyBalanceUpdate(); // Notify other components
+
       await this.confirmDialogService.showSuccess({
         title: 'Depósito exitoso',
         message1: `Tu depósito de ${this.amount} FIERCE ha sido enviado y está siendo procesado.`

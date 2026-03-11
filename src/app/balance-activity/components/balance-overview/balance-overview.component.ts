@@ -28,6 +28,17 @@ export class BalanceOverviewComponent {
 
   ngOnInit() {
     this.fetchData();
+    
+    // Listen for balance updates from anywhere
+    this.subscriptions.add(
+      this.sidebarMenuService.balanceUpdated$.subscribe(() => {
+        this.fetchData();
+      })
+    );
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 
   fetchData() {

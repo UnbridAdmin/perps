@@ -44,14 +44,16 @@ export class DepositService {
     ];
 
     const fierceContract = new ethers.Contract(fierceAddress, abi, signer);
-    const parsedAmount = ethers.parseUnits(amount, decimals);
+    const parsedAmount = ethers.parseUnits(amount.toString(), decimals);
 
     console.log(`Sending ${amount} FIERCE to ${vaultAddress}...`);
     const tx = await fierceContract['transfer'](vaultAddress, parsedAmount);
     console.log('Transaction sent:', tx.hash);
     
-    // Wait for transaction to be mined (optional but recommended for UX)
-    // await tx.wait(); 
+    // Wait for 4 confirmations as requested
+    console.log('Waiting for 4 confirmations...');
+    await tx.wait(4); 
+    console.log('Transaction confirmed with 4 blocks.');
 
     // 2. Call the backend with the hash
     return this.notifyBackend(tx.hash, amount, walletAddress);

@@ -134,6 +134,13 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
       })
     );
 
+    // Suscribirse a actualizaciones de balance globales
+    this.subscriptions.add(
+      this.sidebarMenuService.balanceUpdated$.subscribe(() => {
+        this.loadUserProfile();
+      })
+    );
+
     // Verificar ruta inicial
     this.isHomePage = this.router.url === '/home' || this.router.url === '/';
     if (!this.isHomePage) {
