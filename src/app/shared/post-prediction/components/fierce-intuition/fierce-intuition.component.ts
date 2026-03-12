@@ -17,9 +17,22 @@ export class FierceIntuitionComponent {
 
     showAllOptions = false;
 
+    get totalVotes(): number {
+        if (!this.prediction?.options) return 0;
+        return this.prediction.options.reduce((sum: number, option: any) => {
+            return sum + (option.prediction_intuition_votes || 0);
+        }, 0);
+    }
+
     get visibleOptions() {
         if (!this.prediction?.options) return [];
-        return this.showAllOptions ? this.prediction.options : this.prediction.options.slice(0, 3);
+        const options = this.showAllOptions ? this.prediction.options : this.prediction.options.slice(0, 3);
+        const total = this.totalVotes;
+        
+        return options.map((option: any) => ({
+            ...option,
+            percentage: total > 0 ? Math.round((option.prediction_intuition_votes / total) * 100) : 0
+        }));
     }
 
     get remainingOptionsCount() {
