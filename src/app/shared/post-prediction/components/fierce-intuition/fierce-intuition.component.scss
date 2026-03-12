@@ -41,7 +41,7 @@
 }
 
 .sentiment-total {
-    font-size: 12px;
+    font-size: 1rem;
     color: #71767b;
 }
 
@@ -54,7 +54,7 @@
 
 .sentiment-vote-btn {
     background: transparent;
-    border: 2px solid #9c27b0;
+    border: 1px solid #212529;
     border-radius: 20px;
     padding: 10px 12px;
     cursor: pointer;
@@ -67,7 +67,7 @@
     overflow: hidden;
 
     &:hover {
-        border-color: #ba68c8;
+        border-color: $primary-color;
         transform: translateY(-1px);
     }
 

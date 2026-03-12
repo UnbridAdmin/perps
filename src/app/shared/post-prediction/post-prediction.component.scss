@@ -211,6 +211,11 @@
     position: relative;
     transition: all 0.2s;
     border-radius: 8px 8px 0 0;
+     background: rgba(255, 255, 255, 0.041);
+
+   /* &:first-child {
+      background: rgba(255, 255, 255, 0.05);
+    }*/
 
     &:hover {
       color: #e7e9ea;
@@ -243,7 +248,7 @@
   }
 
   &.tabs-inactive {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    //border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     opacity: 0.85;
     transition: opacity 0.2s ease;
   }
