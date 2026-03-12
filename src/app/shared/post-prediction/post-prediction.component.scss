@@ -241,6 +241,12 @@
       background: #4ade80; // Market theme color
     }
   }
+
+  &.tabs-inactive {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    opacity: 0.85;
+    transition: opacity 0.2s ease;
+  }
 }
 
 // Popover styles

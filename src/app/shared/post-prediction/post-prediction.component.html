@@ -36,14 +36,13 @@
       (showHowItWorks)="openHowItWorksModal()">
     </app-fierce-intuition>
 
+    <!-- Featured Comment / King of the Hill -->
+    <app-featured-comment [comment]="prediction.featuredComment" (overthrow)="openOverthrowModal(i)">
+    </app-featured-comment>
+
     <!-- Action Buttons -->
     <div class="prediction-tabs-container" *ngIf="prediction.actions">
-      <div class="prediction-tabs">
-        <!-- Mechanic 1: Free Vote -->
-        <div class="tab" (click)="toggleSentimentPopover(i)"
-          [class.active]="activeMarketPopover !== i && activeBetPopover !== i" title="Votos libres">
-          🔮 {{ prediction.sentimentVotes.total | number:'1.0-0' }}
-        </div>
+      <div class="prediction-tabs" [ngClass]="{'tabs-inactive': activeMarketPopover !== i && activeBetPopover !== i}">
         <!-- Mechanic 2: Bet/Pot -->
         <div class="tab" (click)="toggleBetPopover(i)" [class.active]="activeBetPopover === i" title="Pool de apuestas">
           🎲 {{ prediction.marketInfo?.poolAmount || '0' }}
@@ -65,11 +64,6 @@
     <app-bet-pool *ngIf="activeBetPopover === i" [prediction]="prediction" (vote)="onPlaceMutualBet(i, $event)"
       (close)="closePopover()">
     </app-bet-pool>
-
-    <!-- Featured Comment / King of the Hill -->
-    <app-featured-comment *ngIf="activeMarketPopover !== i && activeBetPopover !== i"
-      [comment]="prediction.featuredComment" (overthrow)="openOverthrowModal(i)">
-    </app-featured-comment>
   </div>
 
   <!-- Loading more indicator -->
