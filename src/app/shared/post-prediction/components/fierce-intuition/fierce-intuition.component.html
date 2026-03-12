@@ -19,6 +19,7 @@
     <!-- Results - Voted State -->
     <div class="sentiment-results" *ngIf="hasVoted">
         <div class="result-option" *ngFor="let option of visibleOptions" [class.selected]="votedOptionId === option.id">
+            <div class="percentage-bar" [style.width.%]="option.percentage"></div>
             <span class="result-label">{{ option.title }}</span>
             <span class="result-percentage">{{ option.percentage }}%</span>
         </div>
