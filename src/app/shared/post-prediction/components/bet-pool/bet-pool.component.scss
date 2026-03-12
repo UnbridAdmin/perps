@@ -1,142 +1,311 @@
 .bet-collapsible-panel {
     margin-top: 16px;
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(26, 26, 26, 0.95);
+    backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 16px;
-    animation: slideDown 0.3s ease-out;
-    border-left: 3px solid #ff9800; // Distinct accent color for betting
+    border-radius: 16px;
+    padding: 20px;
+    animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-left: 4px solid #ff9800;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 .panel-header {
     display: flex;
     align-items: center;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
     .panel-title {
-        font-size: 15px;
-        font-weight: 600;
+        font-size: 16px;
+        font-weight: 700;
         color: #ff9800;
+        letter-spacing: 0.5px;
     }
 
     .panel-participants {
-        font-size: 12px;
+        font-size: 13px;
         color: #71767b;
         margin-left: auto;
-        margin-right: 10px;
+        margin-right: 15px;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 4px 10px;
+        border-radius: 20px;
     }
 }
 
 .close-panel-btn {
-    background: none;
+    background: rgba(255, 255, 255, 0.05);
     border: none;
     color: #71767b;
     font-size: 20px;
-    line-height: 1;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
     cursor: pointer;
-    padding: 0 4px;
+    transition: all 0.2s;
 
     &:hover {
-        color: #fff;
+        background: rgba(255, 0, 0, 0.2);
+        color: #ff4d4d;
     }
 }
 
 .panel-pool-info {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
-    background: rgba(0, 0, 0, 0.2);
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 16px;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.4), rgba(40, 40, 40, 0.2));
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 
-    .pool-label {
-        font-size: 12px;
-        color: #b0b0b0;
-        margin-bottom: 4px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+    .pool-main {
+        display: flex;
+        flex-direction: column;
+
+        .pool-label {
+            font-size: 11px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .pool-amount {
+            font-size: 26px;
+            font-weight: 800;
+            color: #4ade80;
+            font-variant-numeric: tabular-nums;
+        }
     }
 
-    .pool-amount {
-        font-size: 24px;
-        font-weight: 700;
-        color: #4ade80;
-        text-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
+    .pool-burn-info {
+        font-size: 12px;
+        color: #ff6b6b;
+        background: rgba(255, 107, 107, 0.1);
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-weight: 600;
     }
 }
 
 .panel-instruction {
     font-size: 13px;
     color: #a0aab0;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
     text-align: center;
+    font-style: italic;
 }
 
 .betting-options {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
+    margin-bottom: 20px;
 
-    .bet-option-btn {
+    .bet-option-row {
         position: relative;
-        background: transparent;
-        border: 1px solid rgba(255, 152, 0, 0.3);
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 8px;
-        min-height: 44px;
+        height: 52px;
         cursor: pointer;
         overflow: hidden;
-        transition: all 0.2s ease;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 2;
 
-        &:hover {
+        &.active {
             border-color: #ff9800;
-            box-shadow: 0 4px 12px rgba(255, 152, 0, 0.15);
-            transform: translateY(-1px);
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            background: rgba(255, 152, 0, 0.08);
+            
+            .option-progress { background: rgba(255, 152, 0, 0.15); }
         }
     }
 
-    .bet-percentage-bar {
-        position: absolute;
-        left: 0;
-        top: 0;
-        height: 100%;
-        background: rgba(255, 152, 0, 0.15);
-        z-index: 0;
-    }
-
-    .bet-option-content {
-        position: relative;
+    .betting-simulator-inline {
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid #ff9800;
+        border-top: none;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+        padding: 16px;
+        margin-top: -1px;
+        margin-bottom: 8px;
+        animation: expandDown 0.3s ease-out;
         z-index: 1;
+
+        .simulator-inner-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .simulator-controls-compact {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+
+            .input-box {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+
+                label { font-size: 10px; color: #888; text-transform: uppercase; }
+                input {
+                    background: rgba(255,255,255,0.05);
+                    border: 1px solid rgba(255,255,255,0.1);
+                    border-radius: 6px;
+                    color: white;
+                    padding: 8px 12px;
+                    font-size: 14px;
+                    width: 100%;
+                    outline: none;
+                    &:focus { border-color: #ff9800; }
+                }
+            }
+
+            .profit-preview {
+                text-align: right;
+                display: flex;
+                flex-direction: column;
+                
+                .label { font-size: 10px; color: #888; }
+                .value { font-size: 16px; font-weight: 800; color: #71767b; }
+                .roi { font-size: 10px; color: #4ade80; font-weight: 600; }
+                
+                &.positive .value { color: #4ade80; }
+            }
+        }
+    }
+}
+
+@keyframes expandDown {
+    from { opacity: 0; transform: translateY(-10px); height: 0; }
+    to { opacity: 1; transform: translateY(0); height: auto; }
+}
+
+.betting-simulator {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px dashed rgba(255, 152, 0, 0.3);
+    animation: fadeIn 0.3s ease;
+
+    .simulator-controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 20px;
+
+        @media (max-width: 480px) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .input-group {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 16px;
-        width: 100%;
+        flex-direction: column;
+        gap: 8px;
 
-        .bet-option-title {
-            font-size: 14px;
+        label {
+            font-size: 12px;
+            color: #888;
+            text-transform: uppercase;
+        }
+
+        input {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            padding: 10px 14px;
+            font-size: 16px;
             font-weight: 600;
-            color: #ffffff;
+            outline: none;
+
+            &:focus {
+                border-color: #ff9800;
+                box-shadow: 0 0 0 2px rgba(255, 152, 0, 0.2);
+            }
+        }
+    }
+
+    .calculation-result {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-end;
+        text-align: right;
+
+        &.positive {
+            .calc-value { color: #4ade80; }
         }
 
-        .bet-option-stats {
-            font-size: 13px;
-            color: #ffb74d;
-            font-weight: 500;
+        .calc-label {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 4px;
         }
+
+        .calc-value {
+            font-size: 20px;
+            font-weight: 800;
+            color: #71767b;
+        }
+
+        .calc-roi {
+            font-size: 11px;
+            color: #4ade80;
+            font-weight: 600;
+        }
+    }
+}
+
+.confirm-bet-btn {
+    width: 100%;
+    background: linear-gradient(to right, #ff9800, #f57c00);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 10px;
+
+    &:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 152, 0, 0.4);
+    }
+
+    &:active:not(:disabled) {
+        transform: translateY(0);
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        filter: grayscale(1);
     }
 }
 
 @keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
