@@ -498,6 +498,13 @@ export class AppComponent implements OnInit, OnDestroy {
 
   onTabChange(tab: 'for-you' | 'trending') {
     this.activeTab = tab;
+    // Si estamos en home, actualizar el componente
+    if (this.isHomePage) {
+      this.router.navigate(['/home'], { 
+        queryParams: { tab },
+        queryParamsHandling: 'merge'
+      });
+    }
   }
 }
 

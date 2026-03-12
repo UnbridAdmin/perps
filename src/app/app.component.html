@@ -6,7 +6,6 @@
   <app-header [isHomePage]="isHomePage" (tabChange)="onTabChange($event)"></app-header>
   <div class="container" [class.full-width]="!showNewsSidebar">
     <div class="main-content">
-      <app-post-prediction *ngIf="isHomePage" [tab]="activeTab"></app-post-prediction>
       <router-outlet></router-outlet>
     </div>
     <app-news *ngIf="showNewsSidebar"></app-news>
