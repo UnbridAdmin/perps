@@ -18,6 +18,7 @@ import { FeaturedCommentComponent } from './components/featured-comment/featured
 import { BetPoolComponent } from './components/bet-pool/bet-pool.component';
 import { TradingMarketComponent } from './components/trading-market/trading-market.component';
 import { BetPoolService } from './components/bet-pool/bet-pool.service';
+import { SidebarMenuService } from '../../sidebar-menu/sidebar-menu.service';
 
 // API Response interfaces
 interface ApiPredictionOption {
@@ -119,7 +120,8 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     private confirmDialogService: ConfirmDialogService,
     private commonService: CommonService,
     private categoryService: CategoryService,
-    private betPoolService: BetPoolService
+    private betPoolService: BetPoolService,
+    private sidebarMenuService: SidebarMenuService
   ) { }
 
   // API data properties
@@ -538,6 +540,9 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
             });
             // Refresh pool data after betting
             this.loadPoolData(predictionIndex);
+            
+            // Notify balance update in sidebar
+            this.sidebarMenuService.notifyBalanceUpdate();
           } else {
             await this.confirmDialogService.showError({
               title: 'Error',
