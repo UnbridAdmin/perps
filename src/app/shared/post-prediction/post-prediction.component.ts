@@ -17,6 +17,7 @@ import { HowItWorkIntuitionComponent } from './components/how-it-work-intuition/
 import { FeaturedCommentComponent } from './components/featured-comment/featured-comment.component';
 import { BetPoolComponent } from './components/bet-pool/bet-pool.component';
 import { TradingMarketComponent } from './components/trading-market/trading-market.component';
+import { BetPoolService } from './components/bet-pool/bet-pool.service';
 
 // API Response interfaces
 interface ApiPredictionOption {
@@ -67,6 +68,9 @@ interface Prediction {
     title: string;
     votes: number;
     percentage: number;
+    poolPercentage?: number;
+    poolAmount?: number;
+    userInvestment?: number;
   }>;
   sentimentVotes?: {
     total: number;
@@ -114,7 +118,8 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     private confirmDialogService: ConfirmDialogService,
     private commonService: CommonService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private betPoolService: BetPoolService
   ) { }
 
   // API data properties
@@ -252,7 +257,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
           total: totalVotes
         },
         marketInfo: {
-          poolAmount: '$0 USDT',
+          poolAmount: `${(apiPred as any).prediction_mutual_amount || 0} F`,
           participants: totalParticipants,
           options: apiPred.options.map(opt => ({
             label: opt.prediction_option_title,
@@ -322,7 +327,49 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
       this.activeBetPopover = index;
       this.activeMarketPopover = null;
       this.activeSentimentPopover = null;
+
+      // Load real pool data
+      this.loadPoolData(index);
     }
+  }
+
+  private loadPoolData(index: number): void {
+    const prediction = this.predictions[index];
+    const predictionId = prediction.prediction_id;
+
+    const isAuthenticated = this.authService.isAuthenticated();
+
+    const poolCall = isAuthenticated
+      ? this.betPoolService.getUserPredictionPoolData(predictionId)
+      : this.betPoolService.getPredictionPoolData(predictionId);
+
+    poolCall.subscribe({
+      next: (response: any) => {
+        if (response.success && response.data) {
+          const poolData = response.data;
+          
+          // 1. Update total amount
+          if (!prediction.marketInfo) {
+            prediction.marketInfo = { poolAmount: '0 F', participants: 0, options: [] };
+          }
+          prediction.marketInfo.poolAmount = poolData.marketInfo?.poolAmount || '0 F';
+
+          // 2. Synchronize existing options with pool data
+          if (prediction.options && poolData.options) {
+            poolData.options.forEach((poolOpt: any) => {
+              const matchingOption = prediction.options.find(o => o.id === poolOpt.id);
+              if (matchingOption) {
+                // IMPORTANT: Use separate properties for pool data
+                matchingOption.poolAmount = poolOpt.poolAmount;
+                matchingOption.userInvestment = poolOpt.userInvestment;
+                matchingOption.poolPercentage = poolOpt.percentage;
+              }
+            });
+          }
+        }
+      },
+      error: (err) => console.error('Error loading pool data:', err)
+    });
   }
 
   // Open How it Works modal
@@ -459,6 +506,53 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
       }
     } catch (error) {
       console.error('Error in voting process:', error);
+    }
+  }
+
+  // Handle mutual betting from BetPoolComponent
+  async onPlaceMutualBet(predictionIndex: number, event: { optionId: number, amount: number }): Promise<void> {
+    const { optionId, amount } = event;
+    const prediction = this.predictions[predictionIndex];
+
+    try {
+      if (!this.authService.isAuthenticated()) {
+        await this.confirmDialogService.showInfo({
+          title: 'Inicio de sesión requerido',
+          message1: 'Debes iniciar sesión para realizar apuestas.'
+        });
+        return;
+      }
+
+      this.betPoolService.placeMutualBet({
+        predictionId: prediction.prediction_id,
+        optionId: optionId,
+        amount: amount
+      }).subscribe({
+        next: async (response: any) => {
+          if (response.success) {
+            await this.confirmDialogService.showSuccess({
+              title: 'Apuesta registrada',
+              message1: `Tu apuesta de ${amount} F ha sido procesada exitosamente.`
+            });
+            // Refresh pool data after betting
+            this.loadPoolData(predictionIndex);
+          } else {
+            await this.confirmDialogService.showError({
+              title: 'Error',
+              message1: response.message || 'No se pudo procesar la apuesta.'
+            });
+          }
+        },
+        error: async (err: any) => {
+          console.error('Bet error:', err);
+          await this.confirmDialogService.showError({
+            title: 'Error del servidor',
+            message1: err.error?.message || 'Error al procesar la apuesta.'
+          });
+        }
+      });
+    } catch (error) {
+      console.error('Error in betting process:', error);
     }
   }
 

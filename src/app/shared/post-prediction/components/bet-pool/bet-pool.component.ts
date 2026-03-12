@@ -39,7 +39,7 @@ export class BetPoolComponent {
 
         // Mocking values if they don't exist in the current prediction object
         const poolAmount = parseFloat(this.prediction.marketInfo?.poolAmount?.replace(/[^0-9.]/g, '') || '0');
-        const optionPool = parseFloat(selectedOption.poolAmount?.toString().replace(/[^0-9.]/g, '') || (poolAmount * (selectedOption.percentage / 100)).toString());
+        const optionPool = parseFloat(selectedOption.poolAmount?.toString().replace(/[^0-9.]/g, '') || (poolAmount * ((selectedOption.poolPercentage || selectedOption.percentage) / 100)).toString());
         const userInvestment = selectedOption.userInvestment || 0;
 
         const newOptionPool = optionPool + this.betAmount;

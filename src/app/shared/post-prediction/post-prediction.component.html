@@ -62,7 +62,7 @@
       (trade)="navigateToTrade(prediction)" (close)="closePopover()">
     </app-trading-market>
 
-    <app-bet-pool *ngIf="activeBetPopover === i" [prediction]="prediction" (vote)="voteOnPrediction(i, $event)"
+    <app-bet-pool *ngIf="activeBetPopover === i" [prediction]="prediction" (vote)="onPlaceMutualBet(i, $event)"
       (close)="closePopover()">
     </app-bet-pool>
 
