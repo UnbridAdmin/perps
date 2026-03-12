@@ -132,7 +132,9 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
   selectedCategoryId: number | null = null;
 
   ngOnInit(): void {
-    this.loadPredictions();
+    // We remove this.loadPredictions() from here because BehaviorSubject
+    // in CategoryService ('filterCategoryIdSubject') emits its initial value (null)
+    // immediately upon subscription, which will trigger resetAndReload() -> loadPredictions()
 
     // Subscribe to authentication changes to refresh predictions when user logs in
     this.subscriptions.add(
