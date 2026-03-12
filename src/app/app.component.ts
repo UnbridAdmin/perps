@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterOutlet, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { HeaderComponent } from './header/header.component';
 import { SidebarMenuComponent } from './sidebar-menu/sidebar-menu.component';
-import { PostPredictionComponent } from './shared/post-prediction/post-prediction.component';
 import { NewsComponent } from './news/news.component';
 import { WalletConnectService, WalletState } from './services/walletconnect.service';
 import { CommonService } from './shared/commonService';
@@ -15,7 +14,7 @@ import { Subscription, filter, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-root',
-  imports: [CommonModule, RouterOutlet, HeaderComponent, SidebarMenuComponent, PostPredictionComponent, NewsComponent],
+  imports: [CommonModule, RouterOutlet, HeaderComponent, SidebarMenuComponent, NewsComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   standalone: true,

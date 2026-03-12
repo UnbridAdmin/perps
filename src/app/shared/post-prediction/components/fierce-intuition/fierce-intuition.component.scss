@@ -113,7 +113,7 @@
     gap: 12px;
     padding: 10px 12px;
     border-radius: 20px;
-    border: 2px solid #2f3336;
+    border: 1px solid #2f3336;
     transition: all 0.2s;
     position: relative;
     background: transparent;
@@ -121,7 +121,7 @@
 
     &.selected {
         background: rgba(156, 39, 176, 0.1);
-        border: 2px solid $border-color;
+        border: 1px solid $border-color;
         padding-left: 38px;
     }
 

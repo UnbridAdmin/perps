@@ -230,16 +230,16 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
       // Parse total participants to number
       const totalParticipants = parseInt(apiPred.totalParticipants.replace('K', '000').replace('M', '000000')) || 0;
 
+      // Calculate total votes for sentiment section
+      const totalVotes = apiPred.options.reduce((sum, opt) => sum + (opt.prediction_intuition_votes || 0), 0);
+
       // Calculate percentages for each option
       const options = apiPred.options.map(opt => ({
         id: opt.prediction_option_id,
         title: opt.prediction_option_title,
         votes: opt.prediction_intuition_votes || 0,
-        percentage: totalParticipants > 0 ? Math.round(((opt.prediction_intuition_votes || 0) / totalParticipants) * 100) : 0
+        percentage: totalVotes > 0 ? Math.round(((opt.prediction_intuition_votes || 0) / totalVotes) * 100) : 0
       }));
-
-      // Calculate total votes for sentiment section
-      const totalVotes = apiPred.options.reduce((sum, opt) => sum + (opt.prediction_intuition_votes || 0), 0);
 
       return {
         prediction_id: apiPred.prediction_id,
@@ -604,12 +604,11 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
           frontendPrediction.sentimentVotes = { total: totalVotes };
 
           // Update percentages
-          const totalParticipants = parseInt(apiPrediction.totalParticipants.replace('K', '000').replace('M', '000000')) || 0;
           frontendPrediction.options.forEach(opt => {
             const apiOpt = apiPrediction.options.find(apiOpt => apiOpt.prediction_option_id === opt.id);
             if (apiOpt) {
               opt.votes = apiOpt.prediction_intuition_votes || 0;
-              opt.percentage = totalParticipants > 0 ? Math.round((opt.votes / totalParticipants) * 100) : 0;
+              opt.percentage = totalVotes > 0 ? Math.round((opt.votes / totalVotes) * 100) : 0;
             }
           });
         }

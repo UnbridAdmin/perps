@@ -20,7 +20,8 @@ export class FierceIntuitionComponent {
     get totalVotes(): number {
         if (!this.prediction?.options) return 0;
         return this.prediction.options.reduce((sum: number, option: any) => {
-            return sum + (option.prediction_intuition_votes || 0);
+            const votes = option.votes !== undefined ? option.votes : (option.prediction_intuition_votes || 0);
+            return sum + votes;
         }, 0);
     }
 
@@ -29,10 +30,15 @@ export class FierceIntuitionComponent {
         const options = this.showAllOptions ? this.prediction.options : this.prediction.options.slice(0, 3);
         const total = this.totalVotes;
         
-        return options.map((option: any) => ({
-            ...option,
-            percentage: total > 0 ? Math.round((option.prediction_intuition_votes / total) * 100) : 0
-        }));
+        return options.map((option: any) => {
+            const votes = option.votes !== undefined ? option.votes : (option.prediction_intuition_votes || 0);
+            return {
+                ...option,
+                id: option.prediction_option_id || option.id,
+                title: option.prediction_option_title || option.title,
+                percentage: total > 0 ? Math.round((votes / total) * 100) : 0
+            };
+        });
     }
 
     get remainingOptionsCount() {
