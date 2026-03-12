@@ -50,16 +50,32 @@ export class DepositModalComponent implements OnInit {
     try {
       const address = await this.walletService.getConnectedWalletAddress();
       if (address) {
-        // Fetch FIERCE balance from wallet
+        // Fetch FIERCE balance from wallet using ERC20 standard ABI
         const balance = await this.walletService.getERC20Balance(
           environment.DECIMALFIERCE || 18,
           environment.FIERCECONTRACTADDRESS,
-          environment.USDTPolyABI
+          environment.ERC20_MINIMAL_ABI || environment.USDTPolyABI
         );
-        this.fierceBalance = balance || '0.00';
+        
+        // Validate the balance was retrieved successfully
+        if (balance !== null && balance !== undefined) {
+          this.fierceBalance = balance;
+        } else {
+          console.warn('Balance returned null or undefined, using default 0.00');
+          this.fierceBalance = '0.00';
+        }
+      } else {
+        console.warn('No wallet address connected');
+        this.fierceBalance = '0.00';
       }
     } catch (error) {
       console.error('Error loading balances:', error);
+      this.fierceBalance = '0.00';
+      // Show user-friendly error message
+      this.confirmDialogService.showError({
+        title: 'Error al cargar saldo',
+        message1: 'No se pudo cargar el saldo de FIERCE. Por favor, intenta de nuevo.'
+      });
     }
   }
 

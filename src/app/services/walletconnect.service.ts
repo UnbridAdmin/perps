@@ -564,13 +564,42 @@ export class WalletConnectService implements OnDestroy {
   }
 
   async getERC20Balance(decimals: number, contractAddress: string, abi: any): Promise<string | null> {
-    const signer = await this.getSigner();
-    if (!signer) return null;
+    try {
+      const signer = await this.getSigner();
+      if (!signer) {
+        console.warn('No signer available for getERC20Balance');
+        return null;
+      }
 
-    const address = await signer.getAddress();
-    const erc20Contract = new ethers.Contract(contractAddress, abi, signer);
-    const balance = await erc20Contract['balanceOf'](address);
-    return formatUnits(balance, decimals);
+      const address = await signer.getAddress();
+
+      // Validate contract address format
+      if (!address || !contractAddress) {
+        console.error('Invalid address or contract address');
+        return null;
+      }
+
+      const erc20Contract = new ethers.Contract(contractAddress, abi, signer);
+
+      // Add timeout to catch hanging RPC calls
+      const balancePromise = erc20Contract['balanceOf'](address);
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Balance fetch timeout')), 15000)
+      );
+
+      const balance = await Promise.race([balancePromise, timeoutPromise]);
+
+      // Validate balance is a valid number
+      if (balance && typeof balance !== 'undefined') {
+        return formatUnits(balance, decimals);
+      } else {
+        console.warn('Invalid balance received from contract');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error fetching ERC20 balance:', error);
+      return null;
+    }
   }
 
   ngOnDestroy(): void {
