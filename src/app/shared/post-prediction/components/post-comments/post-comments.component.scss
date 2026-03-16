@@ -32,20 +32,12 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+    cursor: pointer;
 
-    textarea {
-      background: transparent;
-      border: none;
-      color: white;
+    .placeholder-box {
+      color: rgba(255, 255, 255, 0.5);
       font-size: 1.1rem;
-      resize: none;
-      min-height: 50px;
-      outline: none;
       padding: 8px 0;
-
-      &::placeholder {
-        color: rgba(255, 255, 255, 0.5);
-      }
     }
 
     .input-actions {
@@ -126,6 +118,19 @@
       color: rgba(255, 255, 255, 0.9);
       line-height: 1.5;
       font-size: 0.95rem;
+    }
+
+    .comment-gif {
+      margin-top: 8px;
+      max-width: 250px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+
+      img {
+        width: 100%;
+        display: block;
+      }
     }
 
     .comment-footer {

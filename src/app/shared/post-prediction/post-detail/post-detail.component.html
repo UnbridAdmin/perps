@@ -1,16 +1,22 @@
 <div class="post-detail-container">
   <div class="detail-header">
     <button class="back-btn" [routerLink]="['/home']">
-      <i class="bi bi-arrow-left"></i>
+      <i class="fa-solid fa-arrow-left"></i>
       <span>Post</span>
     </button>
   </div>
 
   <div class="detail-content" *ngIf="predictionId">
     <!-- Re-use the post prediction component in single mode -->
-    <app-post-prediction [predictionId]="predictionId"></app-post-prediction>
+    <app-post-prediction 
+      [predictionId]="predictionId" 
+      (predictionLoaded)="handlePredictionLoaded($event)">
+    </app-post-prediction>
     
     <!-- Add the comments component below -->
-    <app-post-comments [predictionId]="predictionId"></app-post-comments>
+    <app-post-comments 
+      [predictionId]="predictionId" 
+      [prediction]="currentPrediction">
+    </app-post-comments>
   </div>
 </div>

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
@@ -109,6 +109,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
   @Input() userId?: number; // Optional: filter by user ID
   @Input() tab: 'for-you' | 'trending' = 'for-you';
   @Input() predictionId?: number; // Optional: show only one specific prediction
+  @Output() predictionLoaded = new EventEmitter<any>();
 
   private subscriptions: Subscription = new Subscription();
 
@@ -213,6 +214,10 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
           if (this.predictionId) {
             this.predictions = this.predictions.filter(p => p.prediction_id === this.predictionId);
             this.apiPredictions = this.apiPredictions.filter(p => p.prediction_id === this.predictionId);
+            
+            if (this.predictions.length > 0) {
+              this.predictionLoaded.emit(this.predictions[0]);
+            }
           }
 
           // Populate user votes from API data

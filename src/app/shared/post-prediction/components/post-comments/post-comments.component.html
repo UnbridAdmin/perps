@@ -3,14 +3,10 @@
     <div class="user-avatar">
       <img src="https://api.dicebear.com/9.x/fun-emoji/svg?seed=you" alt="Your avatar">
     </div>
-    <div class="input-wrapper">
-      <textarea 
-        placeholder="Post your reply" 
-        [(ngModel)]="newCommentText"
-        (keydown.enter)="$event.preventDefault(); submitComment()">
-      </textarea>
+    <div class="input-wrapper" (click)="openReplyModal()">
+      <div class="placeholder-box">Post your reply</div>
       <div class="input-actions">
-        <button class="reply-btn" [disabled]="!newCommentText.trim()" (click)="submitComment()">Reply</button>
+        <button class="reply-btn" disabled>Reply</button>
       </div>
     </div>
   </div>
@@ -28,17 +24,20 @@
         <div class="comment-text">
           {{ comment.text }}
         </div>
+        <div class="comment-gif" *ngIf="comment.gifUrl">
+          <img [src]="comment.gifUrl" alt="GIF">
+        </div>
         <div class="comment-footer">
           <button class="action-btn" [class.active]="comment.isLiked" (click)="toggleLike(comment)">
-            <i class="bi bi-heart" *ngIf="!comment.isLiked"></i>
-            <i class="bi bi-heart-fill" *ngIf="comment.isLiked"></i>
+            <i class="fa-regular fa-heart" *ngIf="!comment.isLiked"></i>
+            <i class="fa-solid fa-heart" *ngIf="comment.isLiked"></i>
             <span>{{ comment.likes }}</span>
           </button>
           <button class="action-btn">
-            <i class="bi bi-chat"></i>
+            <i class="fa-regular fa-comment"></i>
           </button>
           <button class="action-btn">
-            <i class="bi bi-share"></i>
+            <i class="fa-solid fa-share-nodes"></i>
           </button>
         </div>
       </div>

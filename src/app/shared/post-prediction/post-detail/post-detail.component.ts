@@ -13,6 +13,7 @@ import { PostCommentsComponent } from '../components/post-comments/post-comments
 })
 export class PostDetailComponent implements OnInit {
   predictionId: number | null = null;
+  currentPrediction: any = null;
 
   constructor(private route: ActivatedRoute) {}
 
@@ -20,5 +21,9 @@ export class PostDetailComponent implements OnInit {
     this.route.params.subscribe(params => {
       this.predictionId = +params['id'];
     });
+  }
+
+  handlePredictionLoaded(prediction: any) {
+    this.currentPrediction = prediction;
   }
 }
