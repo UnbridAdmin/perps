@@ -1,0 +1,47 @@
+<div class="comments-section">
+  <div class="comment-input-container">
+    <div class="user-avatar">
+      <img src="https://api.dicebear.com/9.x/fun-emoji/svg?seed=you" alt="Your avatar">
+    </div>
+    <div class="input-wrapper">
+      <textarea 
+        placeholder="Post your reply" 
+        [(ngModel)]="newCommentText"
+        (keydown.enter)="$event.preventDefault(); submitComment()">
+      </textarea>
+      <div class="input-actions">
+        <button class="reply-btn" [disabled]="!newCommentText.trim()" (click)="submitComment()">Reply</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="comments-list">
+    <div class="comment-item" *ngFor="let comment of comments">
+      <div class="comment-avatar">
+        <img [src]="comment.avatar" [alt]="comment.user">
+      </div>
+      <div class="comment-content">
+        <div class="comment-header">
+          <span class="comment-user">{{ comment.user }}</span>
+          <span class="comment-time">{{ comment.timeAgo }}</span>
+        </div>
+        <div class="comment-text">
+          {{ comment.text }}
+        </div>
+        <div class="comment-footer">
+          <button class="action-btn" [class.active]="comment.isLiked" (click)="toggleLike(comment)">
+            <i class="bi bi-heart" *ngIf="!comment.isLiked"></i>
+            <i class="bi bi-heart-fill" *ngIf="comment.isLiked"></i>
+            <span>{{ comment.likes }}</span>
+          </button>
+          <button class="action-btn">
+            <i class="bi bi-chat"></i>
+          </button>
+          <button class="action-btn">
+            <i class="bi bi-share"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

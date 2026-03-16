@@ -238,12 +238,16 @@
     }
 
     // Custom active colors for each mechanic based on their theme
-    &:nth-child(2).active::after {
+    &:nth-child(1).active::after {
       background: #ff9800; // Bet pool theme color
     }
 
-    &:nth-child(3).active::after {
+    &:nth-child(2).active::after {
       background: #4ade80; // Market theme color
+    }
+
+    &:nth-child(3).active::after {
+      background: #00d1ff; // Messages theme color
     }
   }
 

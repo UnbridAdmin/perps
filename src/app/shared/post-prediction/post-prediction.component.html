@@ -21,12 +21,13 @@
         </p>
       </div>
     </div>
-    <div class="prediction-question">
+    <div class="prediction-question" (click)="navigateToPostDetail(prediction.prediction_id)" style="cursor: pointer;">
       {{ prediction.question }}
     </div>
 
     <!-- Image (optional) -->
-    <div class="prediction-image" *ngIf="prediction.imageUrl">
+    <div class="prediction-image" *ngIf="prediction.imageUrl" (click)="navigateToPostDetail(prediction.prediction_id)"
+      style="cursor: pointer;">
       <img [src]="prediction.imageUrl" alt="Prediction image" />
     </div>
 
@@ -51,6 +52,10 @@
         <div class="tab" (click)="toggleMarketPopover(i)" [class.active]="activeMarketPopover === i"
           title="Mercado Trading">
           📊 {{ prediction.totalVolume | number:'1.0-0' }} F
+        </div>
+        <!-- Mechanic 4: Messages -->
+        <div class="tab" (click)="navigateToPostDetail(prediction.prediction_id)" title="Comentarios">
+          💬 {{ prediction.actions.comments || '0' }}
         </div>
       </div>
       <!-- <button class="predict-btn btn-primary" (click)="navigateToTrade(prediction)">🎯 Trade</button> -->

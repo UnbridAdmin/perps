@@ -108,6 +108,7 @@ interface Prediction {
 export class PostPredictionComponent implements OnInit, OnDestroy {
   @Input() userId?: number; // Optional: filter by user ID
   @Input() tab: 'for-you' | 'trending' = 'for-you';
+  @Input() predictionId?: number; // Optional: show only one specific prediction
 
   private subscriptions: Subscription = new Subscription();
 
@@ -186,6 +187,11 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
       params.user_id = this.userId;
     }
 
+    // Add predictionId filter if provided
+    if (this.predictionId) {
+      params.predictionId = this.predictionId;
+    }
+
     // Check both authentication and wallet connection
     const isAuthenticated = this.authService.isAuthenticated();
     const isWalletConnected = await this.walletConnectService.checkConnection();
@@ -202,9 +208,16 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
         if (this.currentPage === 1) {
           this.predictions = mappedPredictions;
           this.apiPredictions = apiResponse.data;
+
+          // If in single post mode, ensure we only keep the matching one
+          if (this.predictionId) {
+            this.predictions = this.predictions.filter(p => p.prediction_id === this.predictionId);
+            this.apiPredictions = this.apiPredictions.filter(p => p.prediction_id === this.predictionId);
+          }
+
           // Populate user votes from API data
           this.userVotes = {};
-          apiResponse.data.forEach(pred => {
+          this.apiPredictions.forEach(pred => {
             if (pred.userVotedOption) {
               this.userVotes[pred.prediction_id] = pred.userVotedOption;
             }
@@ -214,7 +227,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
           this.apiPredictions = [...this.apiPredictions, ...apiResponse.data];
         }
 
-        this.hasMoreData = mappedPredictions.length === this.pageSize;
+        this.hasMoreData = this.predictionId ? false : mappedPredictions.length === this.pageSize;
         this.currentPage++;
         this.isLoading = false;
       },
@@ -626,6 +639,11 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
   // Navigate to trade detail page
   navigateToTrade(prediction: any): void {
     this.router.navigate(['/trade', prediction.prediction_id]);
+  }
+
+  // Navigate to post detail page
+  navigateToPostDetail(predictionId: number): void {
+    this.router.navigate(['/post', predictionId]);
   }
 
   // Navigate to category and activate filters
