@@ -1,12 +1,116 @@
 <div class="comments-section">
-  <div class="comment-input-container">
-    <div class="user-avatar">
-      <img src="https://api.dicebear.com/9.x/fun-emoji/svg?seed=you" alt="Your avatar">
+  <!-- Featured Comment Section (King of the Hill) -->
+  <div class="featured-comment-wrapper" *ngIf="prediction?.featuredComment">
+    <app-featured-comment [comment]="prediction.featuredComment" (overthrow)="toggleOverthrowForm()"></app-featured-comment>
+    
+    <!-- In-line Overthrow Form -->
+    <div class="overthrow-form-container" *ngIf="overthrowIsExpanded">
+      <div class="overthrow-header">
+         <i class="fa-solid fa-crown"></i> Destrona al Rey
+      </div>
+      
+      <div class="overthrow-body">
+        <div class="input-row">
+          <div class="user-avatar-small">
+            <img src="https://api.dicebear.com/9.x/fun-emoji/svg?seed=you" alt="You">
+          </div>
+          <div class="input-area">
+            <textarea 
+              placeholder="Escribe tu mensaje para ser el nuevo Rey..." 
+              [(ngModel)]="overthrowText"
+              rows="2">
+            </textarea>
+            
+            <div class="gif-preview-mini" *ngIf="overthrowGifUrl">
+              <img [src]="overthrowGifUrl" alt="GIF">
+              <button class="remove-btn" (click)="overthrowGifUrl = ''">
+                <i class="fa-solid fa-circle-xmark"></i>
+              </button>
+            </div>
+
+            <div class="gif-url-input-mini" *ngIf="overthrowShowGifInput">
+              <input type="text" [(ngModel)]="overthrowGifUrl" placeholder="GIF URL...">
+            </div>
+          </div>
+        </div>
+
+        <div class="overthrow-actions">
+          <div class="left-tools">
+            <button class="tool-btn" (click)="toggleOverthrowGifInput()" [class.active]="overthrowShowGifInput">
+              <i class="fa-solid fa-photo-film"></i>
+            </button>
+            <button class="tool-btn"><i class="fa-regular fa-face-smile"></i></button>
+          </div>
+          <div class="right-actions">
+            <div class="cost-info">
+              🔥 Burns <span>{{ (prediction.featuredComment?.burnedAmount || 0) + 1 }} F</span>
+            </div>
+            <button class="overthrow-btn" (click)="submitOverthrow()" [disabled]="!overthrowText.trim() && !overthrowGifUrl.trim()">
+              Dethrone
+            </button>
+            <button class="cancel-link" (click)="cancelOverthrow()">Cancel</button>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="input-wrapper" (click)="openReplyModal()">
-      <div class="placeholder-box">Post your reply</div>
-      <div class="input-actions">
-        <button class="reply-btn" disabled>Reply</button>
+  </div>
+
+  <!-- Regular Expandable Reply Area -->
+  <div class="expandable-reply-container" [class.expanded]="isExpanded">
+    <div class="reply-banner" *ngIf="isExpanded">
+      You're replying for <span class="user-highlight">@You</span>
+    </div>
+
+    <div class="reply-main">
+      <div class="user-avatar">
+        <img src="https://api.dicebear.com/9.x/fun-emoji/svg?seed=you" alt="You">
+      </div>
+      
+      <div class="input-content">
+        <div class="replying-to" *ngIf="isExpanded && prediction">
+          Replying to <span class="user-highlight">@{{prediction.creator}}</span>
+        </div>
+
+        <textarea 
+          placeholder="Post your reply" 
+          [(ngModel)]="newCommentText"
+          (click)="expandInput()"
+          [rows]="isExpanded ? 3 : 1"
+          [class.compact]="!isExpanded">
+        </textarea>
+
+        <!-- GIF Preview in-line -->
+        <div class="gif-preview" *ngIf="gifUrl && isExpanded">
+          <img [src]="gifUrl" alt="GIF">
+          <button class="remove-btn" (click)="gifUrl = ''"><i class="fa-solid fa-circle-xmark"></i></button>
+        </div>
+
+        <!-- GIF URL Input in-line -->
+        <div class="gif-url-input" *ngIf="showGifInput && isExpanded">
+          <input type="text" [(ngModel)]="gifUrl" placeholder="Paste GIF URL here...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Toolbar and Actions -->
+    <div class="reply-actions" *ngIf="isExpanded">
+      <div class="toolbar">
+        <button class="tool-btn" title="Media disabled"><i class="fa-regular fa-image"></i></button>
+        <button class="tool-btn" [class.active]="showGifInput" (click)="toggleGifInput()" title="Add GIF">
+          <i class="fa-solid fa-photo-film"></i>
+        </button>
+        <button class="tool-btn"><i class="fa-regular fa-face-smile"></i></button>
+        <button class="tool-btn"><i class="fa-solid fa-location-dot"></i></button>
+      </div>
+
+      <div class="submit-group">
+        <div class="burn-info" *ngIf="burnAmount > 0">
+          🔥 Burns <span>{{burnAmount}} Fierce</span>
+        </div>
+        <button class="reply-btn" [disabled]="!newCommentText.trim() && !gifUrl.trim()" (click)="submitComment()">
+          Reply
+        </button>
+        <button class="cancel-btn" (click)="resetForm()">Cancel</button>
       </div>
     </div>
   </div>

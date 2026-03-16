@@ -89,6 +89,7 @@ interface Prediction {
     user: string;
     avatar: string;
     text: string;
+    gifUrl?: string;
     burnedAmount: number;
   };
   actions?: {
@@ -134,6 +135,14 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
   isLoading = false;
   hasMoreData = true;
   selectedCategoryId: number | null = null;
+  
+  // State for in-line Overthrow forms
+  overthrowFormsState: { [predictionId: number]: { 
+    isExpanded: boolean, 
+    text: string, 
+    gifUrl: string, 
+    showGifInput: boolean 
+  } } = {};
 
   ngOnInit(): void {
     // We remove this.loadPredictions() from here because BehaviorSubject
@@ -288,9 +297,15 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
           }))
         },
         actions: {
-          comments: 0,
-          likes: 0,
+          comments: Math.floor(Math.random() * 50),
+          likes: Math.floor(Math.random() * 100),
           volume: `$${apiPred.totalVolume || 0}`
+        },
+        featuredComment: {
+          user: 'CryptoKing',
+          avatar: 'https://api.dicebear.com/9.x/fun-emoji/svg?seed=king',
+          text: 'Este es el mensaje mas épico de la plataforma! 🔥',
+          burnedAmount: 10
         }
       };
     });
@@ -410,14 +425,62 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     this.activeBetPopover = null;
   }
 
-  // Open modal / logic to overthrow the featured comment
-  openOverthrowModal(index: number): void {
-    // To be implemented: open a modal where the user inputs their text and the amount of Fierce to burn
-    console.log('Overthrowing featured comment for prediction:', this.predictions[index].prediction_id);
-    this.confirmDialogService.showInfo({
-      title: 'Destronar Comentario',
-      message1: 'Próximamente: Ingresa tu mensaje y quema Fierce para destacarlo aquí.'
+  // Toggle in-line overthrow form
+  toggleOverthrowForm(index: number): void {
+    const predictionId = this.predictions[index].prediction_id;
+    if (!this.overthrowFormsState[predictionId]) {
+      this.overthrowFormsState[predictionId] = {
+        isExpanded: true,
+        text: '',
+        gifUrl: '',
+        showGifInput: false
+      };
+    } else {
+      this.overthrowFormsState[predictionId].isExpanded = !this.overthrowFormsState[predictionId].isExpanded;
+    }
+  }
+
+  cancelOverthrow(index: number): void {
+    const predictionId = this.predictions[index].prediction_id;
+    if (this.overthrowFormsState[predictionId]) {
+      this.overthrowFormsState[predictionId].isExpanded = false;
+      this.overthrowFormsState[predictionId].text = '';
+      this.overthrowFormsState[predictionId].gifUrl = '';
+      this.overthrowFormsState[predictionId].showGifInput = false;
+    }
+  }
+
+  toggleOverthrowGifInput(index: number): void {
+    const predictionId = this.predictions[index].prediction_id;
+    if (this.overthrowFormsState[predictionId]) {
+      this.overthrowFormsState[predictionId].showGifInput = !this.overthrowFormsState[predictionId].showGifInput;
+    }
+  }
+
+  submitOverthrow(index: number): void {
+    const prediction = this.predictions[index];
+    const form = this.overthrowFormsState[prediction.prediction_id];
+    
+    if (!form || (!form.text.trim() && !form.gifUrl.trim())) return;
+
+    const currentKingBurn = prediction.featuredComment?.burnedAmount || 0;
+    const newBurnAmount = currentKingBurn + 1;
+
+    // Simulate sucessful overthrow
+    prediction.featuredComment = {
+      user: 'You',
+      avatar: 'https://api.dicebear.com/9.x/fun-emoji/svg?seed=you',
+      text: form.text,
+      gifUrl: form.gifUrl,
+      burnedAmount: newBurnAmount
+    };
+
+    this.confirmDialogService.showSuccess({
+      title: '¡Nuevo Rey dertronado!',
+      message1: `Has dertronado al mensaje anterior quemando ${newBurnAmount} Fierce.`
     });
+
+    this.cancelOverthrow(index);
   }
 
   // Vote on sentiment poll - now with real API integration

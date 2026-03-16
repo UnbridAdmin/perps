@@ -12,6 +12,8 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class PostReplyModalComponent implements OnInit {
   @Input() prediction: any; // The prediction/post being replied to
+  @Input() mode: 'reply' | 'overthrow' = 'reply';
+  @Input() currentKing: any = null; // The current featured comment to be overthrown
 
   commentText: string = '';
   gifUrl: string = '';
@@ -30,11 +32,17 @@ export class PostReplyModalComponent implements OnInit {
     
     this.activeModal.close({
       text: this.commentText,
-      gifUrl: this.gifUrl
+      gifUrl: this.gifUrl,
+      burnAmount: this.burnAmount
     });
   }
 
   get burnAmount(): number {
+    if (this.mode === 'overthrow') {
+      // For overthrow, they must burn more than the current king or a minimum amount
+      const currentBurn = this.currentKing?.burnedAmount || 0;
+      return currentBurn + 1; // Simplification for UI demonstration
+    }
     return this.gifUrl.trim() ? 1 : 0;
   }
 }

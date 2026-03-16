@@ -1,8 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { PostReplyModalComponent } from '../post-reply-modal/post-reply-modal.component';
 
 interface Comment {
   id: number;
@@ -15,10 +13,12 @@ interface Comment {
   gifUrl?: string;
 }
 
+import { FeaturedCommentComponent } from '../featured-comment/featured-comment.component';
+
 @Component({
   selector: 'app-post-comments',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, FeaturedCommentComponent],
   templateUrl: './post-comments.component.html',
   styleUrls: ['./post-comments.component.scss']
 })
@@ -26,11 +26,17 @@ export class PostCommentsComponent implements OnInit {
   @Input() predictionId!: number;
   @Input() prediction: any; // Full prediction object for context
 
+  isExpanded: boolean = false;
   newCommentText: string = '';
+  gifUrl: string = '';
+  showGifInput: boolean = false;
 
-  constructor(private modalService: NgbModal) {}
+  // State for in-line Overthrow
+  overthrowIsExpanded: boolean = false;
+  overthrowText: string = '';
+  overthrowGifUrl: string = '';
+  overthrowShowGifInput: boolean = false;
 
-  ngOnInit(): void {}
   comments: Comment[] = [
     {
       id: 1,
@@ -67,47 +73,76 @@ export class PostCommentsComponent implements OnInit {
     }
   ];
 
+  constructor() {}
+
+  ngOnInit(): void {}
+
+  expandInput() {
+    this.isExpanded = true;
+  }
+
+  toggleGifInput() {
+    this.showGifInput = !this.showGifInput;
+  }
+
   submitComment() {
-    if (!this.newCommentText.trim()) return;
+    if (!this.newCommentText.trim() && !this.gifUrl.trim()) return;
 
     const newComment: Comment = {
       id: this.comments.length + 1,
       user: 'You',
       avatar: 'https://api.dicebear.com/9.x/fun-emoji/svg?seed=you',
       text: this.newCommentText,
+      gifUrl: this.gifUrl,
       timeAgo: 'Just now',
       likes: 0
     };
 
     this.comments.unshift(newComment);
-    this.newCommentText = '';
+    this.resetForm();
   }
 
-  openReplyModal() {
-    const modalRef = this.modalService.open(PostReplyModalComponent, {
-      centered: true,
-      size: 'md',
-      windowClass: 'dark-modal-reply'
-    });
+  resetForm() {
+    this.newCommentText = '';
+    this.gifUrl = '';
+    this.isExpanded = false;
+    this.showGifInput = false;
+  }
 
-    modalRef.componentInstance.prediction = this.prediction;
+  get burnAmount(): number {
+    return this.gifUrl.trim() ? 1 : 0;
+  }
 
-    modalRef.result.then((result) => {
-      if (result) {
-        const newComment: Comment = {
-          id: this.comments.length + 1,
-          user: 'You',
-          avatar: 'https://api.dicebear.com/9.x/fun-emoji/svg?seed=you',
-          text: result.text,
-          gifUrl: result.gifUrl,
-          timeAgo: 'Just now',
-          likes: 0
-        };
-        this.comments.unshift(newComment);
-      }
-    }, (reason) => {
-      // Dismissed
-    });
+  // --- Overthrow Logic ---
+  toggleOverthrowForm(): void {
+    this.overthrowIsExpanded = !this.overthrowIsExpanded;
+  }
+
+  cancelOverthrow(): void {
+    this.overthrowIsExpanded = false;
+    this.overthrowText = '';
+    this.overthrowGifUrl = '';
+    this.overthrowShowGifInput = false;
+  }
+
+  toggleOverthrowGifInput(): void {
+    this.overthrowShowGifInput = !this.overthrowShowGifInput;
+  }
+
+  submitOverthrow(): void {
+    if (!this.overthrowText.trim() && !this.overthrowGifUrl.trim()) return;
+
+    if (this.prediction) {
+      const currentBurn = this.prediction.featuredComment?.burnedAmount || 0;
+      this.prediction.featuredComment = {
+        user: 'You',
+        avatar: 'https://api.dicebear.com/9.x/fun-emoji/svg?seed=you',
+        text: this.overthrowText,
+        gifUrl: this.overthrowGifUrl,
+        burnedAmount: currentBurn + 1
+      };
+      this.cancelOverthrow();
+    }
   }
 
   toggleLike(comment: Comment) {
