@@ -60,7 +60,7 @@
               </textarea>
               
               <!-- GIF Preview -->
-              <div class="gif-preview-mini" *ngIf="overthrowFormsState[prediction.prediction_id].gifUrl">
+              <div class="gif-preview-mini" *ngIf="overthrowFormsState[prediction.prediction_id]?.gifUrl">
                 <img [src]="overthrowFormsState[prediction.prediction_id].gifUrl" alt="GIF">
                 <button class="remove-btn" (click)="overthrowFormsState[prediction.prediction_id].gifUrl = ''">
                   <i class="fa-solid fa-circle-xmark"></i>
@@ -85,7 +85,9 @@
               <div class="cost-info">
                 🔥 Burns <span>{{ (prediction.featuredComment?.burnedAmount || 0) + 1 }} F</span>
               </div>
-              <button class="overthrow-btn" (click)="submitOverthrow(i)" [disabled]="!overthrowFormsState[prediction.prediction_id].text.trim() && !overthrowFormsState[prediction.prediction_id].gifUrl.trim()">
+              <button class="overthrow-btn" 
+                (click)="submitOverthrow(i)" 
+                [disabled]="!(overthrowFormsState[prediction.prediction_id]?.text?.trim() || overthrowFormsState[prediction.prediction_id]?.gifUrl?.trim())">
                 Dethrone
               </button>
               <button class="cancel-link" (click)="cancelOverthrow(i)">Cancel</button>

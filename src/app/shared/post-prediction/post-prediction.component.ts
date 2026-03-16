@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { HttpClientModule } from '@angular/common/http';
@@ -102,7 +103,7 @@ interface Prediction {
 @Component({
   selector: 'app-post-prediction',
   standalone: true,
-  imports: [CommonModule, RouterModule, InfiniteScrollModule, HttpClientModule, FierceIntuitionComponent, FeaturedCommentComponent, BetPoolComponent, TradingMarketComponent],
+  imports: [CommonModule, RouterModule, InfiniteScrollModule, HttpClientModule, FormsModule, FierceIntuitionComponent, FeaturedCommentComponent, BetPoolComponent, TradingMarketComponent],
   templateUrl: './post-prediction.component.html',
   styleUrls: ['./post-prediction.component.scss']
 })
@@ -305,6 +306,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
           user: 'CryptoKing',
           avatar: 'https://api.dicebear.com/9.x/fun-emoji/svg?seed=king',
           text: 'Este es el mensaje mas épico de la plataforma! 🔥',
+          gifUrl: 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJqZ3NjNHJqZ3NjNHJqZ3NjNHJqZ3NjNHJqZ3NjNHJqZ3NjNHJqZ3NjJmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/mi6hcCqS9pkkSWMWAc/giphy.gif',
           burnedAmount: 10
         }
       };
