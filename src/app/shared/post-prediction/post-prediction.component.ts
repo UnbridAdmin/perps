@@ -31,6 +31,18 @@ interface ApiPredictionOption {
   intuition_votes_count: number;
 }
 
+interface ApiKingComment {
+  comment_id: number;
+  user_id: number;
+  prediction_id: number;
+  comment: string;
+  burned_fierce: number;
+  created_at: string;
+  avatar: string | null;
+  url_image: string | null;
+  username: string;
+}
+
 interface ApiPrediction {
   prediction_id: number;
   prediction_category_id: number;
@@ -46,6 +58,7 @@ interface ApiPrediction {
   creatorAvatar: string;
   totalVolume: number;
   categoryName: string | null;
+  king_comment: ApiKingComment | null;
 }
 
 interface GetPredictionsResponse {
@@ -305,13 +318,13 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
           likes: Math.floor(Math.random() * 100),
           volume: `$${apiPred.totalVolume || 0}`
         },
-        featuredComment: {
-          user: 'CryptoKing',
-          avatar: 'https://api.dicebear.com/9.x/fun-emoji/svg?seed=king',
-          text: 'Este es el mensaje mas épico de la plataforma! 🔥',
-          gifUrl: 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJqZ3NjNHJqZ3NjNHJqZ3NjNHJqZ3NjNHJqZ3NjNHJqZ3NjNHJqZ3NjJmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/mi6hcCqS9pkkSWMWAc/giphy.gif',
-          burnedAmount: 10
-        }
+        featuredComment: apiPred.king_comment ? {
+          user: apiPred.king_comment.username,
+          avatar: apiPred.king_comment.avatar || 'https://api.dicebear.com/9.x/fun-emoji/svg',
+          text: apiPred.king_comment.comment,
+          gifUrl: apiPred.king_comment.url_image || undefined,
+          burnedAmount: apiPred.king_comment.burned_fierce
+        } : undefined
       };
     });
   }

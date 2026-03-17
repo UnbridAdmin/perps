@@ -38,7 +38,7 @@
     </app-fierce-intuition>
 
     <!-- Featured Comment Section (King of the Hill) -->
-    <div class="featured-comment-container" *ngIf="prediction.featuredComment">
+    <div class="featured-comment-container">
       <app-featured-comment [comment]="prediction.featuredComment" (overthrow)="toggleOverthrowForm(i)"></app-featured-comment>
       
       <!-- In-line Overthrow Form (Accordion Style) -->
