@@ -58,6 +58,7 @@ interface ApiPrediction {
   creatorAvatar: string;
   totalVolume: number;
   categoryName: string | null;
+  totalComments: number;
   king_comment: ApiKingComment | null;
 }
 
@@ -314,7 +315,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
           }))
         },
         actions: {
-          comments: Math.floor(Math.random() * 50),
+          comments: apiPred.totalComments || 0,
           likes: Math.floor(Math.random() * 100),
           volume: `$${apiPred.totalVolume || 0}`
         },
