@@ -7,6 +7,9 @@ import { AuthorizationService } from '../../../../services/authorization.service
 import { ConfirmDialogService } from '../../../confirm-dialog/confirm-dialog.service';
 import { SidebarMenuService } from '../../../../sidebar-menu/sidebar-menu.service';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { WalletConnectService } from '../../../../services/walletconnect.service';
+import { ApiServices } from '../../../../services/api.service';
+import { firstValueFrom } from 'rxjs';
 
 interface Comment {
   id: number;
@@ -46,7 +49,9 @@ export class PostCommentsComponent implements OnInit {
     private postCommentsService: PostCommentsService,
     private authService: AuthorizationService,
     private confirmDialogService: ConfirmDialogService,
-    private sidebarMenuService: SidebarMenuService
+    private sidebarMenuService: SidebarMenuService,
+    private walletConnectService: WalletConnectService,
+    private apiService: ApiServices
   ) {}
 
   ngOnInit(): void {
@@ -122,58 +127,121 @@ export class PostCommentsComponent implements OnInit {
     this.showGifInput = !this.showGifInput;
   }
 
-  submitComment() {
+  async submitComment() {
     if (!this.newCommentText.trim() && !this.gifUrl.trim()) return;
 
-    if (!this.authService.isAuthenticated()) {
-      this.confirmDialogService.showInfo({
-        title: 'Inicio de sesión requerido',
-        message1: 'Debes iniciar sesión para publicar comentarios.'
-      });
-      return;
-    }
-
     this.isSubmitting = true;
-    this.postCommentsService.submitComment(
-      this.predictionId, 
-      this.newCommentText, 
-      this.gifUrl, 
-      this.burnAmount
-    ).subscribe({
-      next: (response) => {
-        this.isSubmitting = false;
-        console.log('Comment submitted successfully', response);
-        const newComment: Comment = {
-          id: this.comments.length + 1,
-          user: 'You',
-          avatar: 'https://api.dicebear.com/9.x/fun-emoji/svg?seed=you',
-          text: this.newCommentText,
-          gifUrl: this.gifUrl,
-          timeAgo: 'Just now',
-          likes: 0
-        };
 
-        this.comments.unshift(newComment);
-        this.resetForm();
-        
-        if (this.burnAmount > 0) {
-          this.sidebarMenuService.notifyBalanceUpdate();
+    try {
+      // If user is not authenticated, we need to create user account/get token first
+      if (!this.authService.isAuthenticated()) {
+        const isConnected = await this.walletConnectService.checkConnection();
+        if (!isConnected) {
+          this.isSubmitting = false;
+          this.confirmDialogService.showInfo({
+            title: 'Billetera requerida',
+            message1: 'Por favor, conecta tu billetera para poder comentar.'
+          });
+          return;
         }
 
-        this.confirmDialogService.showSuccess({
-          title: 'Comentario publicado',
-          message1: 'Tu comentario ha sido publicado exitosamente.'
-        });
-      },
-      error: (error) => {
-        this.isSubmitting = false;
-        console.error('Error submitting comment', error);
-        this.confirmDialogService.showError({
-          title: 'Error',
-          message1: error.error?.message || 'Hubo un problema al publicar tu comentario.'
-        });
+        const walletAddress = await this.walletConnectService.getConnectedWalletAddress();
+        
+        try {
+          const existResponse = await this.authService.existUser({ address: walletAddress }).toPromise() as any;
+          if (existResponse?.data?.exists) {
+            this.isSubmitting = false;
+            // User exists in DB but not authenticated - show login required
+            this.confirmDialogService.showInfo({
+              title: 'Inicio de sesión requerido',
+              message1: 'Debes iniciar sesión para publicar comentarios.'
+            });
+            return;
+          }
+        } catch (error) {
+          console.error('Error checking if user exists:', error);
+        }
+
+        // Generate message to sign
+        const message = `Click to sign in and accept the Unbrid Terms of Service(https://unbrid.com/privacy-policy). Login with secure code: ${Date.now()}`;
+
+        // Request signature
+        const signatureData = await this.walletConnectService.signMessage(message);
+
+        // Create user request payload
+        const createUserRequest = {
+          address: walletAddress,
+          coin_id: 1, 
+          message: signatureData.message,
+          signature: signatureData.signature,
+          referral_code: '' 
+        };
+
+        // Call secure-create-user endpoint
+        const createUserResponse = await firstValueFrom(
+          this.apiService.publicApiCall('user/secure-create-user', 'POST', createUserRequest)
+        ) as any;
+
+        if (createUserResponse?.success || createUserResponse?.message === 'SUCCESS') {
+          if (createUserResponse?.data && createUserResponse.data.length > 0) {
+            this.authService.setSession(createUserResponse.data[0].expires, walletAddress);
+          }
+        } else {
+          console.error("Authentication Payload Response:", createUserResponse);
+          throw new Error('Failed to authenticate');
+        }
       }
-    });
+
+      // Proceed with comment submission
+      this.postCommentsService.submitComment(
+        this.predictionId, 
+        this.newCommentText, 
+        this.gifUrl, 
+        this.burnAmount
+      ).subscribe({
+        next: (response) => {
+          this.isSubmitting = false;
+          console.log('Comment submitted successfully', response);
+          const newComment: Comment = {
+            id: Date.now(), // Use timestamp as temp ID
+            user: 'You',
+            avatar: 'https://api.dicebear.com/9.x/fun-emoji/svg?seed=you',
+            text: this.newCommentText,
+            gifUrl: this.gifUrl,
+            timeAgo: 'Just now',
+            likes: 0
+          };
+
+          this.comments.unshift(newComment);
+          this.resetForm();
+          
+          if (this.burnAmount > 0) {
+            this.sidebarMenuService.notifyBalanceUpdate();
+          }
+
+          this.confirmDialogService.showSuccess({
+            title: 'Comentario publicado',
+            message1: 'Tu comentario ha sido publicado exitosamente.'
+          });
+        },
+        error: (error) => {
+          this.isSubmitting = false;
+          console.error('Error submitting comment', error);
+          this.confirmDialogService.showError({
+            title: 'Error',
+            message1: error.error?.message || 'Hubo un problema al publicar tu comentario.'
+          });
+        }
+      });
+
+    } catch (error) {
+      this.isSubmitting = false;
+      console.error('Authentication error:', error);
+      this.confirmDialogService.showError({
+        title: 'Error de autenticación',
+        message1: 'No se pudo autenticar tu cuenta. Por favor intenta de nuevo.'
+      });
+    }
   }
 
   resetForm() {

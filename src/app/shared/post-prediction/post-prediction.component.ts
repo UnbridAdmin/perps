@@ -12,6 +12,8 @@ import { WalletConnectService } from '../../services/walletconnect.service';
 import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
 import { CommonService } from '../commonService';
 import { CategoryService } from '../category.service';
+import { ApiServices } from '../../services/api.service';
+import { firstValueFrom } from 'rxjs';
 import { VotingConfirmationModalComponent } from '../voting-confirmation-modal/voting-confirmation-modal.component';
 import { FierceIntuitionComponent } from './components/fierce-intuition/fierce-intuition.component';
 import { HowItWorkIntuitionComponent } from './components/how-it-work-intuition/how-it-work-intuition.component';
@@ -141,7 +143,8 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     private categoryService: CategoryService,
     private betPoolService: BetPoolService,
     private sidebarMenuService: SidebarMenuService,
-    private featuredCommentService: FeaturedCommentService
+    private featuredCommentService: FeaturedCommentService,
+    private apiService: ApiServices
   ) { }
 
   // API data properties
@@ -477,58 +480,111 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     }
   }
 
-  submitOverthrow(index: number): void {
+  async submitOverthrow(index: number) {
     const prediction = this.predictions[index];
     const form = this.overthrowFormsState[prediction.prediction_id];
     
     if (!form || (!form.text.trim() && !form.gifUrl.trim())) return;
 
-    if (!this.authService.isAuthenticated()) {
-      this.confirmDialogService.showInfo({
-        title: 'Inicio de sesión requerido',
-        message1: 'Debes iniciar sesión para destronar al rey.'
-      });
-      return;
-    }
-
-    const currentKingBurn = prediction.featuredComment?.burnedAmount || 0;
-    const newBurnAmount = currentKingBurn + 1;
-
     form.isSubmitting = true;
-    this.featuredCommentService.overthrowKing(
-      prediction.prediction_id,
-      form.text,
-      form.gifUrl,
-      newBurnAmount
-    ).subscribe({
-      next: (response: any) => {
-        form.isSubmitting = false;
-        // Success: the backend already updated everything
-        prediction.featuredComment = {
-          user: 'You',
-          avatar: 'https://api.dicebear.com/9.x/fun-emoji/svg?seed=you',
-          text: form.text,
-          gifUrl: form.gifUrl,
-          burnedAmount: newBurnAmount
+
+    try {
+      if (!this.authService.isAuthenticated()) {
+        const isConnected = await this.walletConnectService.checkConnection();
+        if (!isConnected) {
+          form.isSubmitting = false;
+          this.confirmDialogService.showInfo({
+            title: 'Billetera requerida',
+            message1: 'Por favor, conecta tu billetera para poder destronar.'
+          });
+          return;
+        }
+
+        const walletAddress = await this.walletConnectService.getConnectedWalletAddress();
+        
+        try {
+          const existResponse = await this.authService.existUser({ address: walletAddress }).toPromise() as any;
+          if (existResponse?.data?.exists) {
+            form.isSubmitting = false;
+            // User exists in DB but not authenticated - show login required
+            this.confirmDialogService.showInfo({
+              title: 'Inicio de sesión requerido',
+              message1: 'Debes iniciar sesión para destronar al rey.'
+            });
+            return;
+          }
+        } catch (error) {
+          console.error('Error checking if user exists:', error);
+        }
+
+        const message = `Click to sign in and accept the Unbrid Terms of Service(https://unbrid.com/privacy-policy). Login with secure code: ${Date.now()}`;
+        const signatureData = await this.walletConnectService.signMessage(message);
+
+        const createUserRequest = {
+          address: walletAddress,
+          coin_id: 1, 
+          message: signatureData.message,
+          signature: signatureData.signature,
+          referral_code: '' 
         };
 
-        this.confirmDialogService.showSuccess({
-          title: '¡Nuevo Rey destronado!',
-          message1: `Has destronado al mensaje anterior quemando ${newBurnAmount} Fierce.`
-        });
+        const createUserResponse = await firstValueFrom(
+          this.apiService.publicApiCall('user/secure-create-user', 'POST', createUserRequest)
+        ) as any;
 
-        this.cancelOverthrow(index);
-        this.sidebarMenuService.notifyBalanceUpdate();
-      },
-      error: (error: any) => {
-        form.isSubmitting = false;
-        console.error('Error overthrowing king:', error);
-        this.confirmDialogService.showError({
-          title: 'Error',
-          message1: error.error?.message || 'Error al intentar destronar al rey.'
-        });
+        if (createUserResponse?.success || createUserResponse?.message === 'SUCCESS') {
+          if (createUserResponse?.data && createUserResponse.data.length > 0) {
+             this.authService.setSession(createUserResponse.data[0].expires, walletAddress);
+          }
+        } else {
+          throw new Error('Failed to authenticate');
+        }
       }
-    });
+
+      const currentKingBurn = prediction.featuredComment?.burnedAmount || 0;
+      const newBurnAmount = currentKingBurn + 1;
+
+      this.featuredCommentService.overthrowKing(
+        prediction.prediction_id,
+        form.text,
+        form.gifUrl,
+        newBurnAmount
+      ).subscribe({
+        next: (response: any) => {
+          form.isSubmitting = false;
+          prediction.featuredComment = {
+            user: 'You',
+            avatar: 'https://api.dicebear.com/9.x/fun-emoji/svg?seed=you',
+            text: form.text,
+            gifUrl: form.gifUrl,
+            burnedAmount: newBurnAmount
+          };
+
+          this.confirmDialogService.showSuccess({
+            title: '¡Nuevo Rey destronado!',
+            message1: `Has destronado al mensaje anterior quemando ${newBurnAmount} Fierce.`
+          });
+
+          this.cancelOverthrow(index);
+          this.sidebarMenuService.notifyBalanceUpdate();
+        },
+        error: (error: any) => {
+          form.isSubmitting = false;
+          console.error('Error overthrowing king:', error);
+          this.confirmDialogService.showError({
+            title: 'Error',
+            message1: error.error?.message || 'Error al intentar destronar al rey.'
+          });
+        }
+      });
+    } catch (error) {
+      form.isSubmitting = false;
+      console.error('Authentication error:', error);
+      this.confirmDialogService.showError({
+        title: 'Error de autenticación',
+        message1: 'No se pudo autenticar tu cuenta. Por favor intenta de nuevo.'
+      });
+    }
   }
 
   // Vote on sentiment poll - now with real API integration
