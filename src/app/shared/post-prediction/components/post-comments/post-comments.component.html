@@ -51,8 +51,9 @@
         <div class="burn-info" *ngIf="burnAmount > 0">
           🔥 Burns <span>{{burnAmount}} Fierce</span>
         </div>
-        <button class="reply-btn" [disabled]="!newCommentText.trim() && !gifUrl.trim()" (click)="submitComment()">
-          Reply
+        <button class="reply-btn" [disabled]="(!newCommentText.trim() && !gifUrl.trim()) || isSubmitting" (click)="submitComment()">
+          <span *ngIf="!isSubmitting">Reply</span>
+          <span *ngIf="isSubmitting"><i class="fa-solid fa-circle-notch fa-spin"></i> Posting...</span>
         </button>
         <button class="cancel-btn" (click)="resetForm()">Cancel</button>
       </div>

@@ -20,6 +20,7 @@ import { BetPoolComponent } from './components/bet-pool/bet-pool.component';
 import { TradingMarketComponent } from './components/trading-market/trading-market.component';
 import { BetPoolService } from './components/bet-pool/bet-pool.service';
 import { SidebarMenuService } from '../../sidebar-menu/sidebar-menu.service';
+import { FeaturedCommentService } from './components/featured-comment/featured-comment.service';
 
 // API Response interfaces
 interface ApiPredictionOption {
@@ -125,7 +126,8 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     private commonService: CommonService,
     private categoryService: CategoryService,
     private betPoolService: BetPoolService,
-    private sidebarMenuService: SidebarMenuService
+    private sidebarMenuService: SidebarMenuService,
+    private featuredCommentService: FeaturedCommentService
   ) { }
 
   // API data properties
@@ -142,7 +144,8 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     isExpanded: boolean, 
     text: string, 
     gifUrl: string, 
-    showGifInput: boolean 
+    showGifInput: boolean,
+    isSubmitting: boolean
   } } = {};
 
   ngOnInit(): void {
@@ -435,7 +438,8 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
         isExpanded: true,
         text: '',
         gifUrl: '',
-        showGifInput: false
+        showGifInput: false,
+        isSubmitting: false
       };
     } else {
       this.overthrowFormsState[predictionId].isExpanded = !this.overthrowFormsState[predictionId].isExpanded;
@@ -465,24 +469,52 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     
     if (!form || (!form.text.trim() && !form.gifUrl.trim())) return;
 
+    if (!this.authService.isAuthenticated()) {
+      this.confirmDialogService.showInfo({
+        title: 'Inicio de sesión requerido',
+        message1: 'Debes iniciar sesión para destronar al rey.'
+      });
+      return;
+    }
+
     const currentKingBurn = prediction.featuredComment?.burnedAmount || 0;
     const newBurnAmount = currentKingBurn + 1;
 
-    // Simulate sucessful overthrow
-    prediction.featuredComment = {
-      user: 'You',
-      avatar: 'https://api.dicebear.com/9.x/fun-emoji/svg?seed=you',
-      text: form.text,
-      gifUrl: form.gifUrl,
-      burnedAmount: newBurnAmount
-    };
+    form.isSubmitting = true;
+    this.featuredCommentService.overthrowKing(
+      prediction.prediction_id,
+      form.text,
+      form.gifUrl,
+      newBurnAmount
+    ).subscribe({
+      next: (response: any) => {
+        form.isSubmitting = false;
+        // Success: the backend already updated everything
+        prediction.featuredComment = {
+          user: 'You',
+          avatar: 'https://api.dicebear.com/9.x/fun-emoji/svg?seed=you',
+          text: form.text,
+          gifUrl: form.gifUrl,
+          burnedAmount: newBurnAmount
+        };
 
-    this.confirmDialogService.showSuccess({
-      title: '¡Nuevo Rey dertronado!',
-      message1: `Has dertronado al mensaje anterior quemando ${newBurnAmount} Fierce.`
+        this.confirmDialogService.showSuccess({
+          title: '¡Nuevo Rey destronado!',
+          message1: `Has destronado al mensaje anterior quemando ${newBurnAmount} Fierce.`
+        });
+
+        this.cancelOverthrow(index);
+        this.sidebarMenuService.notifyBalanceUpdate();
+      },
+      error: (error: any) => {
+        form.isSubmitting = false;
+        console.error('Error overthrowing king:', error);
+        this.confirmDialogService.showError({
+          title: 'Error',
+          message1: error.error?.message || 'Error al intentar destronar al rey.'
+        });
+      }
     });
-
-    this.cancelOverthrow(index);
   }
 
   // Vote on sentiment poll - now with real API integration

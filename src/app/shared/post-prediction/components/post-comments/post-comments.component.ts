@@ -1,6 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { PostCommentsService } from './post-comments.service';
+import { AuthorizationService } from '../../../../services/authorization.service';
+import { ConfirmDialogService } from '../../../confirm-dialog/confirm-dialog.service';
+import { SidebarMenuService } from '../../../../sidebar-menu/sidebar-menu.service';
 
 interface Comment {
   id: number;
@@ -28,6 +32,7 @@ export class PostCommentsComponent implements OnInit {
   newCommentText: string = '';
   gifUrl: string = '';
   showGifInput: boolean = false;
+  isSubmitting: boolean = false;
 
   comments: Comment[] = [
     {
@@ -65,7 +70,12 @@ export class PostCommentsComponent implements OnInit {
     }
   ];
 
-  constructor() {}
+  constructor(
+    private postCommentsService: PostCommentsService,
+    private authService: AuthorizationService,
+    private confirmDialogService: ConfirmDialogService,
+    private sidebarMenuService: SidebarMenuService
+  ) {}
 
   ngOnInit(): void {}
 
@@ -80,18 +90,55 @@ export class PostCommentsComponent implements OnInit {
   submitComment() {
     if (!this.newCommentText.trim() && !this.gifUrl.trim()) return;
 
-    const newComment: Comment = {
-      id: this.comments.length + 1,
-      user: 'You',
-      avatar: 'https://api.dicebear.com/9.x/fun-emoji/svg?seed=you',
-      text: this.newCommentText,
-      gifUrl: this.gifUrl,
-      timeAgo: 'Just now',
-      likes: 0
-    };
+    if (!this.authService.isAuthenticated()) {
+      this.confirmDialogService.showInfo({
+        title: 'Inicio de sesión requerido',
+        message1: 'Debes iniciar sesión para publicar comentarios.'
+      });
+      return;
+    }
 
-    this.comments.unshift(newComment);
-    this.resetForm();
+    this.isSubmitting = true;
+    this.postCommentsService.submitComment(
+      this.predictionId, 
+      this.newCommentText, 
+      this.gifUrl, 
+      this.burnAmount
+    ).subscribe({
+      next: (response) => {
+        this.isSubmitting = false;
+        console.log('Comment submitted successfully', response);
+        const newComment: Comment = {
+          id: this.comments.length + 1,
+          user: 'You',
+          avatar: 'https://api.dicebear.com/9.x/fun-emoji/svg?seed=you',
+          text: this.newCommentText,
+          gifUrl: this.gifUrl,
+          timeAgo: 'Just now',
+          likes: 0
+        };
+
+        this.comments.unshift(newComment);
+        this.resetForm();
+        
+        if (this.burnAmount > 0) {
+          this.sidebarMenuService.notifyBalanceUpdate();
+        }
+
+        this.confirmDialogService.showSuccess({
+          title: 'Comentario publicado',
+          message1: 'Tu comentario ha sido publicado exitosamente.'
+        });
+      },
+      error: (error) => {
+        this.isSubmitting = false;
+        console.error('Error submitting comment', error);
+        this.confirmDialogService.showError({
+          title: 'Error',
+          message1: error.error?.message || 'Hubo un problema al publicar tu comentario.'
+        });
+      }
+    });
   }
 
   resetForm() {

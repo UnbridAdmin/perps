@@ -87,8 +87,9 @@
               </div>
               <button class="overthrow-btn" 
                 (click)="submitOverthrow(i)" 
-                [disabled]="!(overthrowFormsState[prediction.prediction_id]?.text?.trim() || overthrowFormsState[prediction.prediction_id]?.gifUrl?.trim())">
-                Dethrone
+                [disabled]="!(overthrowFormsState[prediction.prediction_id]?.text?.trim() || overthrowFormsState[prediction.prediction_id]?.gifUrl?.trim()) || overthrowFormsState[prediction.prediction_id].isSubmitting">
+                <span *ngIf="!overthrowFormsState[prediction.prediction_id].isSubmitting">Dethrone</span>
+                <span *ngIf="overthrowFormsState[prediction.prediction_id].isSubmitting"><i class="fa-solid fa-circle-notch fa-spin"></i> Processing...</span>
               </button>
               <button class="cancel-link" (click)="cancelOverthrow(i)">Cancel</button>
             </div>
