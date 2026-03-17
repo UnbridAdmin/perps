@@ -7,5 +7,6 @@ export const routes: Routes = [
   { path: 'trade', loadChildren: () => import('./trade/trade.module').then(m => m.TradeModule) },
   { path: 'profile', loadChildren: () => import('./profile/profile.module').then(m => m.ProfileModule) },
   { path: 'balance-activity', loadComponent: () => import('./balance-activity/balance-activity.component').then(m => m.BalanceActivityComponent) },
+  { path: 'post/:id', loadComponent: () => import('./shared/post-prediction/post-detail/post-detail.component').then(m => m.PostDetailComponent) },
   { path: ':username', loadComponent: () => import('./profile/profile-detail/profile-detail.component').then(m => m.ProfileDetailComponent) },
 ];

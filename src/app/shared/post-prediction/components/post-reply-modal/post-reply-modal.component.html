@@ -1,0 +1,96 @@
+<div class="modal-header">
+  <button class="close-btn" aria-label="Cerrar" (click)="activeModal.dismiss()">
+    <span>&times;</span>
+  </button>
+</div>
+
+<div class="modal-body">
+  <div class="modal-title-persuasive" *ngIf="mode === 'overthrow'">
+    <i class="fa-solid fa-crown"></i> Destrona al Rey
+  </div>
+
+  <div class="reply-banner" *ngIf="prediction && mode === 'reply'">
+    You're replying for <span class="user-highlight">@You</span>
+  </div>
+
+  <div class="overthrow-context" *ngIf="mode === 'overthrow' && currentKing">
+    <div class="context-label">Mensaje actual destacado:</div>
+    <div class="featured-preview">
+      <div class="king-avatar">
+        <img [src]="currentKing.avatar" alt="King">
+      </div>
+      <div class="king-text">"{{ currentKing.text }}"</div>
+      <div class="king-burn">🔥 {{ currentKing.burnedAmount }} F</div>
+    </div>
+    <div class="motivation-text">¡Quema <span class="burn-val">{{ burnAmount }} Fierce</span> para ocupar su lugar!</div>
+  </div>
+
+  <!-- Parent Post Content (Context) - Only for Reply mode -->
+  <div class="parent-post" *ngIf="prediction && mode === 'reply'">
+    <div class="avatar-line">
+      <div class="user-avatar">
+        <img [src]="prediction.creatorAvatar || 'https://api.dicebear.com/9.x/fun-emoji/svg'" alt="Creator">
+      </div>
+      <div class="connector-line"></div>
+    </div>
+    <div class="post-content">
+      <div class="post-header">
+        <span class="user-name">{{ prediction.creator }}</span>
+        <span class="user-handle">@{{ prediction.creator }}</span>
+        <span class="dot">·</span>
+        <span class="time">{{ prediction.timeAgo }}</span>
+      </div>
+      <div class="post-text">{{ prediction.question }}</div>
+      <div class="replying-to">Replying to <span class="user-highlight">@{{ prediction.creator }}</span></div>
+    </div>
+  </div>
+
+  <!-- Your Reply Section -->
+  <div class="your-reply">
+    <div class="user-avatar">
+      <img src="https://api.dicebear.com/9.x/fun-emoji/svg?seed=you" alt="You">
+    </div>
+    <div class="reply-input-area">
+      <textarea 
+        [placeholder]="mode === 'overthrow' ? 'Escribe tu mensaje para ser el nuevo Rey...' : 'Post your reply'" 
+        [(ngModel)]="commentText"
+        rows="3">
+      </textarea>
+
+      <!-- GIF Preview -->
+      <div class="gif-preview" *ngIf="gifUrl">
+        <img [src]="gifUrl" alt="GIF Preview">
+        <button class="remove-gif" (click)="gifUrl = ''">
+          <i class="fa-solid fa-circle-xmark"></i>
+        </button>
+      </div>
+
+      <!-- GIF URL Input -->
+      <div class="gif-url-input" *ngIf="showGifInput">
+        <input type="text" [(ngModel)]="gifUrl" placeholder="Enter GIF URL (via Giphy, Tenor, etc.)">
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <div class="toolbar">
+      <button class="tool-btn" title="Media disabled">
+        <i class="fa-regular fa-image"></i>
+      </button>
+      <button class="tool-btn" [class.active]="showGifInput" (click)="toggleGifInput()" title="Add GIF">
+        <i class="fa-solid fa-photo-film"></i>
+      </button>
+      <button class="tool-btn"><i class="fa-regular fa-face-smile"></i></button>
+      <button class="tool-btn"><i class="fa-solid fa-location-dot"></i></button>
+    </div>
+
+    <div class="action-right">
+      <div class="burn-info" *ngIf="burnAmount > 0">
+        🔥 Will burn <span>{{ burnAmount }} Fierce</span>
+      </div>
+      <button class="submit-btn" [disabled]="!commentText.trim() && !gifUrl.trim()" (click)="submit()">
+        {{ mode === 'overthrow' ? 'Dethrone' : 'Reply' }}
+      </button>
+    </div>
+  </div>
+</div>

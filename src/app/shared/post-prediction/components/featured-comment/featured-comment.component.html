@@ -1,9 +1,9 @@
-<div class="featured-comment-container">
+<div class="featured-comment-container" [class.is-king]="!!comment">
     <div class="burn-banner">
-        <span class="burn-icon">🔥</span>
+        <span class="burn-icon">👑</span>
         <span class="burn-text">Rey de la Colina</span>
         <div class="info-tooltip">
-            <span class="info-icon">i</span>
+            <span class="info-icon"><i class="fa-solid fa-info"></i></span>
             <div class="tooltip-text">Quema Fierce para fijar tu mensaje aquí y ganar visibilidad. El mensaje con más
                 tokens quemados será el único que se mantenga en la cima.</div>
         </div>
@@ -11,20 +11,34 @@
 
     <div class="comment-content" *ngIf="comment; else beTheFirst">
         <div class="user-info">
-            <img [src]="comment.avatar" alt="Avatar" class="avatar">
+            <div class="avatar"
+                [routerLink]="['/', comment.user]"
+                [style.backgroundImage]="'url(' + (comment.avatar || 'https://api.dicebear.com/9.x/fun-emoji/svg') + ')'">
+            </div>
             <div class="user-details">
-                <span class="username">{{ comment.user }}</span>
-                <span class="burned-amount">🔥 {{ comment.burnedAmount | number }} F Destruidos</span>
+                <span class="username" [routerLink]="['/', comment.user]">@{{ comment.user }}</span>
+                <span class="burned-amount">
+                    <i class="fa-solid fa-fire-flame-curved"></i> {{ comment.burnedAmount | number }} F Destruidos
+                </span>
             </div>
         </div>
         <p class="comment-text">"{{ comment.text }}"</p>
-        <button class="overthrow-btn" (click)="onOverthrow()">Destronar 👑</button>
+        
+        <div class="featured-gif" *ngIf="comment.gifUrl">
+            <img [src]="comment.gifUrl" alt="Featured GIF">
+        </div>
+
+        <button class="overthrow-btn" (click)="onOverthrow()">
+            <i class="fa-solid fa-chess-king"></i> Destronar al Rey
+        </button>
     </div>
 
     <ng-template #beTheFirst>
         <div class="be-first-content">
-            <p class="empty-text">Nadie ha destacado un mensaje aún en esta predicción.</p>
-            <button class="overthrow-btn first-btn" (click)="onOverthrow()">Quemar Fierce para Destacar 🔥</button>
+            <p class="empty-text">Nadie ha reclamado el trono aún.</p>
+            <button class="overthrow-btn first-btn" (click)="onOverthrow()">
+                <i class="fa-solid fa-fire"></i> Quemar Fierce para reinar
+            </button>
         </div>
     </ng-template>
 </div>

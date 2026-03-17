@@ -21,12 +21,13 @@
         </p>
       </div>
     </div>
-    <div class="prediction-question">
+    <div class="prediction-question" (click)="navigateToPostDetail(prediction.prediction_id)" style="cursor: pointer;">
       {{ prediction.question }}
     </div>
 
     <!-- Image (optional) -->
-    <div class="prediction-image" *ngIf="prediction.imageUrl">
+    <div class="prediction-image" *ngIf="prediction.imageUrl" (click)="navigateToPostDetail(prediction.prediction_id)"
+      style="cursor: pointer;">
       <img [src]="prediction.imageUrl" alt="Prediction image" />
     </div>
 
@@ -36,13 +37,74 @@
       (showHowItWorks)="openHowItWorksModal()">
     </app-fierce-intuition>
 
-    <!-- Featured Comment / King of the Hill -->
-    <app-featured-comment [comment]="prediction.featuredComment" (overthrow)="openOverthrowModal(i)">
-    </app-featured-comment>
+    <!-- Featured Comment Section (King of the Hill) -->
+    <div class="featured-comment-container">
+      <app-featured-comment [comment]="prediction.featuredComment"
+        (overthrow)="toggleOverthrowForm(i)"></app-featured-comment>
 
+      <!-- In-line Overthrow Form (Accordion Style) -->
+      <div class="overthrow-form-container" *ngIf="overthrowFormsState[prediction.prediction_id]?.isExpanded">
+        <div class="overthrow-header">
+          <i class="fa-solid fa-crown"></i> Destrona al Rey
+        </div>
+
+        <div class="overthrow-body">
+          <div class="input-row">
+            <div class="user-avatar-small">
+              <img src="https://api.dicebear.com/9.x/fun-emoji/svg?seed=you" alt="You">
+            </div>
+            <div class="input-area">
+              <textarea placeholder="Escribe tu mensaje para ser el nuevo Rey..."
+                [(ngModel)]="overthrowFormsState[prediction.prediction_id].text" rows="2">
+              </textarea>
+
+              <!-- GIF Preview -->
+              <div class="gif-preview-mini" *ngIf="overthrowFormsState[prediction.prediction_id]?.gifUrl">
+                <img [src]="overthrowFormsState[prediction.prediction_id].gifUrl" alt="GIF">
+                <button class="remove-btn" (click)="overthrowFormsState[prediction.prediction_id].gifUrl = ''">
+                  <i class="fa-solid fa-circle-xmark"></i>
+                </button>
+              </div>
+
+              <!-- GIF Input -->
+              <div class="gif-url-input-mini" *ngIf="overthrowFormsState[prediction.prediction_id].showGifInput">
+                <input type="text" [(ngModel)]="overthrowFormsState[prediction.prediction_id].gifUrl"
+                  placeholder="GIF URL...">
+              </div>
+            </div>
+          </div>
+
+          <div class="overthrow-actions">
+            <div class="left-tools">
+              <button class="tool-btn" (click)="toggleOverthrowGifInput(i)"
+                [class.active]="overthrowFormsState[prediction.prediction_id].showGifInput">
+                <i class="fa-solid fa-photo-film"></i>
+              </button>
+              <!-- <button class="tool-btn"><i class="fa-regular fa-face-smile"></i></button> -->
+            </div>
+            <div class="right-actions">
+              <div class="cost-info">
+                🔥 Burns <span>{{ (prediction.featuredComment?.burnedAmount || 0) + 1 }} F</span>
+              </div>
+              <button class="overthrow-btn" (click)="submitOverthrow(i)"
+                [disabled]="!(overthrowFormsState[prediction.prediction_id]?.text?.trim() || overthrowFormsState[prediction.prediction_id]?.gifUrl?.trim()) || overthrowFormsState[prediction.prediction_id].isSubmitting">
+                <span *ngIf="!overthrowFormsState[prediction.prediction_id].isSubmitting">Dethrone</span>
+                <span *ngIf="overthrowFormsState[prediction.prediction_id].isSubmitting"><i
+                    class="fa-solid fa-circle-notch fa-spin"></i> Processing...</span>
+              </button>
+              <button class="cancel-link" (click)="cancelOverthrow(i)">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- Action Buttons -->
     <div class="prediction-tabs-container" *ngIf="prediction.actions">
       <div class="prediction-tabs" [ngClass]="{'tabs-inactive': activeMarketPopover !== i && activeBetPopover !== i}">
+        <!-- Mechanic 4: Messages -->
+        <div class="tab" (click)="navigateToPostDetail(prediction.prediction_id)" title="Comentarios">
+          💬 {{ prediction.actions.comments || '0' }}
+        </div>
         <!-- Mechanic 2: Bet/Pot -->
         <div class="tab" (click)="toggleBetPopover(i)" [class.active]="activeBetPopover === i" title="Pool de apuestas">
           🎲 {{ prediction.marketInfo?.poolAmount || '0' }}

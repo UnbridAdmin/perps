@@ -1,5 +1,6 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { HttpClientModule } from '@angular/common/http';
@@ -11,6 +12,8 @@ import { WalletConnectService } from '../../services/walletconnect.service';
 import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
 import { CommonService } from '../commonService';
 import { CategoryService } from '../category.service';
+import { ApiServices } from '../../services/api.service';
+import { firstValueFrom } from 'rxjs';
 import { VotingConfirmationModalComponent } from '../voting-confirmation-modal/voting-confirmation-modal.component';
 import { FierceIntuitionComponent } from './components/fierce-intuition/fierce-intuition.component';
 import { HowItWorkIntuitionComponent } from './components/how-it-work-intuition/how-it-work-intuition.component';
@@ -19,6 +22,7 @@ import { BetPoolComponent } from './components/bet-pool/bet-pool.component';
 import { TradingMarketComponent } from './components/trading-market/trading-market.component';
 import { BetPoolService } from './components/bet-pool/bet-pool.service';
 import { SidebarMenuService } from '../../sidebar-menu/sidebar-menu.service';
+import { FeaturedCommentService } from './components/featured-comment/featured-comment.service';
 
 // API Response interfaces
 interface ApiPredictionOption {
@@ -27,6 +31,18 @@ interface ApiPredictionOption {
   prediction_intuition_votes: number | null;
   prediction_market_votes: number | null;
   intuition_votes_count: number;
+}
+
+interface ApiKingComment {
+  comment_id: number;
+  user_id: number;
+  prediction_id: number;
+  comment: string;
+  burned_fierce: number;
+  created_at: string;
+  avatar: string | null;
+  url_image: string | null;
+  username: string;
 }
 
 interface ApiPrediction {
@@ -44,6 +60,8 @@ interface ApiPrediction {
   creatorAvatar: string;
   totalVolume: number;
   categoryName: string | null;
+  totalComments: number;
+  king_comment: ApiKingComment | null;
 }
 
 interface GetPredictionsResponse {
@@ -89,6 +107,7 @@ interface Prediction {
     user: string;
     avatar: string;
     text: string;
+    gifUrl?: string;
     burnedAmount: number;
   };
   actions?: {
@@ -101,13 +120,15 @@ interface Prediction {
 @Component({
   selector: 'app-post-prediction',
   standalone: true,
-  imports: [CommonModule, RouterModule, InfiniteScrollModule, HttpClientModule, FierceIntuitionComponent, FeaturedCommentComponent, BetPoolComponent, TradingMarketComponent],
+  imports: [CommonModule, RouterModule, InfiniteScrollModule, HttpClientModule, FormsModule, FierceIntuitionComponent, FeaturedCommentComponent, BetPoolComponent, TradingMarketComponent],
   templateUrl: './post-prediction.component.html',
   styleUrls: ['./post-prediction.component.scss']
 })
 export class PostPredictionComponent implements OnInit, OnDestroy {
   @Input() userId?: number; // Optional: filter by user ID
   @Input() tab: 'for-you' | 'trending' = 'for-you';
+  @Input() predictionId?: number; // Optional: show only one specific prediction
+  @Output() predictionLoaded = new EventEmitter<any>();
 
   private subscriptions: Subscription = new Subscription();
 
@@ -121,7 +142,9 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     private commonService: CommonService,
     private categoryService: CategoryService,
     private betPoolService: BetPoolService,
-    private sidebarMenuService: SidebarMenuService
+    private sidebarMenuService: SidebarMenuService,
+    private featuredCommentService: FeaturedCommentService,
+    private apiService: ApiServices
   ) { }
 
   // API data properties
@@ -132,6 +155,15 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
   isLoading = false;
   hasMoreData = true;
   selectedCategoryId: number | null = null;
+  
+  // State for in-line Overthrow forms
+  overthrowFormsState: { [predictionId: number]: { 
+    isExpanded: boolean, 
+    text: string, 
+    gifUrl: string, 
+    showGifInput: boolean,
+    isSubmitting: boolean
+  } } = {};
 
   ngOnInit(): void {
     // We remove this.loadPredictions() from here because BehaviorSubject
@@ -186,6 +218,11 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
       params.user_id = this.userId;
     }
 
+    // Add predictionId filter if provided
+    if (this.predictionId) {
+      params.predictionId = this.predictionId;
+    }
+
     // Check both authentication and wallet connection
     const isAuthenticated = this.authService.isAuthenticated();
     const isWalletConnected = await this.walletConnectService.checkConnection();
@@ -202,9 +239,20 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
         if (this.currentPage === 1) {
           this.predictions = mappedPredictions;
           this.apiPredictions = apiResponse.data;
+
+          // If in single post mode, ensure we only keep the matching one
+          if (this.predictionId) {
+            this.predictions = this.predictions.filter(p => p.prediction_id === this.predictionId);
+            this.apiPredictions = this.apiPredictions.filter(p => p.prediction_id === this.predictionId);
+            
+            if (this.predictions.length > 0) {
+              this.predictionLoaded.emit(this.predictions[0]);
+            }
+          }
+
           // Populate user votes from API data
           this.userVotes = {};
-          apiResponse.data.forEach(pred => {
+          this.apiPredictions.forEach(pred => {
             if (pred.userVotedOption) {
               this.userVotes[pred.prediction_id] = pred.userVotedOption;
             }
@@ -214,7 +262,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
           this.apiPredictions = [...this.apiPredictions, ...apiResponse.data];
         }
 
-        this.hasMoreData = mappedPredictions.length === this.pageSize;
+        this.hasMoreData = this.predictionId ? false : mappedPredictions.length === this.pageSize;
         this.currentPage++;
         this.isLoading = false;
       },
@@ -270,10 +318,17 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
           }))
         },
         actions: {
-          comments: 0,
-          likes: 0,
+          comments: apiPred.totalComments || 0,
+          likes: Math.floor(Math.random() * 100),
           volume: `$${apiPred.totalVolume || 0}`
-        }
+        },
+        featuredComment: apiPred.king_comment ? {
+          user: apiPred.king_comment.username,
+          avatar: apiPred.king_comment.avatar || 'https://api.dicebear.com/9.x/fun-emoji/svg',
+          text: apiPred.king_comment.comment,
+          gifUrl: apiPred.king_comment.url_image || undefined,
+          burnedAmount: apiPred.king_comment.burned_fierce
+        } : undefined
       };
     });
   }
@@ -392,14 +447,144 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     this.activeBetPopover = null;
   }
 
-  // Open modal / logic to overthrow the featured comment
-  openOverthrowModal(index: number): void {
-    // To be implemented: open a modal where the user inputs their text and the amount of Fierce to burn
-    console.log('Overthrowing featured comment for prediction:', this.predictions[index].prediction_id);
-    this.confirmDialogService.showInfo({
-      title: 'Destronar Comentario',
-      message1: 'Próximamente: Ingresa tu mensaje y quema Fierce para destacarlo aquí.'
-    });
+  // Toggle in-line overthrow form
+  toggleOverthrowForm(index: number): void {
+    const predictionId = this.predictions[index].prediction_id;
+    if (!this.overthrowFormsState[predictionId]) {
+      this.overthrowFormsState[predictionId] = {
+        isExpanded: true,
+        text: '',
+        gifUrl: '',
+        showGifInput: false,
+        isSubmitting: false
+      };
+    } else {
+      this.overthrowFormsState[predictionId].isExpanded = !this.overthrowFormsState[predictionId].isExpanded;
+    }
+  }
+
+  cancelOverthrow(index: number): void {
+    const predictionId = this.predictions[index].prediction_id;
+    if (this.overthrowFormsState[predictionId]) {
+      this.overthrowFormsState[predictionId].isExpanded = false;
+      this.overthrowFormsState[predictionId].text = '';
+      this.overthrowFormsState[predictionId].gifUrl = '';
+      this.overthrowFormsState[predictionId].showGifInput = false;
+    }
+  }
+
+  toggleOverthrowGifInput(index: number): void {
+    const predictionId = this.predictions[index].prediction_id;
+    if (this.overthrowFormsState[predictionId]) {
+      this.overthrowFormsState[predictionId].showGifInput = !this.overthrowFormsState[predictionId].showGifInput;
+    }
+  }
+
+  async submitOverthrow(index: number) {
+    const prediction = this.predictions[index];
+    const form = this.overthrowFormsState[prediction.prediction_id];
+    
+    if (!form || (!form.text.trim() && !form.gifUrl.trim())) return;
+
+    form.isSubmitting = true;
+
+    try {
+      if (!this.authService.isAuthenticated()) {
+        const isConnected = await this.walletConnectService.checkConnection();
+        if (!isConnected) {
+          form.isSubmitting = false;
+          this.confirmDialogService.showInfo({
+            title: 'Billetera requerida',
+            message1: 'Por favor, conecta tu billetera para poder destronar.'
+          });
+          return;
+        }
+
+        const walletAddress = await this.walletConnectService.getConnectedWalletAddress();
+        
+        try {
+          const existResponse = await this.authService.existUser({ address: walletAddress }).toPromise() as any;
+          if (existResponse?.data?.exists) {
+            form.isSubmitting = false;
+            // User exists in DB but not authenticated - show login required
+            this.confirmDialogService.showInfo({
+              title: 'Inicio de sesión requerido',
+              message1: 'Debes iniciar sesión para destronar al rey.'
+            });
+            return;
+          }
+        } catch (error) {
+          console.error('Error checking if user exists:', error);
+        }
+
+        const message = `Click to sign in and accept the Unbrid Terms of Service(https://unbrid.com/privacy-policy). Login with secure code: ${Date.now()}`;
+        const signatureData = await this.walletConnectService.signMessage(message);
+
+        const createUserRequest = {
+          address: walletAddress,
+          coin_id: 1, 
+          message: signatureData.message,
+          signature: signatureData.signature,
+          referral_code: '' 
+        };
+
+        const createUserResponse = await firstValueFrom(
+          this.apiService.publicApiCall('user/secure-create-user', 'POST', createUserRequest)
+        ) as any;
+
+        if (createUserResponse?.success || createUserResponse?.message === 'SUCCESS') {
+          if (createUserResponse?.data && createUserResponse.data.length > 0) {
+             this.authService.setSession(createUserResponse.data[0].expires, walletAddress);
+          }
+        } else {
+          throw new Error('Failed to authenticate');
+        }
+      }
+
+      const currentKingBurn = prediction.featuredComment?.burnedAmount || 0;
+      const newBurnAmount = currentKingBurn + 1;
+
+      this.featuredCommentService.overthrowKing(
+        prediction.prediction_id,
+        form.text,
+        form.gifUrl,
+        newBurnAmount
+      ).subscribe({
+        next: (response: any) => {
+          form.isSubmitting = false;
+          prediction.featuredComment = {
+            user: 'You',
+            avatar: 'https://api.dicebear.com/9.x/fun-emoji/svg?seed=you',
+            text: form.text,
+            gifUrl: form.gifUrl,
+            burnedAmount: newBurnAmount
+          };
+
+          this.confirmDialogService.showSuccess({
+            title: '¡Nuevo Rey destronado!',
+            message1: `Has destronado al mensaje anterior quemando ${newBurnAmount} Fierce.`
+          });
+
+          this.cancelOverthrow(index);
+          this.sidebarMenuService.notifyBalanceUpdate();
+        },
+        error: (error: any) => {
+          form.isSubmitting = false;
+          console.error('Error overthrowing king:', error);
+          this.confirmDialogService.showError({
+            title: 'Error',
+            message1: error.error?.message || 'Error al intentar destronar al rey.'
+          });
+        }
+      });
+    } catch (error) {
+      form.isSubmitting = false;
+      console.error('Authentication error:', error);
+      this.confirmDialogService.showError({
+        title: 'Error de autenticación',
+        message1: 'No se pudo autenticar tu cuenta. Por favor intenta de nuevo.'
+      });
+    }
   }
 
   // Vote on sentiment poll - now with real API integration
@@ -626,6 +811,11 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
   // Navigate to trade detail page
   navigateToTrade(prediction: any): void {
     this.router.navigate(['/trade', prediction.prediction_id]);
+  }
+
+  // Navigate to post detail page
+  navigateToPostDetail(predictionId: number): void {
+    this.router.navigate(['/post', predictionId]);
   }
 
   // Navigate to category and activate filters
