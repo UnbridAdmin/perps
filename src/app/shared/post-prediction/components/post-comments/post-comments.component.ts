@@ -1,10 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { PostCommentsService } from './post-comments.service';
 import { AuthorizationService } from '../../../../services/authorization.service';
 import { ConfirmDialogService } from '../../../confirm-dialog/confirm-dialog.service';
 import { SidebarMenuService } from '../../../../sidebar-menu/sidebar-menu.service';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 interface Comment {
   id: number;
@@ -20,7 +22,7 @@ interface Comment {
 @Component({
   selector: 'app-post-comments',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, InfiniteScrollModule, RouterModule],
   templateUrl: './post-comments.component.html',
   styleUrls: ['./post-comments.component.scss']
 })
@@ -34,41 +36,11 @@ export class PostCommentsComponent implements OnInit {
   showGifInput: boolean = false;
   isSubmitting: boolean = false;
 
-  comments: Comment[] = [
-    {
-      id: 1,
-      user: 'CryptoWhale',
-      avatar: 'https://api.dicebear.com/9.x/fun-emoji/svg?seed=whale',
-      text: 'This is a game changer! I really think the market is underestimating the potential here.',
-      timeAgo: '2h ago',
-      likes: 12
-    },
-    {
-      id: 2,
-      user: 'MoonSeeker',
-      avatar: 'https://api.dicebear.com/9.x/fun-emoji/svg?seed=moon',
-      text: 'Totally agree. The fundamentals look solid. Buying more F tokens now! 🚀',
-      timeAgo: '1h ago',
-      likes: 5
-    },
-    {
-      id: 3,
-      user: 'TraderJoe',
-      avatar: 'https://api.dicebear.com/9.x/fun-emoji/svg?seed=joe',
-      text: 'I am not so sure. The volume is still low. Let\'s see how it plays out in the next 24 hours.',
-      timeAgo: '30m ago',
-      likes: 2
-    },
-    {
-      id: 4,
-      user: 'FierceOreo',
-      avatar: 'https://api.dicebear.com/9.x/fun-emoji/svg?seed=oreo',
-      text: 'Look at this pump!',
-      gifUrl: 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJqZ3NjNHJqZ3NjNHJqZ3NjNHJqZ3NjNHJqZ3NjNHJqZ3NjNHJqZ3NjJmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/mi6hcCqS9pkkSWMWAc/giphy.gif',
-      timeAgo: '10m ago',
-      likes: 8
-    }
-  ];
+  comments: Comment[] = [];
+  page: number = 1;
+  limit: number = 10;
+  isLoading: boolean = false;
+  hasMoreData: boolean = true;
 
   constructor(
     private postCommentsService: PostCommentsService,
@@ -77,7 +49,70 @@ export class PostCommentsComponent implements OnInit {
     private sidebarMenuService: SidebarMenuService
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.predictionId) {
+      this.loadComments();
+    }
+  }
+
+  loadComments(infinite: boolean = false) {
+    if (this.isLoading || (!this.hasMoreData && infinite)) return;
+
+    this.isLoading = true;
+    if (!infinite) {
+      this.page = 1;
+      this.comments = [];
+      this.hasMoreData = true;
+    }
+
+    this.postCommentsService.getComments(this.predictionId, this.page, this.limit).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        const apiResponse = response.data;
+        const apiComments = apiResponse?.data || [];
+        
+        if (apiComments.length < this.limit) {
+          this.hasMoreData = false;
+        }
+
+        const mappedComments: Comment[] = apiComments.map((apiComment: any) => ({
+          id: apiComment.comment_id,
+          user: apiComment.username,
+          avatar: apiComment.avatar || `https://api.dicebear.com/9.x/fun-emoji/svg?seed=${apiComment.username}`,
+          text: apiComment.comment,
+          gifUrl: apiComment.url_image,
+          timeAgo: this.formatTimeAgo(apiComment.created_at),
+          likes: 0 // Backend currently doesn't support likes
+        }));
+
+        this.comments = [...this.comments, ...mappedComments];
+        this.page++;
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error loading comments', error);
+      }
+    });
+  }
+
+  onScroll() {
+    this.loadComments(true);
+  }
+
+  private formatTimeAgo(dateString: string): string {
+    if (!dateString) return 'recently';
+    const date = new Date(dateString);
+    const now = new Date();
+    const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    if (seconds < 60) return 'Just now';
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    return `${days}d ago`;
+  }
 
   expandInput() {
     this.isExpanded = true;

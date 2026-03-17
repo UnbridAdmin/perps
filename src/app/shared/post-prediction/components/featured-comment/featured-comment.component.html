@@ -12,10 +12,11 @@
     <div class="comment-content" *ngIf="comment; else beTheFirst">
         <div class="user-info">
             <div class="avatar"
+                [routerLink]="['/', comment.user]"
                 [style.backgroundImage]="'url(' + (comment.avatar || 'https://api.dicebear.com/9.x/fun-emoji/svg') + ')'">
             </div>
             <div class="user-details">
-                <span class="username">@{{ comment.user }}</span>
+                <span class="username" [routerLink]="['/', comment.user]">@{{ comment.user }}</span>
                 <span class="burned-amount">
                     <i class="fa-solid fa-fire-flame-curved"></i> {{ comment.burnedAmount | number }} F Destruidos
                 </span>

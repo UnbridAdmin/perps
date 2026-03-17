@@ -1,4 +1,5 @@
-<div class="comments-section">
+<div class="comments-section" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50"
+  (scrolled)="onScroll()">
   <!-- Regular Expandable Reply Area -->
   <div class="expandable-reply-container" [class.expanded]="isExpanded">
     <div class="reply-banner" *ngIf="isExpanded">
@@ -9,18 +10,14 @@
       <div class="user-avatar">
         <img src="https://api.dicebear.com/9.x/fun-emoji/svg?seed=you" alt="You">
       </div>
-      
+
       <div class="input-content">
         <div class="replying-to" *ngIf="isExpanded && prediction">
           Replying to <span class="user-highlight">@{{prediction.creator}}</span>
         </div>
 
-        <textarea 
-          placeholder="Post your reply" 
-          [(ngModel)]="newCommentText"
-          (click)="expandInput()"
-          [rows]="isExpanded ? 3 : 1"
-          [class.compact]="!isExpanded">
+        <textarea placeholder="Post your reply" [(ngModel)]="newCommentText" (click)="expandInput()"
+          [rows]="isExpanded ? 3 : 1" [class.compact]="!isExpanded">
         </textarea>
 
         <!-- GIF Preview in-line -->
@@ -39,19 +36,17 @@
     <!-- Toolbar and Actions -->
     <div class="reply-actions" *ngIf="isExpanded">
       <div class="toolbar">
-        <button class="tool-btn" title="Media disabled"><i class="fa-regular fa-image"></i></button>
         <button class="tool-btn" [class.active]="showGifInput" (click)="toggleGifInput()" title="Add GIF">
           <i class="fa-solid fa-photo-film"></i>
         </button>
-        <button class="tool-btn"><i class="fa-regular fa-face-smile"></i></button>
-        <button class="tool-btn"><i class="fa-solid fa-location-dot"></i></button>
       </div>
 
       <div class="submit-group">
         <div class="burn-info" *ngIf="burnAmount > 0">
           🔥 Burns <span>{{burnAmount}} Fierce</span>
         </div>
-        <button class="reply-btn" [disabled]="(!newCommentText.trim() && !gifUrl.trim()) || isSubmitting" (click)="submitComment()">
+        <button class="reply-btn" [disabled]="(!newCommentText.trim() && !gifUrl.trim()) || isSubmitting"
+          (click)="submitComment()">
           <span *ngIf="!isSubmitting">Reply</span>
           <span *ngIf="isSubmitting"><i class="fa-solid fa-circle-notch fa-spin"></i> Posting...</span>
         </button>
@@ -61,13 +56,25 @@
   </div>
 
   <div class="comments-list">
+    <!-- Initial Loading -->
+    <div class="loading-state" *ngIf="isLoading && comments.length === 0">
+      <div class="spinner"></div>
+      <span>Cargando comentarios...</span>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!isLoading && comments.length === 0">
+      <i class="fa-regular fa-comment-dots"></i>
+      <p>Sé el primero en comentar esta predicción.</p>
+    </div>
+
     <div class="comment-item" *ngFor="let comment of comments">
-      <div class="comment-avatar">
+      <div class="comment-avatar" [routerLink]="['/', comment.user]" style="cursor: pointer;">
         <img [src]="comment.avatar" [alt]="comment.user">
       </div>
       <div class="comment-content">
         <div class="comment-header">
-          <span class="comment-user">{{ comment.user }}</span>
+          <span class="comment-user" [routerLink]="['/', comment.user]" style="cursor: pointer;">{{ comment.user }}</span>
           <span class="comment-time">{{ comment.timeAgo }}</span>
         </div>
         <div class="comment-text">
@@ -90,6 +97,16 @@
           </button>
         </div>
       </div>
+    </div>
+
+    <!-- Loading More -->
+    <div class="loading-more" *ngIf="isLoading && comments.length > 0">
+      <i class="fa-solid fa-circle-notch fa-spin"></i>
+    </div>
+
+    <!-- End of List -->
+    <div class="end-list" *ngIf="!hasMoreData && comments.length > 0">
+      <span>Has llegado al final de los comentarios.</span>
     </div>
   </div>
 </div>

@@ -25,4 +25,14 @@ export class PostCommentsService {
     };
     return this.apiService.apiCall('predictions/submit-comment', 'POST', payload);
   }
+
+  /**
+   * Fetches paginated comments for a prediction.
+   * @param predictionId The ID of the prediction.
+   * @param page The page number.
+   * @param limit The number of items per page.
+   */
+  getComments(predictionId: number, page: number, limit: number): Observable<any> {
+    return this.apiService.apiCall(`predictions/get-comments?prediction_id=${predictionId}&page=${page}&limit=${limit}`, 'GET', null);
+  }
 }
