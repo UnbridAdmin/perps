@@ -1,4 +1,4 @@
-@use '../../styles/variables' as *;
+@use "../../../styles/variables" as *;
 
 .create-prediction-container {
   max-width: 1400px;
@@ -95,7 +95,8 @@
     color: #e7e9ea;
   }
 
-  select, input {
+  select,
+  input {
     padding: 12px;
     border: 1px solid #2f3336;
     border-radius: 8px;
