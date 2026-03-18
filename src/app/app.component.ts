@@ -68,7 +68,9 @@ export class AppComponent implements OnInit, OnDestroy {
         this.showNewsSidebar = (this.isHomePage ||
           mainPath.startsWith('/profile') ||
           (!mainPath.startsWith('/trade') && !mainPath.startsWith('/login'))) &&
-          !mainPath.startsWith('/balance-activity');
+          !mainPath.startsWith('/balance-activity') &&
+          !mainPath.startsWith('/create-prediction') &&
+          !mainPath.startsWith('/referral');
       });
   }
 

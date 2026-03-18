@@ -1,0 +1,110 @@
+<div class="create-prediction-container">
+  <div class="header">
+    <button class="back-btn" (click)="goBack()">← Volver</button>
+    <h2>Crear Nueva Predicción</h2>
+  </div>
+
+  <div class="content">
+    <div class="form-section">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="category">Categoría:</label>
+          <select id="category" [(ngModel)]="category">
+            <option value="">Seleccionar Categoría</option>
+            <option *ngFor="let cat of categories" [value]="cat.value">{{ cat.label }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="type">Tipo:</label>
+          <select id="type" [(ngModel)]="type" (change)="onTypeChange()">
+            <option value="binary">Binaria (Sí/No)</option>
+            <option value="multiple">Múltiples Opciones</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="title">Título:</label>
+        <input id="title" type="text" [(ngModel)]="title" placeholder="e.g., Subida de BTC a $150,000">
+      </div>
+
+      <div class="form-group">
+        <label for="imageUrl">Enlace de Imagen:</label>
+        <input id="imageUrl" type="url" [(ngModel)]="imageUrl" placeholder="https://example.com/image.jpg">
+      </div>
+
+      <div class="form-group" *ngIf="type === 'multiple'">
+        <label>Opciones:</label>
+        <div class="options-list">
+          <div class="option-item" *ngFor="let option of options; let i = index; trackBy: trackByIndex">
+            <input type="text" [(ngModel)]="options[i]" placeholder="e.g., Antes del 25 de Enero">
+            <button type="button" (click)="removeOption(i)">Eliminar</button>
+          </div>
+          <button type="button" (click)="addOption()" class="add-option-btn">+ Agregar Opción</button>
+        </div>
+      </div>
+
+      <div class="form-group" *ngIf="type === 'binary'">
+        <label>Opciones:</label>
+        <div class="binary-options">
+          <span>SÍ</span> / <span>NO</span>
+        </div>
+      </div>
+
+      <button class="submit-btn" (click)="submitPrediction()" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Creando...' : 'Crear Predicción' }}
+      </button>
+    </div>
+
+    <div class="preview-section">
+      <h3>Vista Previa</h3>
+      <div class="prediction-card">
+        <div class="prediction-header">
+          <div class="prediction-avatar"></div>
+          <div class="prediction-info">
+            <h3>Tu Nombre</h3>
+            <p>{{ getCategoryDisplay() || 'Categoría' }} • Hace poco • 0 participantes</p>
+          </div>
+        </div>
+        <div class="prediction-question">
+          {{ title || 'Tu título de predicción' }}
+        </div>
+
+        <div class="prediction-image" *ngIf="imageUrl">
+          <img [src]="imageUrl" alt="Prediction image" />
+        </div>
+
+        <div class="sentiment-section" *ngIf="options.length > 0">
+          <div class="sentiment-header">
+            <div class="sentiment-title-section">
+              <span class="sentiment-title">🔥 Intuición Fierce</span>
+            </div>
+            <span class="sentiment-total">0 votos</span>
+          </div>
+
+          <div class="sentiment-options">
+            <div class="sentiment-vote-btn" *ngFor="let option of options">
+              <div class="percentage-bar" [style.width.%]="0"></div>
+              <span class="vote-btn-text">{{ option || 'Opción' }}</span>
+              <span class="vote-percentage">0%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="prediction-actions">
+          <button class="action-btn">
+            💬 0
+          </button>
+          <button class="action-btn">
+            👁️ 0
+          </button>
+          <button class="action-btn market-btn">
+            💰 $0
+          </button>
+          <button class="predict-btn btn-primary">🎯 Trade</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

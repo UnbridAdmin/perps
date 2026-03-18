@@ -11,7 +11,6 @@ import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PremiumUpgradeDialogComponent } from '../premium-upgrade-dialog.component';
-import { CreatePredictionComponent } from '../shared/create-prediction/create-prediction.component';
 import { DepositModalComponent } from '../shared/deposit-modal/deposit-modal.component';
 
 @Component({
@@ -300,11 +299,7 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
   }
 
   openCreatePrediction() {
-    const modalRef = this.modalService.open(CreatePredictionComponent, {
-      size: 'xl',
-      backdrop: 'static',
-      windowClass: 'full-screen-modal'
-    });
+    this.router.navigate(['/create-prediction']);
   }
 
   openDepositModal(event?: Event) {

@@ -50,7 +50,7 @@ export class VotingConfirmationModalComponent implements OnInit {
           coin_id: 1, // Assuming 1 is the default coin_id for Polygon
           message: signatureData.message,
           signature: signatureData.signature,
-          referral_code: '' // Optional
+          referral_code: 'syyPTsvh70245910' // Optional
         };
 
         // Call secure-create-user endpoint

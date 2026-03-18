@@ -52,7 +52,7 @@ export class PostCommentsComponent implements OnInit {
     private sidebarMenuService: SidebarMenuService,
     private walletConnectService: WalletConnectService,
     private apiService: ApiServices
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     if (this.predictionId) {
@@ -75,7 +75,7 @@ export class PostCommentsComponent implements OnInit {
         this.isLoading = false;
         const apiResponse = response.data;
         const apiComments = apiResponse?.data || [];
-        
+
         if (apiComments.length < this.limit) {
           this.hasMoreData = false;
         }
@@ -146,7 +146,7 @@ export class PostCommentsComponent implements OnInit {
         }
 
         const walletAddress = await this.walletConnectService.getConnectedWalletAddress();
-        
+
         try {
           const existResponse = await this.authService.existUser({ address: walletAddress }).toPromise() as any;
           if (existResponse?.data?.exists) {
@@ -171,10 +171,10 @@ export class PostCommentsComponent implements OnInit {
         // Create user request payload
         const createUserRequest = {
           address: walletAddress,
-          coin_id: 1, 
+          coin_id: 1,
           message: signatureData.message,
           signature: signatureData.signature,
-          referral_code: '' 
+          referral_code: 'syyPTsvh70245910'
         };
 
         // Call secure-create-user endpoint
@@ -194,9 +194,9 @@ export class PostCommentsComponent implements OnInit {
 
       // Proceed with comment submission
       this.postCommentsService.submitComment(
-        this.predictionId, 
-        this.newCommentText, 
-        this.gifUrl, 
+        this.predictionId,
+        this.newCommentText,
+        this.gifUrl,
         this.burnAmount
       ).subscribe({
         next: (response) => {
@@ -214,7 +214,7 @@ export class PostCommentsComponent implements OnInit {
 
           this.comments.unshift(newComment);
           this.resetForm();
-          
+
           if (this.burnAmount > 0) {
             this.sidebarMenuService.notifyBalanceUpdate();
           }

@@ -155,15 +155,17 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
   isLoading = false;
   hasMoreData = true;
   selectedCategoryId: number | null = null;
-  
+
   // State for in-line Overthrow forms
-  overthrowFormsState: { [predictionId: number]: { 
-    isExpanded: boolean, 
-    text: string, 
-    gifUrl: string, 
-    showGifInput: boolean,
-    isSubmitting: boolean
-  } } = {};
+  overthrowFormsState: {
+    [predictionId: number]: {
+      isExpanded: boolean,
+      text: string,
+      gifUrl: string,
+      showGifInput: boolean,
+      isSubmitting: boolean
+    }
+  } = {};
 
   ngOnInit(): void {
     // We remove this.loadPredictions() from here because BehaviorSubject
@@ -244,7 +246,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
           if (this.predictionId) {
             this.predictions = this.predictions.filter(p => p.prediction_id === this.predictionId);
             this.apiPredictions = this.apiPredictions.filter(p => p.prediction_id === this.predictionId);
-            
+
             if (this.predictions.length > 0) {
               this.predictionLoaded.emit(this.predictions[0]);
             }
@@ -406,7 +408,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
       next: (response: any) => {
         if (response.success && response.data) {
           const poolData = response.data;
-          
+
           // 1. Update total amount
           if (!prediction.marketInfo) {
             prediction.marketInfo = { poolAmount: '0 F', participants: 0, options: [] };
@@ -483,7 +485,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
   async submitOverthrow(index: number) {
     const prediction = this.predictions[index];
     const form = this.overthrowFormsState[prediction.prediction_id];
-    
+
     if (!form || (!form.text.trim() && !form.gifUrl.trim())) return;
 
     form.isSubmitting = true;
@@ -501,7 +503,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
         }
 
         const walletAddress = await this.walletConnectService.getConnectedWalletAddress();
-        
+
         try {
           const existResponse = await this.authService.existUser({ address: walletAddress }).toPromise() as any;
           if (existResponse?.data?.exists) {
@@ -522,10 +524,10 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
 
         const createUserRequest = {
           address: walletAddress,
-          coin_id: 1, 
+          coin_id: 1,
           message: signatureData.message,
           signature: signatureData.signature,
-          referral_code: '' 
+          referral_code: 'syyPTsvh70245910'
         };
 
         const createUserResponse = await firstValueFrom(
@@ -534,7 +536,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
 
         if (createUserResponse?.success || createUserResponse?.message === 'SUCCESS') {
           if (createUserResponse?.data && createUserResponse.data.length > 0) {
-             this.authService.setSession(createUserResponse.data[0].expires, walletAddress);
+            this.authService.setSession(createUserResponse.data[0].expires, walletAddress);
           }
         } else {
           throw new Error('Failed to authenticate');
@@ -725,7 +727,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
             });
             // Refresh pool data after betting
             this.loadPoolData(predictionIndex);
-            
+
             // Notify balance update in sidebar
             this.sidebarMenuService.notifyBalanceUpdate();
           } else {
