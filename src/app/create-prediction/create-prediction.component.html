@@ -1,26 +1,25 @@
 <div class="create-prediction-container">
   <div class="header">
     <button class="back-btn" (click)="goBack()">← Volver</button>
-    <h2>Crear Nueva Predicción</h2>
+    <h2>Create Prediction</h2>
   </div>
 
   <div class="content">
     <div class="form-section">
       <div class="form-row">
         <div class="form-group">
-          <label for="category">Categoría:</label>
-          <select id="category" [(ngModel)]="category">
-            <option value="">Seleccionar Categoría</option>
-            <option *ngFor="let cat of categories" [value]="cat.value">{{ cat.label }}</option>
-          </select>
+          <label>Categoría:</label>
+          <app-custom-dropdown [options]="categories" [selectedItem]="category" (selectedItemChange)="category = $event"
+            placeholder="Seleccionar Categoría" displayKey="label" valueKey="value">
+          </app-custom-dropdown>
         </div>
 
         <div class="form-group">
-          <label for="type">Tipo:</label>
-          <select id="type" [(ngModel)]="type" (change)="onTypeChange()">
-            <option value="binary">Binaria (Sí/No)</option>
-            <option value="multiple">Múltiples Opciones</option>
-          </select>
+          <label>Tipo:</label>
+          <app-custom-dropdown [options]="typeOptions" [selectedItem]="type"
+            (selectedItemChange)="type = $event; onTypeChange()" placeholder="Seleccionar Tipo" displayKey="label"
+            valueKey="value">
+          </app-custom-dropdown>
         </div>
       </div>
 
@@ -34,7 +33,7 @@
         <input id="imageUrl" type="url" [(ngModel)]="imageUrl" placeholder="https://example.com/image.jpg">
       </div>
 
-      <div class="form-group" *ngIf="type === 'multiple'">
+      <div class="form-group" *ngIf="type?.value === 'multiple'">
         <label>Opciones:</label>
         <div class="options-list">
           <div class="option-item" *ngFor="let option of options; let i = index; trackBy: trackByIndex">
@@ -47,7 +46,7 @@
         </div>
       </div>
 
-      <div class="form-group" *ngIf="type === 'binary'">
+      <div class="form-group" *ngIf="type?.value !== 'multiple'">
         <label>Opciones:</label>
         <div class="binary-options">
           <span>SÍ</span> / <span>NO</span>
@@ -55,19 +54,19 @@
       </div>
 
       <button class="btn btn-success" (click)="submitPrediction()" [disabled]="isSubmitting">
-        {{ isSubmitting ? 'Creando...' : 'Crear Predicción' }}
+        {{ isSubmitting ? 'Creating...' : 'Create' }}
       </button>
     </div>
 
     <div class="preview-section">
-      <h3>Vista Previa</h3>
+      <h3>Preview</h3>
       <div class="prediction-card">
         <div class="prediction-header">
           <div class="prediction-avatar"
             [style.backgroundImage]="'url(https://api.dicebear.com/9.x/fun-emoji/svg?seed=you)'">
           </div>
           <div class="prediction-info">
-            <h3>Tu Nombre</h3>
+            <h3>username</h3>
             <p>
               <span class="category-link">{{ getCategoryDisplay() || 'Categoría' }}</span>
               <span> • Hace poco • 0 participantes</span>

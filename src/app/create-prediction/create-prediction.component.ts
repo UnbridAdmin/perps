@@ -5,57 +5,72 @@ import { Router } from '@angular/router';
 import { CreatePredictionService } from './create-prediction.service';
 import { CATEGORIES_TREE, Category } from '../shared/category.model';
 import { FierceIntuitionComponent } from '../shared/post-prediction/components/fierce-intuition/fierce-intuition.component';
+import { CustomDropdownComponent } from '../shared/custom-dropdown/custom-dropdown.component';
 
 @Component({
   selector: 'app-create-prediction',
   standalone: true,
-  imports: [CommonModule, FormsModule, FierceIntuitionComponent],
+  imports: [CommonModule, FormsModule, FierceIntuitionComponent, CustomDropdownComponent],
   templateUrl: './create-prediction.component.html',
   styleUrls: ['./create-prediction.component.scss']
 })
 export class CreatePredictionComponent implements OnInit {
-  category: number | '' = '';
-  type: 'binary' | 'multiple' = 'binary';
+  category: any = null;
+  type: any = { value: 'binary', label: 'Binaria (YES/NO)' };
   title: string = '';
   imageUrl: string = '';
   options: string[] = ['YES', 'NO'];
   isSubmitting = false;
 
   categories: { value: number, label: string }[] = [];
+  typeOptions = [
+    { value: 'binary', label: 'Binaria (YES/NO)' },
+    { value: 'multiple', label: 'Múltiples Opciones' }
+  ];
 
-  constructor(private router: Router, private createPredictionService: CreatePredictionService) {}
+  constructor(private router: Router, private createPredictionService: CreatePredictionService) { }
 
   ngOnInit() {
     this.categories = this.flattenCategories(CATEGORIES_TREE);
   }
 
-  private flattenCategories(categories: Category[], prefix = ''): { value: number, label: string }[] {
-    let result: { value: number, label: string }[] = [];
+  private flattenCategories(categories: Category[], prefix = ''): { value: number, label: string, displayName: string }[] {
+    let result: { value: number, label: string, displayName: string }[] = [];
     for (const cat of categories) {
-      result.push({ value: cat.id, label: prefix + cat.name });
-      if (cat.children && cat.children.length > 0) {
-        result = result.concat(this.flattenCategories(cat.children, prefix + '-- '));
+      // Solo agregar si no tiene children (es categoría de último nivel)
+      if (!cat.children || cat.children.length === 0) {
+        result.push({
+          value: cat.id,
+          label: prefix + cat.name,
+          displayName: cat.name
+        });
+      } else {
+        // Si tiene children, continuar recursivamente con el prefix
+        if (cat.children && cat.children.length > 0) {
+          result = result.concat(this.flattenCategories(cat.children, prefix + cat.name + ' > '));
+        }
       }
     }
     return result;
   }
 
   onTypeChange() {
-    if (this.type === 'binary') {
-      this.options = ['YES', 'NO'];
+    const typeValue = this.type?.value || 'binary';
+    if (typeValue === 'binary') {
+      this.options = ['SÍ', 'NO'];
     } else {
       this.options = [];
     }
   }
 
   getCategoryDisplay(): string {
-    if (this.category === '') return '';
-    const found = this.categories.find(c => c.value === Number(this.category));
-    return found ? found.label.replace('-- ', '').trim() : '';
+    if (!this.category) return '';
+    return this.category.displayName || '';
   }
 
   getDisplayOptions(): string[] {
-    if (this.type === 'binary') {
+    const typeValue = this.type?.value || 'binary';
+    if (typeValue === 'binary') {
       return ['SÍ', 'NO'];
     } else {
       return this.options.filter(o => o.trim().length > 0);
@@ -97,16 +112,16 @@ export class CreatePredictionComponent implements OnInit {
 
   submitPrediction() {
     const validOptions = this.options.map(o => o.trim()).filter(o => o.length > 0);
-    
-    if (this.category === '' || !this.title || validOptions.length === 0) {
+
+    if (!this.category || !this.title || validOptions.length === 0) {
       alert("Por favor completa los campos obligatorios: Categoría, Título y al menos una Opción válida.");
       return;
     }
 
     this.isSubmitting = true;
     const payload = {
-      categoryId: Number(this.category),
-      type: this.type.toUpperCase(),
+      categoryId: Number(this.category.value),
+      type: (this.type?.value || 'binary').toUpperCase(),
       title: this.title,
       imageLink: this.imageUrl,
       options: validOptions
