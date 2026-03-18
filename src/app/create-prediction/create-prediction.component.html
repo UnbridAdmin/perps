@@ -8,33 +8,33 @@
     <div class="form-section">
       <div class="form-row">
         <div class="form-group">
-          <label>Categoría:</label>
+          <label>Category:</label>
           <app-custom-dropdown [options]="categories" [selectedItem]="category" (selectedItemChange)="category = $event"
-            placeholder="Seleccionar Categoría" displayKey="label" valueKey="value">
+            placeholder="Select Category" displayKey="label" valueKey="value">
           </app-custom-dropdown>
         </div>
 
         <div class="form-group">
-          <label>Tipo:</label>
+          <label>Type:</label>
           <app-custom-dropdown [options]="typeOptions" [selectedItem]="type"
-            (selectedItemChange)="type = $event; onTypeChange()" placeholder="Seleccionar Tipo" displayKey="label"
+            (selectedItemChange)="type = $event; onTypeChange()" placeholder="Select Type" displayKey="label"
             valueKey="value">
           </app-custom-dropdown>
         </div>
       </div>
 
       <div class="form-group">
-        <label for="title">Título:</label>
+        <label for="title">Title:</label>
         <input id="title" type="text" [(ngModel)]="title" placeholder="e.g., Subida de BTC a $150,000">
       </div>
 
       <div class="form-group">
-        <label for="imageUrl">Enlace de Imagen:</label>
+        <label for="imageUrl">Image Link:</label>
         <input id="imageUrl" type="url" [(ngModel)]="imageUrl" placeholder="https://example.com/image.jpg">
       </div>
 
       <div class="form-group" *ngIf="type?.value === 'multiple'">
-        <label>Opciones:</label>
+        <label>Options:</label>
         <div class="options-list">
           <div class="option-item" *ngFor="let option of options; let i = index; trackBy: trackByIndex">
             <input type="text" [(ngModel)]="options[i]" placeholder="e.g., Antes del 25 de Enero">
@@ -42,14 +42,14 @@
               <i class="fa-solid fa-trash"></i>
             </button>
           </div>
-          <button class="btn btn-success add-option-btn" (click)="addOption()">+ Agregar Opción</button>
+          <button class="btn btn-success add-option-btn" (click)="addOption()">+ Add Option</button>
         </div>
       </div>
 
       <div class="form-group" *ngIf="type?.value !== 'multiple'">
-        <label>Opciones:</label>
+        <label>Options:</label>
         <div class="binary-options">
-          <span>SÍ</span> / <span>NO</span>
+          <span>YES</span> / <span>NO</span>
         </div>
       </div>
 
@@ -68,14 +68,14 @@
           <div class="prediction-info">
             <h3>username</h3>
             <p>
-              <span class="category-link">{{ getCategoryDisplay() || 'Categoría' }}</span>
-              <span> • Hace poco • 0 participantes</span>
+              <span class="category-link">{{ getCategoryDisplay() || 'Category' }}</span>
+              <span> • Just now • 0 participants</span>
             </p>
           </div>
         </div>
 
         <div class="prediction-question">
-          {{ title || 'Tu título de predicción' }}
+          {{ title || 'Your prediction title' }}
         </div>
 
         <div class="prediction-image" *ngIf="imageUrl">

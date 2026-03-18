@@ -57,7 +57,7 @@ export class CreatePredictionComponent implements OnInit {
   onTypeChange() {
     const typeValue = this.type?.value || 'binary';
     if (typeValue === 'binary') {
-      this.options = ['SÍ', 'NO'];
+      this.options = ['YES', 'NO'];
     } else {
       this.options = [];
     }
@@ -71,7 +71,7 @@ export class CreatePredictionComponent implements OnInit {
   getDisplayOptions(): string[] {
     const typeValue = this.type?.value || 'binary';
     if (typeValue === 'binary') {
-      return ['SÍ', 'NO'];
+      return ['YES', 'NO'];
     } else {
       return this.options.filter(o => o.trim().length > 0);
     }
@@ -80,13 +80,13 @@ export class CreatePredictionComponent implements OnInit {
   get previewPrediction(): any {
     return {
       prediction_id: 0,
-      question: this.title || 'Tu título de predicción',
+      question: this.title || 'Your prediction title',
       options: this.getPreviewOptions(),
       sentimentVotes: {
         total: 0
       },
       imageUrl: this.imageUrl,
-      category: this.getCategoryDisplay() || 'Categoría',
+      category: this.getCategoryDisplay() || 'Category',
       participants: 0,
       creatorAvatar: 'https://api.dicebear.com/9.x/fun-emoji/svg?seed=you'
     };
@@ -114,7 +114,7 @@ export class CreatePredictionComponent implements OnInit {
     const validOptions = this.options.map(o => o.trim()).filter(o => o.length > 0);
 
     if (!this.category || !this.title || validOptions.length === 0) {
-      alert("Por favor completa los campos obligatorios: Categoría, Título y al menos una Opción válida.");
+      alert("Please complete the required fields: Category, Title and at least one valid Option.");
       return;
     }
 
@@ -130,13 +130,13 @@ export class CreatePredictionComponent implements OnInit {
     this.createPredictionService.createPrediction(payload).subscribe({
       next: (res) => {
         this.isSubmitting = false;
-        alert('Predicción creada exitosamente');
+        alert('Prediction created successfully');
         this.router.navigate(['/home']);
       },
       error: (err) => {
         this.isSubmitting = false;
-        console.error('Error creando predicción:', err);
-        alert('Ocurrió un error al crear la predicción');
+        console.error('Error creating prediction:', err);
+        alert('An error occurred while creating the prediction');
       }
     });
   }
