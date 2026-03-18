@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CreatePredictionService } from './create-prediction.service';
 import { CATEGORIES_TREE, Category } from '../shared/category.model';
+import { FierceIntuitionComponent } from '../shared/post-prediction/components/fierce-intuition/fierce-intuition.component';
 
 @Component({
   selector: 'app-create-prediction',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, FierceIntuitionComponent],
   templateUrl: './create-prediction.component.html',
   styleUrls: ['./create-prediction.component.scss']
 })
@@ -51,6 +52,39 @@ export class CreatePredictionComponent implements OnInit {
     if (this.category === '') return '';
     const found = this.categories.find(c => c.value === Number(this.category));
     return found ? found.label.replace('-- ', '').trim() : '';
+  }
+
+  getDisplayOptions(): string[] {
+    if (this.type === 'binary') {
+      return ['SÍ', 'NO'];
+    } else {
+      return this.options.filter(o => o.trim().length > 0);
+    }
+  }
+
+  get previewPrediction(): any {
+    return {
+      prediction_id: 0,
+      question: this.title || 'Tu título de predicción',
+      options: this.getPreviewOptions(),
+      sentimentVotes: {
+        total: 0
+      },
+      imageUrl: this.imageUrl,
+      category: this.getCategoryDisplay() || 'Categoría',
+      participants: 0,
+      creatorAvatar: 'https://api.dicebear.com/9.x/fun-emoji/svg?seed=you'
+    };
+  }
+
+  private getPreviewOptions(): any[] {
+    const displayOptions = this.getDisplayOptions();
+    return displayOptions.map((option, index) => ({
+      prediction_option_id: index,
+      prediction_option_title: option,
+      votes: 0,
+      percentage: 0
+    }));
   }
 
   addOption() {
