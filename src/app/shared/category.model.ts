@@ -96,19 +96,19 @@ export const CATEGORIES_TREE: Category[] = [
             { id: 23, name: 'Legislation', icon: 'bx bx-file' }*/
         ]
     },
-    /*{
-        id: 3,
-        name: 'Crypto',
+    {
+        id: 9,
+        name: 'Entertainment ',
         icon: 'bx bx-bitcoin',
         children: [
-            { id: 30, name: 'Bitcoin', icon: 'bx bx-bitcoin' },
-            { id: 31, name: 'Ethereum', icon: 'bx bx-coin' },
+            { id: 10, name: 'Challenges', icon: 'bx bx-bitcoin' },
+            /*{ id: 31, name: 'Ethereum', icon: 'bx bx-coin' },
             { id: 32, name: 'Altcoins', icon: 'bx bx-coin-stack' },
             { id: 33, name: 'DeFi', icon: 'bx bx-network-chart' },
-            { id: 34, name: 'NFTs', icon: 'bx bx-image' }
+            { id: 34, name: 'NFTs', icon: 'bx bx-image' }*/
         ]
     },
-    {
+   /* {
         id: 4,
         name: 'Finance',
         icon: 'bx bx-line-chart',

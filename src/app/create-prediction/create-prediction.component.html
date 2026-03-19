@@ -106,35 +106,35 @@
   <!-- Info Section about Fees and Rewards - Moved to bottom -->
   <div class="info-section" *ngIf="perpsParams">
     <div class="info-card">
-      <h3>💰 Costo de Creación</h3>
+      <h3>💰 Creation Cost</h3>
       <p class="price-highlight">{{ perpsParams.price_prediction }} Fierce Tokens</p>
-      <p class="info-text">Se descontará de tu balance al crear la predicción</p>
+      <p class="info-text">Will be deducted from your balance when creating the prediction</p>
     </div>
     
     <div class="rewards-info">
-      <h4>🎁 Distribución de Recompensas</h4>
+      <h4>🎁 Reward Distribution</h4>
       
       <div class="reward-item">
         <span class="reward-icon">🏆</span>
         <div class="reward-details">
-          <strong>Tu Recompensa como Creador (Apuestas Mutuas)</strong>
-          <p>Recibirás el <strong>{{ perpsParams.users_rewards }}%</strong> de la pool de apuestas mutuas por cada apuesta realizada en tu predicción</p>
+          <strong>Your Creator Reward (Mutual Bets)</strong>
+          <p>You will receive <strong>{{ perpsParams.users_rewards }}%</strong> of the mutual bets pool for each bet placed on your prediction</p>
         </div>
       </div>
       
       <div class="reward-item">
         <span class="reward-icon">📈</span>
         <div class="reward-details">
-          <strong>Tu Recompensa del Mercado Trading</strong>
-          <p>Recibirás el <strong>{{ perpsParams.market_rewards }}%</strong> de cada operación de trading realizada en tu predicción</p>
+          <strong>Your Trading Market Reward</strong>
+          <p>You will receive <strong>{{ perpsParams.market_rewards }}%</strong> of each trading operation made on your prediction</p>
         </div>
       </div>
       
       <div class="reward-item">
         <span class="reward-icon">🔥</span>
         <div class="reward-details">
-          <strong>Fee de Plataforma</strong>
-          <p>El <strong>{{ perpsParams.envision_burn }}%</strong> será destinado a la plataforma como fee de servicio</p>
+          <strong>Platform Fee</strong>
+          <p><strong>{{ perpsParams.envision_burn }}%</strong> will be allocated to the platform as a service fee</p>
         </div>
       </div>
     </div>

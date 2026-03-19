@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -7,6 +7,7 @@ import { CATEGORIES_TREE, Category } from '../shared/category.model';
 import { FierceIntuitionComponent } from '../shared/post-prediction/components/fierce-intuition/fierce-intuition.component';
 import { CustomDropdownComponent } from '../shared/custom-dropdown/custom-dropdown.component';
 import { ApiServices } from '../services/api.service';
+import { CommonService } from '../shared/commonService';
 
 @Component({
   selector: 'app-create-prediction',
@@ -16,8 +17,10 @@ import { ApiServices } from '../services/api.service';
   styleUrls: ['./create-prediction.component.scss']
 })
 export class CreatePredictionComponent implements OnInit {
+  @Output() balanceUpdated = new EventEmitter<void>();
+  
   category: any = null;
-  type: any = { value: 'binary', label: 'Binaria (YES/NO)' };
+  type: any = { value: 'binary', label: 'Binary (YES/NO)' };
   title: string = '';
   imageUrl: string = '';
   options: string[] = ['YES', 'NO'];
@@ -26,14 +29,15 @@ export class CreatePredictionComponent implements OnInit {
 
   categories: { value: number, label: string }[] = [];
   typeOptions = [
-    { value: 'binary', label: 'Binaria (YES/NO)' },
-    { value: 'multiple', label: 'Múltiples Opciones' }
+    { value: 'binary', label: 'Binary (YES/NO)' },
+    { value: 'multiple', label: 'Multiple Options' }
   ];
 
   constructor(
     private router: Router, 
     private createPredictionService: CreatePredictionService,
-    private apiService: ApiServices
+    private apiService: ApiServices,
+    private commonService: CommonService
   ) { }
 
   ngOnInit() {
@@ -81,6 +85,10 @@ export class CreatePredictionComponent implements OnInit {
     } else {
       this.options = [];
     }
+  }
+
+  private getUsername(): string {
+    return localStorage.getItem('username') || 'user';
   }
 
   getCategoryDisplay(): string {
@@ -134,7 +142,7 @@ export class CreatePredictionComponent implements OnInit {
     const validOptions = this.options.map(o => o.trim()).filter(o => o.length > 0);
 
     if (!this.category || !this.title || validOptions.length === 0) {
-      alert("Please complete the required fields: Category, Title and at least one valid Option.");
+      this.commonService.showToastMessage("Please complete the required fields: Category, Title and at least one valid Option.", 5000, 400);
       return;
     }
 
@@ -150,13 +158,20 @@ export class CreatePredictionComponent implements OnInit {
     this.createPredictionService.createPrediction(payload).subscribe({
       next: (res) => {
         this.isSubmitting = false;
-        alert('Prediction created successfully');
-        this.router.navigate(['/home']);
+        this.commonService.showToastMessage('Prediction created successfully! Your balance has been updated.', 5000, 200);
+        
+        // Emit event to update balance in sidebar
+        this.balanceUpdated.emit();
+        this.commonService.logoutBalance.emit(true);
+        
+        // Redirect to user profile
+        const username = this.getUsername();
+        this.router.navigate(['/', username]);
       },
       error: (err) => {
         this.isSubmitting = false;
         console.error('Error creating prediction:', err);
-        alert('An error occurred while creating the prediction');
+        this.commonService.showToastMessage('An error occurred while creating the prediction', 5000, 400);
       }
     });
   }
