@@ -131,6 +131,8 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
   @Output() predictionLoaded = new EventEmitter<any>();
 
   private subscriptions: Subscription = new Subscription();
+  private loadSubscription?: Subscription;
+  private currentRequestToken = 0;
 
   constructor(
     private router: Router,
@@ -186,9 +188,28 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
         this.resetAndReload();
       })
     );
+
+    // Only load predictions if userId is already available (for direct navigation)
+    // We remove this manual call because the CategoryService subscription
+    // above will already trigger resetAndReload() via its initial emission.
+  }
+
+  ngOnChanges() {
+    console.log('PostPrediction: ngOnChanges called, userId:', this.userId);
+    // Only reload predictions when userId changes from undefined to a valid number
+    if (this.userId !== undefined && this.userId !== null) {
+      this.resetAndReload();
+    }
   }
 
   private resetAndReload(): void {
+    console.log('PostPrediction: resetAndReload called, userId:', this.userId);
+    // Cancel any in-flight load request
+    if (this.loadSubscription) {
+      this.loadSubscription.unsubscribe();
+      this.loadSubscription = undefined;
+    }
+    
     this.currentPage = 1;
     this.predictions = [];
     this.apiPredictions = [];
@@ -201,9 +222,14 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
+
   async loadPredictions(): Promise<void> {
     if (this.isLoading || !this.hasMoreData) return;
 
+    // Increment request token to track this specific call across async gaps
+    const requestToken = ++this.currentRequestToken;
+    console.log('PostPrediction: loadPredictions started, token:', requestToken, 'userId:', this.userId);
+    
     this.isLoading = true;
     const params: any = {
       page: this.currentPage,
@@ -215,8 +241,9 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
       params.category = this.selectedCategoryId;
     }
 
-    // Add user_id filter if provided
-    if (this.userId) {
+    // Add user_id filter when viewing a specific user's profile
+    if (this.userId !== undefined && this.userId !== null) {
+      console.log('PostPrediction: Adding user_id to params:', this.userId);
       params.user_id = this.userId;
     }
 
@@ -229,12 +256,31 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     const isAuthenticated = this.authService.isAuthenticated();
     const isWalletConnected = await this.walletConnectService.checkConnection();
 
-    const apiCall = (isAuthenticated && isWalletConnected)
-      ? this.postPredictionService.getAuthenticatedPredictions(params)
-      : this.postPredictionService.getPublicPredictions(params);
+    // After async gap, check if this request is still valid
+    if (requestToken !== this.currentRequestToken) {
+      console.log('PostPrediction: loadPredictions discarded after async gap, token:', requestToken);
+      return;
+    }
 
-    apiCall.subscribe({
+    // Determine which service to use
+    let apiCall;
+    if (isAuthenticated && isWalletConnected) {
+      // When authenticated, always use the authenticated service
+      // The backend should respect the user_id in params if provided, or default to the logged-in user's feed
+      apiCall = this.postPredictionService.getAuthenticatedPredictions(params);
+    } else {
+      // Not authenticated - use public service
+      apiCall = this.postPredictionService.getPublicPredictions(params);
+    }
+
+    // Cancel any previous subscription still active (though should be handled by token check above for concurrent calls)
+    if (this.loadSubscription) {
+      this.loadSubscription.unsubscribe();
+    }
+
+    this.loadSubscription = apiCall.subscribe({
       next: (response: any) => {
+        console.log('PostPrediction: API response received');
         const apiResponse: GetPredictionsResponse = response.data;
         const mappedPredictions = this.mapApiPredictionsToFrontend(apiResponse.data);
 

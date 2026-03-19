@@ -17,6 +17,14 @@ export class UserTabsComponent {
   activeTab: string = 'predictions';
   @Input() userId?: number;
 
+  constructor() {
+    console.log('UserTabs: Initial userId:', this.userId);
+  }
+
+  ngOnChanges() {
+    console.log('UserTabs: userId changed to:', this.userId);
+  }
+
   setActiveTab(tab: string) {
     this.activeTab = tab;
   }

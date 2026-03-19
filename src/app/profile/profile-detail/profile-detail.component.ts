@@ -20,6 +20,7 @@ export class ProfileDetailComponent {
   profileUserId?: number;
 
   onUserIdLoaded(userId: number): void {
+    console.log('ProfileDetail: Received userId:', userId);
     this.profileUserId = userId;
   }
 }
