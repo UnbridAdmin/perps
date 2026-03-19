@@ -15,7 +15,7 @@ export const CATEGORIES_TREE: Category[] = [
         name: 'Sports',
         icon: 'bx bx-trophy',
         children: [
-            {
+            /*{
                 id: 10,
                 name: 'Football',
                 icon: 'bx bx-football',
@@ -24,7 +24,7 @@ export const CATEGORIES_TREE: Category[] = [
                     { id: 101, name: 'College Football', icon: 'bx bx-star' },
                     { id: 102, name: 'CFL', icon: 'bx bx-star' }
                 ]
-            },
+            },*/
             {
                 id: 11,
                 name: 'Soccer',
@@ -36,17 +36,22 @@ export const CATEGORIES_TREE: Category[] = [
                         icon: 'bx bx-globe',
                         children: [
                             { id: 4, name: 'FIFA World Cup', icon: 'bx bx-world' },
-                            { id: 1101, name: 'UEFA Champions League', icon: 'bx bx-medal' },
-                            { id: 1102, name: 'Copa América', icon: 'bx bx-medal' }
+                            // { id: 1101, name: 'UEFA Champions League', icon: 'bx bx-medal' },
+                            // { id: 1102, name: 'Copa América', icon: 'bx bx-medal' }
                         ]
                     },
-                    { id: 111, name: 'Premier League', icon: 'bx bx-star' },
-                    { id: 112, name: 'La Liga', icon: 'bx bx-star' },
+                    {
+                        id: 5, name: 'Colombia', icon: 'bx bx-star',
+                        children: [
+                            { id: 6, name: 'Primera A', icon: 'bx bx-star' }
+                        ]
+                    },
+                    /*{ id: 112, name: 'La Liga', icon: 'bx bx-star' },
                     { id: 113, name: 'Bundesliga', icon: 'bx bx-star' },
-                    { id: 114, name: 'Serie A', icon: 'bx bx-star' }
+                    { id: 114, name: 'Serie A', icon: 'bx bx-star' }*/
                 ]
             },
-            {
+            /*{
                 id: 12,
                 name: 'Basketball',
                 icon: 'bx bx-basketball',
@@ -77,33 +82,33 @@ export const CATEGORIES_TREE: Category[] = [
             },
             { id: 15, name: 'Golf', icon: 'bx bx-golf' },
             { id: 16, name: 'MMA / UFC', icon: 'bx bx-dumbbell' },
-            { id: 17, name: 'Racing', icon: 'bx bx-car' }
+            { id: 17, name: 'Racing', icon: 'bx bx-car' }*/
         ]
     },
     {
-        id: 2,
+        id: 7,
         name: 'Politics',
         icon: 'bx bx-buildings',
         children: [
-            { id: 20, name: 'US Politics', icon: 'bx bx-flag' },
-            { id: 21, name: 'World Leaders', icon: 'bx bx-globe' },
+            { id: 8, name: 'Elections', icon: 'bx bx-check-square' },
+           /* { id: 21, name: 'World Leaders', icon: 'bx bx-globe' },
             { id: 22, name: 'Elections', icon: 'bx bx-check-square' },
-            { id: 23, name: 'Legislation', icon: 'bx bx-file' }
+            { id: 23, name: 'Legislation', icon: 'bx bx-file' }*/
         ]
     },
     {
-        id: 3,
-        name: 'Crypto',
+        id: 9,
+        name: 'Entertainment ',
         icon: 'bx bx-bitcoin',
         children: [
-            { id: 30, name: 'Bitcoin', icon: 'bx bx-bitcoin' },
-            { id: 31, name: 'Ethereum', icon: 'bx bx-coin' },
+            { id: 10, name: 'Challenges', icon: 'bx bx-bitcoin' },
+            /*{ id: 31, name: 'Ethereum', icon: 'bx bx-coin' },
             { id: 32, name: 'Altcoins', icon: 'bx bx-coin-stack' },
             { id: 33, name: 'DeFi', icon: 'bx bx-network-chart' },
-            { id: 34, name: 'NFTs', icon: 'bx bx-image' }
+            { id: 34, name: 'NFTs', icon: 'bx bx-image' }*/
         ]
     },
-    {
+   /* {
         id: 4,
         name: 'Finance',
         icon: 'bx bx-line-chart',
@@ -135,5 +140,5 @@ export const CATEGORIES_TREE: Category[] = [
             { id: 62, name: 'Awards', icon: 'bx bx-award' },
             { id: 63, name: 'Celebrities', icon: 'bx bx-star' }
         ]
-    }
+    }*/
 ];

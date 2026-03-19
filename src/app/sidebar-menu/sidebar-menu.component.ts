@@ -11,7 +11,6 @@ import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PremiumUpgradeDialogComponent } from '../premium-upgrade-dialog.component';
-import { CreatePredictionComponent } from '../shared/create-prediction.component';
 import { DepositModalComponent } from '../shared/deposit-modal/deposit-modal.component';
 
 @Component({
@@ -250,7 +249,7 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
   /** Alterna la expansión de un nodo del árbol de subcategorías */
   toggleExpand(nodeId: number, event: Event): void {
     event.stopPropagation();
-    
+
     // Si no estamos en home, redirigir primero
     if (!this.isHomePage) {
       this.router.navigate(['/home']);
@@ -300,11 +299,7 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
   }
 
   openCreatePrediction() {
-    const modalRef = this.modalService.open(CreatePredictionComponent, {
-      size: 'xl',
-      backdrop: 'static',
-      windowClass: 'full-screen-modal'
-    });
+    this.router.navigate(['/create-prediction']);
   }
 
   openDepositModal(event?: Event) {
@@ -322,7 +317,7 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
       if (result) {
         this.loadUserProfile(); // Refresh balance
       }
-    }, () => {});
+    }, () => { });
   }
 
   async disconnectWallet(): Promise<void> {

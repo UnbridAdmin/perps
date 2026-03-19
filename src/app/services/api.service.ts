@@ -90,4 +90,8 @@ export class ApiServices {
                 throw new Error(`Método ${method} no soportado`);
         }
     }
+
+    public getPerpsParams() {
+        return this.apiCall('/predictions/get-perps-params', 'GET', {});
+    }
 }

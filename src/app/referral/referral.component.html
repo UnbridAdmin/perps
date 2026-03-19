@@ -1,0 +1,239 @@
+<!-- Animated Background -->
+<div class="referral-page">
+  <!-- Floating orbs background -->
+  <div class="bg-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
+  </div>
+
+  <!-- Grid overlay -->
+  <div class="grid-overlay" aria-hidden="true"></div>
+
+  <!-- Main content -->
+  <main class="referral-content">
+
+    <!-- Logo / Brand -->
+    <header class="brand-header" aria-label="Brand header">
+      <!-- <div class="logo-wrap">
+        <img src="https://ipfs.unbrid.com/envision/envision-logo.png" alt="Unbrid Logo" class="logo-img" />
+        <span class="brand-name">Unbrid <span class="brand-accent">Perps</span></span>
+      </div> -->
+      <div class="urgency-banner" aria-label="Limited time offer">
+        <span class="urgency-pulse" aria-hidden="true"></span>
+        <span class="urgency-icon">⏰</span>
+        <span class="urgency-text"><strong>Limited Time Offer!</strong> Claim your bonus before it expires</span>
+      </div>
+    </header>
+
+    <!-- SUCCESS STATE -->
+    @if (isSuccess) {
+    <div class="success-card">
+      <div class="success-icon-wrap">
+        <div class="success-ring"></div>
+        <span class="success-checkmark">✓</span>
+      </div>
+      <h2 class="success-title">Welcome to the Future!</h2>
+      <p class="success-subtitle">
+        Your account has been created and <strong class="highlight-text">5 F-Coins</strong> have been added to your
+        wallet!
+      </p>
+      <div class="redirect-info">
+        <div class="redirect-bar">
+          <div class="redirect-progress" [style.animation-duration]="'3s'"></div>
+        </div>
+        <p class="redirect-count">Redirecting in <strong>{{ countdown }}</strong>s…</p>
+      </div>
+    </div>
+    }
+
+    <!-- DEFAULT / CONNECTING STATE -->
+    @if (!isSuccess) {
+    <div class="hero-section">
+      <!-- Left column: copy -->
+      <div class="hero-copy">
+        <div class="tag-line">
+          <span class="tag-pill">🚀 Exclusive Referral</span>
+        </div>
+
+        <h1 class="hero-title">
+          Welcome to<br>
+          <span class="gradient-text">Unbrid Perps</span>
+        </h1>
+
+        <p class="hero-subtitle">
+          Your friend invited you to the most powerful decentralized perpetuals trading platform.
+          Join now and start earning <strong class="highlight-text">F-Coins</strong> from day one.
+        </p>
+
+        <!-- Countdown Timer -->
+        <div class="countdown-banner">
+          <span class="countdown-label">Offer expires in:</span>
+          <div class="countdown-display" role="timer" aria-label="Countdown timer">
+            <div class="countdown-box">
+              <span class="countdown-number">{{ daysRemaining }}</span>
+              <span class="countdown-unit">Days</span>
+            </div>
+            <span class="countdown-separator">:</span>
+            <div class="countdown-box">
+              <span class="countdown-number">{{ hoursRemaining }}</span>
+              <span class="countdown-unit">Hours</span>
+            </div>
+            <span class="countdown-separator">:</span>
+            <div class="countdown-box">
+              <span class="countdown-number">{{ minutesRemaining }}</span>
+              <span class="countdown-unit">Minutes</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Referral code display -->
+        @if (referralCode) {
+        <div class="referral-code-box" role="status" aria-label="Referral code">
+          <span class="ref-label">Referral Code</span>
+          <span class="ref-code">{{ referralCode }}</span>
+          <span class="ref-badge">✓ Valid</span>
+        </div>
+        }
+
+        <!-- CTA Button -->
+        <button id="connect-wallet-referral-btn" class="cta-btn" [class.loading]="isConnecting"
+          [disabled]="isConnecting" (click)="connectAndRegister()" aria-label="Connect wallet and claim bonus">
+          @if (isConnecting) {
+          <span class="spinner" aria-hidden="true"></span>
+          <span>Connecting wallet…</span>
+          } @else {
+          <span class="btn-icon">⚡</span>
+          <span>Connect Wallet & Claim Bonus</span>
+          }
+        </button>
+
+        @if (errorMessage) {
+        <p class="error-msg" role="alert">⚠️ {{ errorMessage }}</p>
+        }
+
+        <p class="disclaimer">
+          By connecting, you agree to the
+          <a href="https://unbrid.com/privacy-policy" target="_blank" rel="noopener">Terms of Service</a>.
+        </p>
+      </div>
+
+      <!-- Right column: benefit cards -->
+      <div class="benefits-grid">
+
+        <!-- Bonus card (highlighted) -->
+        <div class="benefit-card benefit-card--featured">
+          <div class="benefit-icon">🪙</div>
+          <div class="benefit-body">
+            <h3 class="benefit-title">Welcome Bonus</h3>
+            <p class="benefit-desc">Get <span class="highlight-text highlight-big">5 F-Coins</span> instantly credited
+              to your account when you sign up through this referral link.</p>
+          </div>
+          <div class="glow-corner" aria-hidden="true"></div>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">📈</div>
+          <div class="benefit-body">
+            <h3 class="benefit-title">Perpetuals Trading</h3>
+            <p class="benefit-desc">Trade perpetual futures with up to 50× leverage on the most liquid decentralized
+              platform.</p>
+          </div>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">🏆</div>
+          <div class="benefit-body">
+            <h3 class="benefit-title">Earn Rewards</h3>
+            <p class="benefit-desc">Predict market movements, compete in the leaderboard, and earn F-Coins for every
+              correct prediction.</p>
+          </div>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">🔮</div>
+          <div class="benefit-body">
+            <h3 class="benefit-title">King of the Hill</h3>
+            <p class="benefit-desc">Dethrone the current champion and claim the throne. The king earns a share of every
+              prediction fee.</p>
+          </div>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">🛡️</div>
+          <div class="benefit-body">
+            <h3 class="benefit-title">Secure & Decentralized</h3>
+            <p class="benefit-desc">Non-custodial wallet integration. You own your keys, you own your funds — always.
+            </p>
+          </div>
+        </div>
+
+        <!-- <div class="benefit-card">
+          <div class="benefit-icon">🌐</div>
+          <div class="benefit-body">
+            <h3 class="benefit-title">Multi-Chain</h3>
+            <p class="benefit-desc">Supported across multiple EVM-compatible chains. Trade wherever you feel
+              comfortable.</p>
+          </div>
+        </div> -->
+
+      </div>
+    </div>
+
+    <!-- Steps section -->
+    <div class="steps-section">
+      <h2 class="steps-title">Get started in 3 steps</h2>
+      <div class="steps-track">
+        <div class="step-item">
+          <div class="step-number">01</div>
+          <div class="step-connector" aria-hidden="true"></div>
+          <div class="step-body">
+            <h4>Connect Wallet</h4>
+            <p>Link your MetaMask, Coinbase, or WalletConnect wallet securely.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-number">02</div>
+          <div class="step-connector" aria-hidden="true"></div>
+          <div class="step-body">
+            <h4>Claim your F-Coins</h4>
+            <p>5 F-Coins are automatically added to your balance — no action needed.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-number last">03</div>
+          <div class="step-body">
+            <h4>Start Earning</h4>
+            <p>Trade, predict, and compete. Turn your market insight into real rewards.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats strip -->
+    <!-- <div class="stats-strip">
+      <div class="stat-item">
+        <span class="stat-value">$2.4M+</span>
+        <span class="stat-label">Total Volume</span>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+      <div class="stat-item">
+        <span class="stat-value">12,000+</span>
+        <span class="stat-label">Active Traders</span>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+      <div class="stat-item">
+        <span class="stat-value">50×</span>
+        <span class="stat-label">Max Leverage</span>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+      <div class="stat-item">
+        <span class="stat-value">0.1%</span>
+        <span class="stat-label">Trading Fee</span>
+      </div>
+    </div> -->
+    }
+
+  </main>
+</div>

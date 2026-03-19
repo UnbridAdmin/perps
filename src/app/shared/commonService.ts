@@ -1,6 +1,9 @@
 import { EventEmitter, Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
+import { ToastrService } from "ngx-toastr";
+import { cloneDeep } from "lodash-es";
 import { environment } from "../../environments/environment";
+import { ToastComponent } from "./toast/toast.component";
 
 @Injectable()
 export class CommonService {
@@ -10,6 +13,34 @@ export class CommonService {
     accountChanging: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     validChains: number[] = environment.VALIDCHAINS;
     nameChains: any = environment.NAMECHAINS;
+
+    constructor(private toastr: ToastrService) {}
+
+    showToastMessage(messages: string, time: number, status: number) {
+        let notificationStatus: String;
+        let notificationTitle: string;
+        if (status == 100) {
+            notificationStatus = "border-blue";
+            notificationTitle = "Info";
+        }
+        if (status == 200) {
+            notificationStatus = "border-green";
+            notificationTitle = "Success";
+        }
+        if (status == 400) {
+            notificationStatus = "border-red";
+            notificationTitle = "Error";
+        }
+        const { message, title } = { message: messages, title: notificationTitle };
+        this.toastr.show(message, title, {
+            timeOut: time,
+            toastClass: "toast " + notificationStatus,
+            positionClass: 'toast-top-right',
+            enableHtml: true,
+            progressBar: true,
+            toastComponent: ToastComponent
+        });
+    }
 
     generateUniqueUUID(): string {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {

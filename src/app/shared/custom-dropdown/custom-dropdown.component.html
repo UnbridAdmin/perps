@@ -1,0 +1,39 @@
+<!-- HTML Template - Generic Dropdown -->
+<div class="custom-dropdown" [class.open]="isOpen">
+    <!-- Dropdown Trigger -->
+    <div class="dropdown-trigger" (click)="toggleDropdown()">
+        <div class="selected-item" *ngIf="selectedItem; else placeholder">
+            <!-- Template personalizable para el item seleccionado -->
+            <ng-container [ngTemplateOutlet]="selectedTemplate || defaultSelectedTemplate"
+                [ngTemplateOutletContext]="{ $implicit: selectedItem }">
+            </ng-container>
+        </div>
+        <ng-template #placeholder>
+            <span class="placeholder">{{ placeholder }}</span>
+        </ng-template>
+        <i class="fa fa-chevron-down dropdown-arrow" [class.rotated]="isOpen"></i>
+    </div>
+
+    <!-- Dropdown Options -->
+    <div class="dropdown-options" *ngIf="isOpen">
+        <div class="dropdown-option" *ngFor="let item of options" (click)="selectItem(item)"
+            [class.selected]="isItemSelected(item)">
+            <!-- Template personalizable para cada opción -->
+            <ng-container [ngTemplateOutlet]="itemTemplate || defaultItemTemplate"
+                [ngTemplateOutletContext]="{ $implicit: item }">
+            </ng-container>
+        </div>
+    </div>
+</div>
+
+<!-- Templates por defecto -->
+<ng-template #defaultSelectedTemplate let-item>
+    <span>{{ getDisplayValue(item) }}</span>
+</ng-template>
+
+<ng-template #defaultItemTemplate let-item>
+    <span>{{ getDisplayValue(item) }}</span>
+</ng-template>
+
+<!-- Overlay para cerrar al hacer click fuera -->
+<div class="dropdown-overlay" *ngIf="isOpen" (click)="closeDropdown()"></div>

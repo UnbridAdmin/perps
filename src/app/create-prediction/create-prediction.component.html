@@ -1,0 +1,142 @@
+<div class="create-prediction-container">
+  <div class="header">
+    <button class="back-btn" (click)="goBack()">← Volver</button>
+    <h2>Create Prediction</h2>
+  </div>
+
+  <div class="content">
+    <div class="form-section">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Category:</label>
+          <app-custom-dropdown [options]="categories" [selectedItem]="category" (selectedItemChange)="category = $event"
+            placeholder="Select Category" displayKey="label" valueKey="value">
+          </app-custom-dropdown>
+        </div>
+
+        <div class="form-group">
+          <label>Type:</label>
+          <app-custom-dropdown [options]="typeOptions" [selectedItem]="type"
+            (selectedItemChange)="type = $event; onTypeChange()" placeholder="Select Type" displayKey="label"
+            valueKey="value">
+          </app-custom-dropdown>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="title">Title:</label>
+        <input id="title" type="text" [(ngModel)]="title" placeholder="e.g., Subida de BTC a $150,000">
+      </div>
+
+      <div class="form-group">
+        <label for="imageUrl">Image Link:</label>
+        <input id="imageUrl" type="url" [(ngModel)]="imageUrl" placeholder="https://example.com/image.jpg">
+      </div>
+
+      <div class="form-group" *ngIf="type?.value === 'multiple'">
+        <label>Options:</label>
+        <div class="options-list">
+          <div class="option-item" *ngFor="let option of options; let i = index; trackBy: trackByIndex">
+            <input type="text" [(ngModel)]="options[i]" placeholder="e.g., Antes del 25 de Enero">
+            <button type="button" class="delete-btn" (click)="removeOption(i)" title="Eliminar opción">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+          <button class="btn btn-success add-option-btn" (click)="addOption()">+ Add Option</button>
+        </div>
+      </div>
+
+      <div class="form-group" *ngIf="type?.value !== 'multiple'">
+        <label>Options:</label>
+        <div class="binary-options">
+          <span>YES</span> / <span>NO</span>
+        </div>
+      </div>
+
+      <button class="btn btn-success" (click)="submitPrediction()" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Creating...' : 'Create' }}
+      </button>
+    </div>
+
+    <div class="preview-section">
+      <h3>Preview</h3>
+      <div class="prediction-card">
+        <div class="prediction-header">
+          <div class="prediction-avatar"
+            [style.backgroundImage]="'url(https://api.dicebear.com/9.x/fun-emoji/svg?seed=you)'">
+          </div>
+          <div class="prediction-info">
+            <h3>username</h3>
+            <p>
+              <span class="category-link">{{ getCategoryDisplay() || 'Category' }}</span>
+              <span> • Just now • 0 participants</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="prediction-question">
+          {{ title || 'Your prediction title' }}
+        </div>
+
+        <div class="prediction-image" *ngIf="imageUrl">
+          <img [src]="imageUrl" alt="Prediction image" />
+        </div>
+
+        <app-fierce-intuition [prediction]="previewPrediction" [hasVoted]="false" [votedOptionId]="null">
+        </app-fierce-intuition>
+
+        <div class="prediction-tabs-container">
+          <div class="prediction-tabs">
+            <!-- Messages -->
+            <div class="tab" title="Comentarios">
+              💬 0
+            </div>
+            <!-- Bet/Pool -->
+            <div class="tab" title="Pool de apuestas">
+              🎲 0
+            </div>
+            <!-- Trading Market -->
+            <div class="tab" title="Mercado Trading">
+              📊 0 F
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info Section about Fees and Rewards - Moved to bottom -->
+  <div class="info-section" *ngIf="perpsParams">
+    <div class="info-card">
+      <h3>💰 Creation Cost</h3>
+      <p class="price-highlight">{{ perpsParams.price_prediction }} Fierce Tokens</p>
+      <p class="info-text">Will be deducted from your balance when creating the prediction</p>
+    </div>
+    
+    <div class="rewards-info">
+      <h4>🎁 Reward Distribution</h4>
+      
+      <div class="reward-item">
+        <span class="reward-icon">🏆</span>
+        <div class="reward-details">
+          <strong>Your Creator Reward (Mutual Bets)</strong>
+          <p>You will receive <strong>{{ perpsParams.users_rewards }}%</strong> of the mutual bets pool for each bet placed on your prediction</p>
+        </div>
+      </div>
+      
+      <div class="reward-item">
+        <span class="reward-icon">📈</span>
+        <div class="reward-details">
+          <strong>Your Trading Market Reward</strong>
+          <p>You will receive <strong>{{ perpsParams.market_rewards }}%</strong> of each trading operation made on your prediction</p>
+        </div>
+      </div>
+      
+      <div class="reward-item">
+        <span class="reward-icon">🔥</span>
+        <div class="reward-details">
+          <strong>Platform Fee</strong>
+          <p><strong>{{ perpsParams.envision_burn }}%</strong> will be allocated to the platform as a service fee</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

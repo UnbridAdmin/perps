@@ -1,0 +1,22 @@
+<div class="toast-container">
+    <div class="toast-content">
+        <div class="toast-left-content">
+            <div class="notification-icon">
+                <img *ngIf="title=='Info'" src="/assets/img/icons/info.svg" alt="" (click)="remove()">
+                <img *ngIf="title=='Success'" src="/assets/img/icons/success.svg" alt="" (click)="remove()">
+                <img *ngIf="title=='Error'" src="/assets/img/icons/error.png" alt="" (click)="remove()">
+            </div>
+        </div>
+        <div class="toast-right-content">
+            <div class="notification-close-icon"><img src="/assets/img/icons/cancel-notification.png" alt=""
+                    (click)="remove()"></div>
+            <div class="notification-title" *ngIf="title" [innerHTML]="title">{{ title }}</div>
+            <div class="notification-message" *ngIf="message" [innerHTML]="message">
+                {{ message }}
+            </div>
+        </div>
+    </div>
+    <div *ngIf="true">
+        <div class="toast-progress" [style.width]="width + '%'"></div>
+    </div>
+</div>
