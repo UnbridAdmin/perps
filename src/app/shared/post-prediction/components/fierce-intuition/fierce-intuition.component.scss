@@ -111,13 +111,13 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 10px 12px;
+    padding: 6px 10px;
     border-radius: 20px;
     border: 1px solid #2f3336;
     transition: all 0.2s;
     position: relative;
     background: transparent;
-    min-height: 40px;
+    min-height: 38px;
     overflow: hidden;
 
     &.selected {

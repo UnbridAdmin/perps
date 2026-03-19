@@ -4,33 +4,51 @@
         <span class="burn-text">Rey de la Colina</span>
         <div class="info-tooltip">
             <span class="info-icon"><i class="fa-solid fa-info"></i></span>
-            <div class="tooltip-text">Quema Fierce para fijar tu mensaje aquí y ganar visibilidad. El mensaje con más
+            <div class="tooltip-text">Quema Fierce para fijar tu comentario aquí y ganar visibilidad. El comentario con más
                 tokens quemados será el único que se mantenga en la cima.</div>
         </div>
     </div>
 
-    <div class="comment-content" *ngIf="comment; else beTheFirst">
-        <div class="user-info">
-            <div class="avatar"
-                [routerLink]="['/', comment.user]"
-                [style.backgroundImage]="'url(' + (comment.avatar || 'https://api.dicebear.com/9.x/fun-emoji/svg') + ')'">
+    <div class="comment-content" *ngIf="comment; else beTheFirst" (click)="toggleExpanded()" [class.expanded]="isExpanded">
+        <div class="comment-grid" [class.has-gif]="!!comment.gifUrl">
+            <!-- Columna 1: Datos del Usuario -->
+            <div class="user-column">
+                <div class="user-info">
+                    <div class="avatar"
+                        [routerLink]="['/', comment.user]"
+                        (click)="$event.stopPropagation()"
+                        [style.backgroundImage]="'url(' + (comment.avatar || 'https://api.dicebear.com/9.x/fun-emoji/svg') + ')'">
+                    </div>
+                    <div class="user-details">
+                        <span class="username" 
+                            [routerLink]="['/', comment.user]"
+                            (click)="$event.stopPropagation()">@{{ comment.user }}</span>
+                        <span class="burned-amount">
+                            <i class="fa-solid fa-fire-flame-curved"></i> {{ comment.burnedAmount | number }} F
+                        </span>
+                    </div>
+                </div>
             </div>
-            <div class="user-details">
-                <span class="username" [routerLink]="['/', comment.user]">@{{ comment.user }}</span>
-                <span class="burned-amount">
-                    <i class="fa-solid fa-fire-flame-curved"></i> {{ comment.burnedAmount | number }} F Destruidos
-                </span>
+
+            <!-- Columna 2: Mensaje -->
+            <div class="message-column">
+                <p class="comment-text" [class.truncated]="!isExpanded">"{{ comment.text }}"</p>
             </div>
-        </div>
-        <p class="comment-text">"{{ comment.text }}"</p>
-        
-        <div class="featured-gif" *ngIf="comment.gifUrl">
-            <img [src]="comment.gifUrl" alt="Featured GIF">
+
+            <!-- Columna 3: GIF (si existe) -->
+            <div class="gif-column" *ngIf="comment.gifUrl">
+                <div class="featured-gif">
+                    <img [src]="comment.gifUrl" alt="Featured GIF">
+                </div>
+            </div>
         </div>
 
-        <button class="overthrow-btn" (click)="onOverthrow()">
-            <i class="fa-solid fa-chess-king"></i> Destronar al Rey
-        </button>
+        <!-- Acciones (mostradas al expandir) -->
+        <div class="comment-actions" *ngIf="isExpanded">
+            <button class="overthrow-btn" (click)="onOverthrow($event)">
+                <i class="fa-solid fa-chess-king"></i> Destronar al Rey
+            </button>
+        </div>
     </div>
 
     <ng-template #beTheFirst>

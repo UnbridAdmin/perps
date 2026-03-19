@@ -1,9 +1,9 @@
 .featured-comment-container {
-    background: rgba(255, 255, 255, 0.02);
+    //background: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 12px;
-    margin: 8px 16px 16px 16px;
-    overflow: hidden;
+    margin-bottom: 15px;
+    //overflow: hidden;
     position: relative;
     transition: all 0.3s ease;
 
@@ -19,13 +19,16 @@
             top: 0;
             width: 4px;
             height: 100%;
-            background: linear-gradient(to bottom, #ff6b35, #ff9800);
-            box-shadow: 2px 0 10px rgba(255, 107, 53, 0.3);
+            //background: linear-gradient(to bottom, #ff6b35, #ff9800);
+            //box-shadow: 2px 0 10px rgba(255, 107, 53, 0.3);
         }
 
         .burn-banner {
             background: rgba(255, 107, 53, 0.15);
-            .burn-text { color: #ff9800; }
+
+            .burn-text {
+                color: #ff9800;
+            }
         }
     }
 }
@@ -33,9 +36,10 @@
 .burn-banner {
     display: flex;
     align-items: center;
-    padding: 8px 12px;
+    padding: 2px 12px;
     background: rgba(255, 107, 53, 0.1);
     border-bottom: 1px solid rgba(255, 107, 53, 0.1);
+    border-radius: 12px 12px 0 0;
 
     .burn-icon {
         font-size: 14px;
@@ -96,77 +100,152 @@
 
 .comment-content {
     padding: 12px 16px;
+    cursor: pointer;
+    transition: background 0.25s ease;
 
-    .user-info {
-        display: flex;
-        align-items: center;
-        margin-bottom: 8px;
+    &:hover {
+        background: rgba(255, 107, 53, 0.05);
+    }
 
-        .avatar {
-            width: 40px;
-            height: 40px;
-            aspect-ratio: 1;
-            border-radius: 50%;
-            background-size: cover;
-            background-position: center;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-            transition: transform 0.2s ease;
-            cursor: pointer;
-            flex-shrink: 0;
-            margin-right: 12px;
+    &.expanded {
+        padding: 12px 16px 0;
+    }
 
-            &:hover {
-                transform: scale(1.05);
-            }
+    .comment-grid {
+        display: grid;
+        grid-auto-flow: column;
+        gap: 12px;
+        align-items: flex-start;
+
+        // 3 columnas cuando hay GIF
+        &.has-gif {
+            grid-template-columns: auto 1fr auto;
         }
 
-        .user-details {
-            display: flex;
-            flex-direction: column;
+        // 2 columnas cuando no hay GIF
+        &:not(.has-gif) {
+            grid-template-columns: auto 1fr;
+        }
+    }
 
-            .username {
-                font-size: 13px;
-                font-weight: 700;
-                color: #e7e9ea;
+    .user-column {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 8px;
+        min-width: 0;
+
+        .user-info {
+            display: flex;
+            flex-direction: row;
+            gap: 8px;
+            align-items: flex-start;
+
+            .avatar {
+                width: 40px;
+                height: 40px;
+                aspect-ratio: 1;
+                border-radius: 50%;
+                background-size: cover;
+                background-position: center;
+                border: 2px solid rgba(255, 255, 255, 0.2);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+                transition: transform 0.2s ease;
+                cursor: pointer;
+                flex-shrink: 0;
+
+                &:hover {
+                    transform: scale(1.05);
+                }
             }
 
-            .burned-amount {
-                font-size: 11px;
-                color: #ff6b35;
-                font-weight: 600;
+            .user-details {
                 display: flex;
-                align-items: center;
-                gap: 4px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 2px;
+                min-width: 0;
 
-                i {
+                .username {
                     font-size: 12px;
-                    color: #ff9800;
+                    font-weight: 700;
+                    color: #e7e9ea;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    max-width: 100%;
+                }
+
+                .burned-amount {
+                    font-size: 10px;
+                    color: #ff6b35;
+                    font-weight: 600;
+                    display: flex;
+                    align-items: center;
+                    gap: 3px;
+                    white-space: nowrap;
+
+                    i {
+                        font-size: 10px;
+                        color: #ff9800;
+                    }
                 }
             }
         }
     }
 
-    .comment-text {
-        font-size: 14px;
-        color: #e7e9ea;
-        margin: 0 0 12px 0;
-        line-height: 1.4;
-        font-style: italic;
-    }
+    .message-column {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        min-width: 0;
 
-    .featured-gif {
-        margin-bottom: 12px;
-        border-radius: 8px;
-        overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        max-width: 75px;
+        .comment-text {
+            font-size: 13px;
+            color: #e7e9ea;
+            margin: 0;
+            line-height: 1.4;
+            font-style: italic;
 
-        img {
-            width: 100%;
-            display: block;
+            &.truncated {
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
         }
     }
+
+    .gif-column {
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+
+        .featured-gif {
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 60px;
+            height: 60px;
+            flex-shrink: 0;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+        }
+    }
+}
+
+.comment-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 16px 12px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    margin-top: 8px;
 }
 
 .be-first-content {
@@ -186,22 +265,22 @@
     color: #ff9800;
     border-radius: 20px;
     padding: 8px 16px;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
 
     i {
-        font-size: 14px;
+        font-size: 13px;
     }
 
     &:hover {
         background: rgba(255, 107, 53, 0.1);
+        border-color: rgba(255, 107, 53, 0.6);
         transform: translateY(-1px);
     }
 

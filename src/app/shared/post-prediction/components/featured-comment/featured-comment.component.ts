@@ -13,7 +13,16 @@ export class FeaturedCommentComponent {
     @Input() comment: any; // Example: { user: 'CryptoKing', avatar: '...', text: 'Brasil gana fijo!', burnedAmount: 500 }
     @Output() overthrow = new EventEmitter<void>();
 
-    onOverthrow() {
+    isExpanded = false;
+
+    toggleExpanded() {
+        this.isExpanded = !this.isExpanded;
+    }
+
+    onOverthrow(event?: any) {
+        if (event) {
+            event.stopPropagation();
+        }
         this.overthrow.emit();
     }
 }
