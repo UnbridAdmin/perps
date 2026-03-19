@@ -74,7 +74,7 @@ export class AuthorizationService {
     }
 
     public clearSession(): void {
-        const keysToRemove = ['expirationDate', 'signatureData', 'accountAddress', 'sessionAddress'];
+        const keysToRemove = ['expirationDate', 'signatureData', 'accountAddress', 'sessionAddress', 'username'];
         keysToRemove.forEach(key => localStorage.removeItem(key));
 
         sessionStorage.removeItem('accountAddress');
@@ -114,5 +114,26 @@ export class AuthorizationService {
         const expirationDate = moment(expirationDateString, 'ddd MMM DD HH:mm:ss Z YYYY');
         const currentDate = moment();
         return currentDate.isBefore(expirationDate);
+    }
+
+    public getAuthenticatedUsername(): string | null {
+        if (!this.isAuthenticated()) {
+            return null;
+        }
+        // Try to get username from localStorage first
+        const storedUsername = localStorage.getItem('username');
+        if (storedUsername) {
+            return storedUsername;
+        }
+        // Fallback: generate username from wallet address
+        const sessionAddress = localStorage.getItem('sessionAddress');
+        if (sessionAddress) {
+            return sessionAddress.slice(0, 10);
+        }
+        return null;
+    }
+
+    public setAuthenticatedUsername(username: string): void {
+        localStorage.setItem('username', username);
     }
 }

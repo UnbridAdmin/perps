@@ -38,27 +38,56 @@ export class ProfileInfoComponent implements OnInit {
   private loadProfile(): void {
     this.isLoading = true;
     // Check both path parameters (/leocruz) and query parameters (?username=leocruz)
-    const username = this.route.snapshot.paramMap.get('username') ||
+    const usernameFromUrl = this.route.snapshot.paramMap.get('username') ||
       this.route.snapshot.queryParamMap.get('username');
 
-    if (username) {
-      // If a username is specified, we fetch that public profile
-      this.profileService.getUserPublicProfile(username).subscribe({
-        next: (resp: any) => {
-          if (resp.data && resp.data.length > 0) {
-            this.userProfile = resp.data[0];
-            this.userIdLoaded.emit(this.userProfile.user_id);
-            // Check if viewing own profile
-            this.checkIfOwnProfile();
+    if (usernameFromUrl) {
+      // If a username is specified in URL, check if it's the authenticated user's profile
+      const authenticatedUsername = this.authService.getAuthenticatedUsername();
+      
+      if (this.authService.isAuthenticated() && authenticatedUsername === usernameFromUrl) {
+        // Viewing own profile - use private service
+        this.profileService.getUserProfile().subscribe({
+          next: (resp: any) => {
+            if (resp.data && resp.data.length > 0) {
+              this.userProfile = resp.data[0];
+              this.userIdLoaded.emit(this.userProfile.user_id);
+              this.isOwnProfile = true;
+              // Save username to localStorage for future comparisons
+              if (this.userProfile.username) {
+                localStorage.setItem('username', this.userProfile.username);
+              }
+            }
+            this.isLoading = false;
+          },
+          error: (err) => {
+            console.error('Error fetching auth profile:', err);
+            this.errorMessage = 'Could not load profile.';
+            this.isLoading = false;
           }
-          this.isLoading = false;
-        },
-        error: (err) => {
-          console.error('Error fetching public profile:', err);
-          this.errorMessage = 'Could not load public profile.';
-          this.isLoading = false;
-        }
-      });
+        });
+      } else {
+        // Viewing someone else's profile - use public service
+        this.profileService.getUserPublicProfile(usernameFromUrl).subscribe({
+          next: (resp: any) => {
+            if (resp.data && resp.data.length > 0) {
+              this.userProfile = resp.data[0];
+              this.userIdLoaded.emit(this.userProfile.user_id);
+              // Save username to localStorage for future comparisons
+              if (this.userProfile.username) {
+                localStorage.setItem('username', this.userProfile.username);
+              }
+              this.isOwnProfile = false;
+            }
+            this.isLoading = false;
+          },
+          error: (err) => {
+            console.error('Error fetching public profile:', err);
+            this.errorMessage = 'Could not load public profile.';
+            this.isLoading = false;
+          }
+        });
+      }
     } else if (this.authService.isAuthenticated()) {
       // If no username is specified but the user is logged in, show their own profile
       this.profileService.getUserProfile().subscribe({
@@ -67,6 +96,10 @@ export class ProfileInfoComponent implements OnInit {
             this.userProfile = resp.data[0];
             this.userIdLoaded.emit(this.userProfile.user_id);
             this.isOwnProfile = true;
+            // Save username to localStorage for future comparisons
+            if (this.userProfile.username) {
+              localStorage.setItem('username', this.userProfile.username);
+            }
           }
           this.isLoading = false;
         },
@@ -79,22 +112,6 @@ export class ProfileInfoComponent implements OnInit {
     } else {
       this.isLoading = false;
       this.errorMessage = 'No profile information available.';
-    }
-  }
-
-  private checkIfOwnProfile(): void {
-    if (this.authService.isAuthenticated() && this.userProfile) {
-      this.profileService.getUserProfile().subscribe({
-        next: (resp: any) => {
-          if (resp.data && resp.data.length > 0) {
-            const ownUsername = resp.data[0].username;
-            this.isOwnProfile = ownUsername === this.userProfile?.username;
-          }
-        },
-        error: () => {
-          this.isOwnProfile = false;
-        }
-      });
     }
   }
 

@@ -156,6 +156,10 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
           this.username = response.data[0].username || '';
           this.unbridBalance = response.data[0].fierce_balance || 0;
           this.userProfileImage = response.data[0].url_avatar || 'https://api.dicebear.com/9.x/fun-emoji/svg';
+          // Save username to localStorage for profile comparison
+          if (this.username) {
+            localStorage.setItem('username', this.username);
+          }
         }
       },
       error: (error) => {
@@ -342,7 +346,7 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
 
   private clearAllStorage(): void {
     sessionStorage.clear();
-    const keysToRemove = ['expirationDate', 'signatureData', 'accountAddress'];
+    const keysToRemove = ['expirationDate', 'signatureData', 'accountAddress', 'username'];
     keysToRemove.forEach(key => localStorage.removeItem(key));
   }
 
