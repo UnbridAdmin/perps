@@ -215,9 +215,9 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
       params.category = this.selectedCategoryId;
     }
 
-    // Add user_id filter if provided
+    // Add type=profile filter when viewing user's profile
     if (this.userId) {
-      params.user_id = this.userId;
+      params.type = 'profile';
     }
 
     // Add predictionId filter if provided

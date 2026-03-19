@@ -10,7 +10,6 @@ import { AccuracyMetricsComponent } from './accuracy-metrics/accuracy-metrics.co
 import { SignalMetricsComponent } from './signal-metrics/signal-metrics.component';
 import { EarningsMetricsComponent } from './earnings-metrics/earnings-metrics.component';
 import { UserTabsComponent } from './user-tabs/user-tabs.component';
-import { MyPredictionsComponent } from './my-predictions/my-predictions.component';
 import { EditProfileModalComponent } from './edit-profile-modal/edit-profile-modal.component';
 
 
@@ -27,7 +26,6 @@ import { EditProfileModalComponent } from './edit-profile-modal/edit-profile-mod
     SignalMetricsComponent,
     EarningsMetricsComponent,
     UserTabsComponent,
-    MyPredictionsComponent,
     EditProfileModalComponent
   ]
 })
