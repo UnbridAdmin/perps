@@ -4,6 +4,7 @@ import { Router, RouterOutlet, NavigationEnd, ActivatedRoute } from '@angular/ro
 import { HeaderComponent } from './header/header.component';
 import { SidebarMenuComponent } from './sidebar-menu/sidebar-menu.component';
 import { NewsComponent } from './news/news.component';
+import { ToastComponent } from './shared/toast/toast.component';
 import { WalletConnectService, WalletState } from './services/walletconnect.service';
 import { CommonService } from './shared/commonService';
 import { AuthorizationService } from './services/authorization.service';
@@ -34,6 +35,14 @@ export class AppComponent implements OnInit, OnDestroy {
   isDisconnecting = false;
   isInitialized = false;
   signing: boolean = true;
+
+  // TOAST PROPERTIES
+  showToast = false;
+  toastMessage = '';
+  showSuccessToast = false;
+  successToastMessage = '';
+  showErrorToast = false;
+  errorToastMessage = '';
 
   // DETECCIÓN INMEDIATA DE CUENTA
   private currentAccount: string | null = null;
@@ -505,6 +514,38 @@ export class AppComponent implements OnInit, OnDestroy {
         queryParams: { tab },
         queryParamsHandling: 'merge'
       });
+    }
+  }
+
+  showToastMessage(messages: string, time: number, status: number) {
+    let notificationStatus: String;
+    let notificationTitle: string;
+    if (status == 100) {
+      notificationStatus = "border-blue";
+      notificationTitle = "Info";
+      this.showToast = true;
+      this.toastMessage = messages;
+      setTimeout(() => {
+        this.showToast = false;
+      }, time);
+    }
+    if (status == 200) {
+      notificationStatus = "border-green";
+      notificationTitle = "Success";
+      this.showSuccessToast = true;
+      this.successToastMessage = messages;
+      setTimeout(() => {
+        this.showSuccessToast = false;
+      }, time);
+    }
+    if (status == 400) {
+      notificationStatus = "border-red";
+      notificationTitle = "Error";
+      this.showErrorToast = true;
+      this.errorToastMessage = messages;
+      setTimeout(() => {
+        this.showErrorToast = false;
+      }, time);
     }
   }
 }
