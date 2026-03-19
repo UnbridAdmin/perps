@@ -417,3 +417,93 @@
     text-decoration: underline;
   }
 }
+
+// Info Section Styles
+.info-section {
+  background: linear-gradient(135deg, rgba(156, 39, 176, 0.1), rgba(29, 155, 240, 0.1));
+  border: 1px solid rgba(156, 39, 176, 0.3);
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .info-card {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+
+    h3 {
+      color: #e7e9ea;
+      margin: 0 0 8px 0;
+      font-size: 16px;
+    }
+
+    .price-highlight {
+      color: #9c27b0;
+      font-size: 24px;
+      font-weight: 700;
+      margin: 8px 0;
+      text-shadow: 0 0 10px rgba(156, 39, 176, 0.3);
+    }
+
+    .info-text {
+      color: #71767b;
+      font-size: 12px;
+      margin: 0;
+    }
+  }
+
+  .rewards-info {
+    h4 {
+      color: #e7e9ea;
+      margin: 0 0 12px 0;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .reward-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      margin-bottom: 8px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .reward-icon {
+        font-size: 20px;
+        flex-shrink: 0;
+      }
+
+      .reward-details {
+        flex: 1;
+
+        strong {
+          color: #e7e9ea;
+          font-size: 13px;
+          display: block;
+          margin-bottom: 4px;
+        }
+
+        p {
+          color: #71767b;
+          font-size: 12px;
+          margin: 0;
+          line-height: 1.4;
+
+          strong {
+            color: #9c27b0;
+            display: inline;
+          }
+        }
+      }
+    }
+  }
+}

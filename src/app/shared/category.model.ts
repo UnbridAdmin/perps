@@ -85,18 +85,18 @@ export const CATEGORIES_TREE: Category[] = [
             { id: 17, name: 'Racing', icon: 'bx bx-car' }*/
         ]
     },
-    /*{
-        id: 2,
+    {
+        id: 7,
         name: 'Politics',
         icon: 'bx bx-buildings',
         children: [
-            { id: 20, name: 'US Politics', icon: 'bx bx-flag' },
-            { id: 21, name: 'World Leaders', icon: 'bx bx-globe' },
+            { id: 8, name: 'Elections', icon: 'bx bx-check-square' },
+           /* { id: 21, name: 'World Leaders', icon: 'bx bx-globe' },
             { id: 22, name: 'Elections', icon: 'bx bx-check-square' },
-            { id: 23, name: 'Legislation', icon: 'bx bx-file' }
+            { id: 23, name: 'Legislation', icon: 'bx bx-file' }*/
         ]
     },
-    {
+    /*{
         id: 3,
         name: 'Crypto',
         icon: 'bx bx-bitcoin',

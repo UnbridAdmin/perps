@@ -6,6 +6,7 @@ import { CreatePredictionService } from './create-prediction.service';
 import { CATEGORIES_TREE, Category } from '../shared/category.model';
 import { FierceIntuitionComponent } from '../shared/post-prediction/components/fierce-intuition/fierce-intuition.component';
 import { CustomDropdownComponent } from '../shared/custom-dropdown/custom-dropdown.component';
+import { ApiServices } from '../services/api.service';
 
 @Component({
   selector: 'app-create-prediction',
@@ -21,6 +22,7 @@ export class CreatePredictionComponent implements OnInit {
   imageUrl: string = '';
   options: string[] = ['YES', 'NO'];
   isSubmitting = false;
+  perpsParams: any = null;
 
   categories: { value: number, label: string }[] = [];
   typeOptions = [
@@ -28,10 +30,28 @@ export class CreatePredictionComponent implements OnInit {
     { value: 'multiple', label: 'Múltiples Opciones' }
   ];
 
-  constructor(private router: Router, private createPredictionService: CreatePredictionService) { }
+  constructor(
+    private router: Router, 
+    private createPredictionService: CreatePredictionService,
+    private apiService: ApiServices
+  ) { }
 
   ngOnInit() {
     this.categories = this.flattenCategories(CATEGORIES_TREE);
+    this.loadPerpsParams();
+  }
+
+  private loadPerpsParams() {
+    this.apiService.getPerpsParams().subscribe({
+      next: (response: any) => {
+        if (response && response.data) {
+          this.perpsParams = response.data.params;
+        }
+      },
+      error: (err) => {
+        console.error('Error loading perps params:', err);
+      }
+    });
   }
 
   private flattenCategories(categories: Category[], prefix = ''): { value: number, label: string, displayName: string }[] {

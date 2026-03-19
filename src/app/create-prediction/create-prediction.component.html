@@ -98,8 +98,43 @@
             <!-- Trading Market -->
             <div class="tab" title="Mercado Trading">
               📊 0 F
-            </div>
-          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info Section about Fees and Rewards - Moved to bottom -->
+  <div class="info-section" *ngIf="perpsParams">
+    <div class="info-card">
+      <h3>💰 Costo de Creación</h3>
+      <p class="price-highlight">{{ perpsParams.price_prediction }} Fierce Tokens</p>
+      <p class="info-text">Se descontará de tu balance al crear la predicción</p>
+    </div>
+    
+    <div class="rewards-info">
+      <h4>🎁 Distribución de Recompensas</h4>
+      
+      <div class="reward-item">
+        <span class="reward-icon">🏆</span>
+        <div class="reward-details">
+          <strong>Tu Recompensa como Creador (Apuestas Mutuas)</strong>
+          <p>Recibirás el <strong>{{ perpsParams.users_rewards }}%</strong> de la pool de apuestas mutuas por cada apuesta realizada en tu predicción</p>
+        </div>
+      </div>
+      
+      <div class="reward-item">
+        <span class="reward-icon">📈</span>
+        <div class="reward-details">
+          <strong>Tu Recompensa del Mercado Trading</strong>
+          <p>Recibirás el <strong>{{ perpsParams.market_rewards }}%</strong> de cada operación de trading realizada en tu predicción</p>
+        </div>
+      </div>
+      
+      <div class="reward-item">
+        <span class="reward-icon">🔥</span>
+        <div class="reward-details">
+          <strong>Fee de Plataforma</strong>
+          <p>El <strong>{{ perpsParams.envision_burn }}%</strong> será destinado a la plataforma como fee de servicio</p>
         </div>
       </div>
     </div>
