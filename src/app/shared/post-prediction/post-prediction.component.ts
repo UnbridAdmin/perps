@@ -131,6 +131,8 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
   @Output() predictionLoaded = new EventEmitter<any>();
 
   private subscriptions: Subscription = new Subscription();
+  private loadSubscription?: Subscription;
+  private currentRequestToken = 0;
 
   constructor(
     private router: Router,
@@ -186,9 +188,28 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
         this.resetAndReload();
       })
     );
+
+    // Only load predictions if userId is already available (for direct navigation)
+    // We remove this manual call because the CategoryService subscription
+    // above will already trigger resetAndReload() via its initial emission.
+  }
+
+  ngOnChanges() {
+    console.log('PostPrediction: ngOnChanges called, userId:', this.userId);
+    // Only reload predictions when userId changes from undefined to a valid number
+    if (this.userId !== undefined && this.userId !== null) {
+      this.resetAndReload();
+    }
   }
 
   private resetAndReload(): void {
+    console.log('PostPrediction: resetAndReload called, userId:', this.userId);
+    // Cancel any in-flight load request
+    if (this.loadSubscription) {
+      this.loadSubscription.unsubscribe();
+      this.loadSubscription = undefined;
+    }
+    
     this.currentPage = 1;
     this.predictions = [];
     this.apiPredictions = [];
@@ -201,9 +222,24 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
+  private getAuthenticatedUserId(): number | null {
+    // Get the authenticated user's ID from localStorage or service
+    const username = this.authService.getAuthenticatedUsername();
+    if (!username) return null;
+    
+    // Try to get user ID from localStorage or return a default
+    // This is a simplified approach - in a real app, you'd get this from the user service
+    const storedUserId = localStorage.getItem('user_id');
+    return storedUserId ? parseInt(storedUserId, 10) : null;
+  }
+
   async loadPredictions(): Promise<void> {
     if (this.isLoading || !this.hasMoreData) return;
 
+    // Increment request token to track this specific call across async gaps
+    const requestToken = ++this.currentRequestToken;
+    console.log('PostPrediction: loadPredictions started, token:', requestToken, 'userId:', this.userId);
+    
     this.isLoading = true;
     const params: any = {
       page: this.currentPage,
@@ -215,9 +251,10 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
       params.category = this.selectedCategoryId;
     }
 
-    // Add type=profile filter when viewing user's profile
-    if (this.userId) {
-      params.type = 'profile';
+    // Add user_id filter when viewing a specific user's profile
+    if (this.userId !== undefined && this.userId !== null) {
+      console.log('PostPrediction: Adding user_id to params:', this.userId);
+      params.user_id = this.userId;
     }
 
     // Add predictionId filter if provided
@@ -229,12 +266,41 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     const isAuthenticated = this.authService.isAuthenticated();
     const isWalletConnected = await this.walletConnectService.checkConnection();
 
-    const apiCall = (isAuthenticated && isWalletConnected)
-      ? this.postPredictionService.getAuthenticatedPredictions(params)
-      : this.postPredictionService.getPublicPredictions(params);
+    // After async gap, check if this request is still valid
+    if (requestToken !== this.currentRequestToken) {
+      console.log('PostPrediction: loadPredictions discarded after async gap, token:', requestToken);
+      return;
+    }
 
-    apiCall.subscribe({
+    // Determine which service to use
+    let apiCall;
+    if (isAuthenticated && isWalletConnected) {
+      // When authenticated, check if viewing own profile or another user's profile
+      const authenticatedUserId = this.getAuthenticatedUserId();
+      
+      if (this.userId && this.userId !== authenticatedUserId) {
+        // Viewing another user's profile - use public service with user_id
+        console.log('PostPrediction: Using public service for another user, params:', params);
+        apiCall = this.postPredictionService.getPublicPredictions(params);
+      } else {
+        // Viewing own profile or no user filter - use authenticated service
+        console.log('PostPrediction: Using authenticated service, params:', params);
+        apiCall = this.postPredictionService.getAuthenticatedPredictions(params);
+      }
+    } else {
+      // Not authenticated - use public service
+      console.log('PostPrediction: Using public service (not authenticated), params:', params);
+      apiCall = this.postPredictionService.getPublicPredictions(params);
+    }
+
+    // Cancel any previous subscription still active (though should be handled by token check above for concurrent calls)
+    if (this.loadSubscription) {
+      this.loadSubscription.unsubscribe();
+    }
+
+    this.loadSubscription = apiCall.subscribe({
       next: (response: any) => {
+        console.log('PostPrediction: API response received');
         const apiResponse: GetPredictionsResponse = response.data;
         const mappedPredictions = this.mapApiPredictionsToFrontend(apiResponse.data);
 

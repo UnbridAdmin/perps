@@ -1,3 +1,5 @@
-<app-profile-info (userIdLoaded)="onUserIdLoaded($event)"></app-profile-info>
-<app-user-metrics></app-user-metrics>
-<app-user-tabs [userId]="profileUserId"></app-user-tabs>
+<div class="profile-container">
+  <app-profile-info (userIdLoaded)="onUserIdLoaded($event)"></app-profile-info>
+  <app-user-metrics></app-user-metrics>
+  <app-user-tabs [userId]="profileUserId"></app-user-tabs>
+</div>
