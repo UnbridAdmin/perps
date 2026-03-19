@@ -222,16 +222,6 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
-  private getAuthenticatedUserId(): number | null {
-    // Get the authenticated user's ID from localStorage or service
-    const username = this.authService.getAuthenticatedUsername();
-    if (!username) return null;
-    
-    // Try to get user ID from localStorage or return a default
-    // This is a simplified approach - in a real app, you'd get this from the user service
-    const storedUserId = localStorage.getItem('user_id');
-    return storedUserId ? parseInt(storedUserId, 10) : null;
-  }
 
   async loadPredictions(): Promise<void> {
     if (this.isLoading || !this.hasMoreData) return;
@@ -275,21 +265,11 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     // Determine which service to use
     let apiCall;
     if (isAuthenticated && isWalletConnected) {
-      // When authenticated, check if viewing own profile or another user's profile
-      const authenticatedUserId = this.getAuthenticatedUserId();
-      
-      if (this.userId && this.userId !== authenticatedUserId) {
-        // Viewing another user's profile - use public service with user_id
-        console.log('PostPrediction: Using public service for another user, params:', params);
-        apiCall = this.postPredictionService.getPublicPredictions(params);
-      } else {
-        // Viewing own profile or no user filter - use authenticated service
-        console.log('PostPrediction: Using authenticated service, params:', params);
-        apiCall = this.postPredictionService.getAuthenticatedPredictions(params);
-      }
+      // When authenticated, always use the authenticated service
+      // The backend should respect the user_id in params if provided, or default to the logged-in user's feed
+      apiCall = this.postPredictionService.getAuthenticatedPredictions(params);
     } else {
       // Not authenticated - use public service
-      console.log('PostPrediction: Using public service (not authenticated), params:', params);
       apiCall = this.postPredictionService.getPublicPredictions(params);
     }
 

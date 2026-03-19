@@ -76,13 +76,6 @@ export class ProfileInfoComponent implements OnInit {
             if (resp.data && resp.data.length > 0) {
               this.userProfile = resp.data[0];
               this.userIdLoaded.emit(this.userProfile.user_id);
-              // Save username and user_id to localStorage for future comparisons
-              if (this.userProfile.username) {
-                localStorage.setItem('username', this.userProfile.username);
-              }
-              if (this.userProfile.user_id) {
-                localStorage.setItem('user_id', this.userProfile.user_id.toString());
-              }
               this.isOwnProfile = false;
             }
             this.isLoading = false;
