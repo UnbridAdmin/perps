@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { PriceTrendService, IntuitionMarketGapData } from '../price-trend/price-trend.service';
+import { CommonService } from '../../shared/commonService';
 import { Subscription } from 'rxjs';
 
 interface MarketOption {
@@ -35,7 +36,8 @@ export class IntuitionVsMarketAnalysisComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
-    private priceTrendService: PriceTrendService
+    private priceTrendService: PriceTrendService,
+    private commonService: CommonService
   ) {}
 
   ngOnInit() {
@@ -177,9 +179,7 @@ Genera un análisis para cada opción que incluya:
 Usa los GAPs para identificar posibles oportunidades o riesgos. Aplica la lógica de que los GAPs grandes tienden a converger con el tiempo.`;
 
     navigator.clipboard.writeText(prompt).then(() => {
-      // You could add a temporary toast or change button text here
-      console.log('Prompt copiado al portapapeles');
-      alert('Prompt copiado al portapapeles con éxito');
+      this.commonService.showToastMessage('Prompt copiado al portapapeles con éxito', 3000, 200);
     });
   }
 

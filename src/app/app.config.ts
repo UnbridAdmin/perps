@@ -10,7 +10,7 @@ import { AuthorizationService } from './services/authorization.service';
 import { WalletConnectService } from './services/walletconnect.service';
 import { CommonService } from './shared/commonService';
 import { CacheService } from './services/cache.service';
-import { ToastComponent } from './shared/toast/toast.component';
+import { AgilToastComponent } from './shared/toaster/agil-toast/agil-toast.component';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -29,7 +29,7 @@ export const appConfig: ApplicationConfig = {
       preventDuplicates: true,
       enableHtml: true,
       progressBar: true,
-      toastComponent: ToastComponent
+      toastComponent: AgilToastComponent
     }),
   ],
 };

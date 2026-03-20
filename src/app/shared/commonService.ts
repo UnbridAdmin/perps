@@ -1,12 +1,13 @@
 import { EventEmitter, Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
-import { ToastrService } from "ngx-toastr";
+import { GlobalConfig, ToastrService } from "ngx-toastr";
 import { cloneDeep } from "lodash-es";
 import { environment } from "../../environments/environment";
-import { ToastComponent } from "./toast/toast.component";
 
 @Injectable()
 export class CommonService {
+    toastRef: any;
+    options: GlobalConfig;
     signatureProcessing: EventEmitter<any> = new EventEmitter();
     updateUserAddress: EventEmitter<any> = new EventEmitter();
     logoutBalance: EventEmitter<any> = new EventEmitter();
@@ -14,7 +15,7 @@ export class CommonService {
     validChains: number[] = environment.VALIDCHAINS;
     nameChains: any = environment.NAMECHAINS;
 
-    constructor(private toastr: ToastrService) {}
+    constructor(private toastr: ToastrService) { }
 
     showToastMessage(messages: string, time: number, status: number) {
         let notificationStatus: String;
@@ -31,14 +32,14 @@ export class CommonService {
             notificationStatus = "border-red";
             notificationTitle = "Error";
         }
+        const opt = cloneDeep(this.options);
         const { message, title } = { message: messages, title: notificationTitle };
-        this.toastr.show(message, title, {
+        this.toastRef = this.toastr.show(message, title, {
             timeOut: time,
             toastClass: "toast " + notificationStatus,
             positionClass: 'toast-top-right',
             enableHtml: true,
-            progressBar: true,
-            toastComponent: ToastComponent
+            progressBar: true
         });
     }
 
