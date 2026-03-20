@@ -28,6 +28,7 @@ interface PredictionData {
 export class IntuitionVsMarketAnalysisComponent implements OnInit, OnDestroy {
   predictionData: PredictionData | null = null;
   showInfoPopover = false;
+  isAnalysisExpanded = true;
   private routeSub: Subscription | null = null;
   private dataSub: Subscription | null = null;
 
@@ -100,6 +101,43 @@ export class IntuitionVsMarketAnalysisComponent implements OnInit, OnDestroy {
 
   closeInfoPopover() {
     this.showInfoPopover = false;
+  }
+
+  toggleAnalysis() {
+    this.isAnalysisExpanded = !this.isAnalysisExpanded;
+  }
+
+  getOptionAnalysis(option: MarketOption): any {
+    const gap = option.gap;
+    let title = '';
+    let message = '';
+    let type: 'positive' | 'negative' | 'neutral' = 'neutral';
+    let hint = '';
+
+    if (gap >= 30) {
+      title = `🔵 GAP GRANDE POSITIVO: +${gap}%`;
+      message = `La comunidad (${option.fierceIntuition}%) es significativamente más optimista que el mercado (${option.marketPrice}%).`;
+      hint = `📌 Oportunidad: Si crees que el mercado eventualmente subirá para alcanzar la intuición, podrías comprar antes de que otros reaccionen.`;
+      type = 'positive';
+    } else if (gap <= -30) {
+      title = `🟢 GAP GRANDE NEGATIVO: ${gap}%`;
+      message = `El mercado (${option.marketPrice}%) confía mucho más en esta opción que la comunidad (${option.fierceIntuition}%).`;
+      hint = `📌 Oportunidad inversa: El dinero ("smart money") ve valor real aquí. Podría ser una oportunidad de compra antes de que la comunidad lo descubra.`;
+      type = 'negative';
+    } else if (gap > -10 && gap < 10) {
+      title = `⚪ GAP PEQUEÑO: ${gap >= 0 ? '+' : ''}${gap}%`;
+      message = `La comunidad (${option.fierceIntuition}%) y el mercado (${option.marketPrice}%) están alineados.`;
+      hint = `📌 Neutral: La señal es clara y aceptada por todos. No hay discrepancias significativas para arbitraje.`;
+      type = 'neutral';
+    } else {
+      // Intermediate cases
+      title = `🟡 GAP MODERADO: ${gap >= 0 ? '+' : ''}${gap}%`;
+      message = `Existe una discrepancia moderada entre la opinión (${option.fierceIntuition}%) y el precio real (${option.marketPrice}%).`;
+      hint = `📌 Observación: Monitorea si la tendencia de votos cambia o si el volumen empieza a subir.`;
+      type = gap > 0 ? 'positive' : 'negative';
+    }
+
+    return { title, message, hint, type };
   }
 
   getGap(option: MarketOption): number {

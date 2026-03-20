@@ -2,7 +2,7 @@
     <!-- Info Popover Backdrop -->
     <div class="popover-backdrop" *ngIf="showInfoPopover" (click)="closeInfoPopover()"></div>
 
-    <!-- 1. Intuición Fierce Section (Progress Bars) -->
+    <!-- 1. Intuición Fierce Section -->
     <div class="analysis-section fierce-intuition-section">
         <div class="widget-header">
             <div class="header-title">
@@ -32,7 +32,7 @@
 
     <div class="section-divider"></div>
 
-    <!-- 2. Mercado Real Section (Cards) -->
+    <!-- 2. Mercado Real Section -->
     <div class="analysis-section market-real-section">
         <div class="widget-header market-section-header">
             <div class="header-title">
@@ -59,40 +59,61 @@
 
     <div class="section-divider"></div>
 
-    <!-- 3. Análisis Comparativo Section (New Cards) -->
+    <!-- 3. Comparative & IA Analysis Section -->
     <div class="analysis-section comparative-analysis-section">
-        <div class="widget-header">
+        <div class="widget-header clickable" (click)="toggleAnalysis()">
             <div class="header-title">
                 <span class="purple-flame">🔥</span>
                 <h3>Intuición Fierce vs Mercado</h3>
             </div>
-            <div class="ia-tag">IA Analisis</div>
-        </div>
-
-        <div class="binary-cards">
-            <div class="binary-card" *ngFor="let option of predictionData.options">
-                <div class="card-title">{{ option.name.toUpperCase() }}</div>
-                <div class="card-grid">
-                    <div class="grid-col">
-                        <span class="grid-label">INTUICIÓN</span>
-                        <span class="grid-value intuition">{{ option.fierceIntuition }}%</span>
-                    </div>
-                    <div class="grid-col">
-                        <span class="grid-label">MERCADO</span>
-                        <span class="grid-value market">{{ option.marketPrice }}%</span>
-                    </div>
-                    <div class="grid-col gap-col">
-                        <span class="grid-value gap">{{ Math.abs(option.gap) }}%</span>
-                    </div>
+            <div class="header-actions">
+                <div class="ia-tag" [class.active]="isAnalysisExpanded">
+                    IA Analisis <span class="toggle-icon">{{ isAnalysisExpanded ? '▲' : '▼' }}</span>
                 </div>
             </div>
         </div>
 
-        <div class="insight-bar">
-            <span class="insight-icon">💡</span>
-            <span class="insight-text">
-                La comunidad está {{ predictionData.options[0].gap > 0 ? 'más optimista' : 'más pesimista' }} que el mercado
-            </span>
+        <div class="expand-content" *ngIf="isAnalysisExpanded">
+            <div class="binary-cards">
+                <div class="binary-card" *ngFor="let option of predictionData.options">
+                    <div class="card-title">{{ option.name.toUpperCase() }}</div>
+                    <div class="card-grid">
+                        <div class="grid-col">
+                            <span class="grid-label">INTUICIÓN</span>
+                            <span class="grid-value intuition">{{ option.fierceIntuition }}%</span>
+                        </div>
+                        <div class="grid-col">
+                            <span class="grid-label">MERCADO</span>
+                            <span class="grid-value market">{{ option.marketPrice }}%</span>
+                        </div>
+                        <div class="grid-col gap-col">
+                            <span class="grid-value gap">{{ Math.abs(option.gap) }}%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="insight-bar">
+                <span class="insight-icon">💡</span>
+                <span class="insight-text">
+                    La comunidad está {{ predictionData.options[0].gap > 0 ? 'más optimista' : 'más pesimista' }} que el mercado
+                </span>
+            </div>
+
+            <div class="ai-automated-report">
+                <div class="report-header">
+                    <h4>ANÁLISIS GENERADO AUTOMÁTICAMENTE</h4>
+                </div>
+                
+                <div class="option-report-card" *ngFor="let option of predictionData.options" 
+                     [class]="getOptionAnalysis(option).type">
+                    <div class="report-title">{{ getOptionAnalysis(option).title }}</div>
+                    <div class="report-body">
+                        <p class="analysis-text">{{ getOptionAnalysis(option).message }}</p>
+                        <p class="suggestion-text">{{ getOptionAnalysis(option).hint }}</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
