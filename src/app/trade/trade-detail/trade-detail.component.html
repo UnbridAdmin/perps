@@ -16,7 +16,7 @@
     <h1 class="prediction-title">{{ tradeData?.prediction?.prediction_title || 'Loading prediction...' }}</h1>
     <div class="stats">
       <div class="stat-item">
-        <span>🔥</span>
+        <!-- <span>🔥</span> -->
         <span>{{ tradeData?.prediction?.totalVolume | number:'1.0-2' }} F Vol.</span>
       </div>
     </div>
@@ -25,28 +25,28 @@
   <div class="main-content">
     <div class="left-column">
       <app-outcome [tradeData]="tradeData" (onSelectOption)="selectedOptionData = $event"></app-outcome>
-      
+
       <!-- Featured Comment Section (King of the Hill) -->
       <div class="featured-comment-container-standalone">
         <app-featured-comment [comment]="currentPrediction?.featuredComment"
           (overthrow)="toggleOverthrowForm()"></app-featured-comment>
-  
+
         <!-- In-line Overthrow Form (Accordion Style) -->
         <div class="overthrow-form-container" *ngIf="overthrowForm.isExpanded">
           <div class="overthrow-header">
             <i class="fa-solid fa-crown"></i> Destrona al Rey
           </div>
-  
+
           <div class="overthrow-body">
             <div class="input-row">
               <div class="user-avatar-small">
                 <img src="https://api.dicebear.com/9.x/fun-emoji/svg?seed=you" alt="You">
               </div>
               <div class="input-area">
-                <textarea placeholder="Escribe tu mensaje para ser el nuevo Rey..."
-                  [(ngModel)]="overthrowForm.text" rows="2">
+                <textarea placeholder="Escribe tu mensaje para ser el nuevo Rey..." [(ngModel)]="overthrowForm.text"
+                  rows="2">
                 </textarea>
-  
+
                 <!-- GIF Preview -->
                 <div class="gif-preview-mini" *ngIf="overthrowForm.gifUrl">
                   <img [src]="overthrowForm.gifUrl" alt="GIF">
@@ -54,15 +54,14 @@
                     <i class="fa-solid fa-circle-xmark"></i>
                   </button>
                 </div>
-  
+
                 <!-- GIF Input -->
                 <div class="gif-url-input-mini" *ngIf="overthrowForm.showGifInput">
-                  <input type="text" [(ngModel)]="overthrowForm.gifUrl"
-                    placeholder="GIF URL...">
+                  <input type="text" [(ngModel)]="overthrowForm.gifUrl" placeholder="GIF URL...">
                 </div>
               </div>
             </div>
-  
+
             <div class="overthrow-actions">
               <div class="left-tools">
                 <button class="tool-btn" (click)="toggleOverthrowGifInput()"
@@ -77,8 +76,8 @@
                 <button class="overthrow-btn" (click)="submitOverthrow()"
                   [disabled]="!(overthrowForm.text.trim() || overthrowForm.gifUrl.trim()) || overthrowForm.isSubmitting">
                   <span *ngIf="!overthrowForm.isSubmitting">Dethrone</span>
-                  <span *ngIf="overthrowForm.isSubmitting"><i
-                      class="fa-solid fa-circle-notch fa-spin"></i> Processing...</span>
+                  <span *ngIf="overthrowForm.isSubmitting"><i class="fa-solid fa-circle-notch fa-spin"></i>
+                    Processing...</span>
                 </button>
                 <button class="cancel-link" (click)="cancelOverthrow()">Cancel</button>
               </div>
@@ -94,7 +93,8 @@
         [predictionTitle]="tradeData?.prediction?.prediction_title"
         [predictionType]="tradeData?.prediction?.prediction_type" [options]="tradeData?.options"
         [predictionId]="predictionId"></app-trading-panel>
-      <app-intuition-vs-market-analysis [predictionTitle]="tradeData?.prediction?.prediction_title"></app-intuition-vs-market-analysis>
+      <app-intuition-vs-market-analysis
+        [predictionTitle]="tradeData?.prediction?.prediction_title"></app-intuition-vs-market-analysis>
     </div>
   </div>
 </div>
