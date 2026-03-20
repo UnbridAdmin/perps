@@ -5,6 +5,7 @@ import { OutcomeComponent } from '../outcome/outcome.component';
 import { TradingPanelComponent } from '../trading-panel/trading-panel.component';
 import { PostCommentsComponent } from '../../shared/post-prediction/components/post-comments/post-comments.component';
 import { PriceTrendComponent } from '../price-trend/price-trend.component';
+import { IntuitionVsMarketAnalysisComponent } from '../intuition-vs-market-analysis/intuition-vs-market-analysis.component';
 import { FeaturedCommentComponent } from '../../shared/post-prediction/components/featured-comment/featured-comment.component';
 import { TradeService } from '../trade.service';
 import { AuthorizationService } from '../../services/authorization.service';
@@ -19,7 +20,7 @@ import { firstValueFrom } from 'rxjs';
 @Component({
   selector: 'app-trade-detail',
   standalone: true,
-  imports: [CommonModule, OutcomeComponent, TradingPanelComponent, PostCommentsComponent, PriceTrendComponent, FeaturedCommentComponent, FormsModule],
+  imports: [CommonModule, OutcomeComponent, TradingPanelComponent, PostCommentsComponent, IntuitionVsMarketAnalysisComponent, FeaturedCommentComponent, FormsModule],
   templateUrl: './trade-detail.component.html',
   styleUrl: './trade-detail.component.scss',
 })
@@ -29,7 +30,7 @@ export class TradeDetailComponent implements OnInit {
   currentPrediction: any = null;
   selectedOptionData: any = null;
   isLoading = false;
-  
+
   // Overthrow form state
   overthrowForm = {
     isExpanded: false,

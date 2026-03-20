@@ -1,0 +1,113 @@
+<div class="intuition-market-analysis-container" *ngIf="predictionData">
+    <!-- Info Popover Backdrop -->
+    <div class="popover-backdrop" *ngIf="showInfoPopover" (click)="closeInfoPopover()"></div>
+
+    <!-- 1. Intuición Fierce Section (Progress Bars) -->
+    <div class="analysis-section fierce-intuition-section">
+        <div class="widget-header">
+            <div class="header-title">
+                <span class="flame-icon">🔥</span>
+                <h3>Intuición Fierce</h3>
+                <button class="info-btn" (click)="toggleInfoPopover()">
+                    <span class="info-icon">ⓘ</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="fierce-ranking">
+            <div class="ranking-card" *ngFor="let option of predictionData.options; let i = index">
+                <div class="rank-circle">{{ i + 1 }}</div>
+                <div class="option-content">
+                    <div class="option-row">
+                        <span class="option-name">{{ option.name }}</span>
+                        <span class="option-percentage">{{ option.fierceIntuition }}%</span>
+                    </div>
+                    <div class="custom-progress-bar">
+                        <div class="bar-fill" [style.width]="getBarWidth(option.fierceIntuition)"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- 2. Mercado Real Section (Cards) -->
+    <div class="analysis-section market-real-section">
+        <div class="widget-header market-section-header">
+            <div class="header-title">
+                <span class="money-icon">💰</span>
+                <h3>Mercado Real</h3>
+            </div>
+        </div>
+
+        <div class="market-list">
+            <div class="market-card" *ngFor="let option of predictionData.options">
+                <div class="market-top">
+                    <span class="option-name">{{ option.name }}</span>
+                    <div class="market-metrics">
+                        <span class="market-val">{{ option.marketPrice }}%</span>
+                        <span class="market-vol">{{ option.volume }}</span>
+                    </div>
+                </div>
+                <div class="market-bottom" [class.pos]="option.gap > 0" [class.neg]="option.gap < 0">
+                    <span class="gap-indicator">{{ option.gap > 0 ? '↑' : '↓' }} {{ Math.abs(option.gap) }}% gap</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- 3. Análisis Comparativo Section (New Cards) -->
+    <div class="analysis-section comparative-analysis-section">
+        <div class="widget-header">
+            <div class="header-title">
+                <span class="purple-flame">🔥</span>
+                <h3>Intuición Fierce vs Mercado</h3>
+            </div>
+            <div class="ia-tag">IA Analisis</div>
+        </div>
+
+        <div class="binary-cards">
+            <div class="binary-card" *ngFor="let option of predictionData.options">
+                <div class="card-title">{{ option.name.toUpperCase() }}</div>
+                <div class="card-grid">
+                    <div class="grid-col">
+                        <span class="grid-label">INTUICIÓN</span>
+                        <span class="grid-value intuition">{{ option.fierceIntuition }}%</span>
+                    </div>
+                    <div class="grid-col">
+                        <span class="grid-label">MERCADO</span>
+                        <span class="grid-value market">{{ option.marketPrice }}%</span>
+                    </div>
+                    <div class="grid-col gap-col">
+                        <span class="grid-value gap">{{ Math.abs(option.gap) }}%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="insight-bar">
+            <span class="insight-icon">💡</span>
+            <span class="insight-text">
+                La comunidad está {{ predictionData.options[0].gap > 0 ? 'más optimista' : 'más pesimista' }} que el mercado
+            </span>
+        </div>
+    </div>
+
+    <!-- Info Popover -->
+    <div class="info-popover" *ngIf="showInfoPopover">
+        <div class="popover-header">
+            <span class="popover-title">💡 ¿Qué significa esto?</span>
+        </div>
+        <div class="popover-content">
+            <p>La <strong>Intuición Fierce</strong> muestra cómo votó la comunidad de holders.</p>
+            <p>Cuando hay un <strong>GAP grande</strong> entre intuición y mercado, puede ser una <strong>oportunidad de trading</strong>.</p>
+            <div class="example-box">
+                <p class="example-title">Ejemplo:</p>
+                <p>Si la comunidad dice <span class="highlight">78%</span> pero el mercado solo <span class="highlight">45%</span>, el mercado podría estar subvaluando esta opción.</p>
+            </div>
+        </div>
+    </div>
+</div>
