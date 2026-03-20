@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { PriceTrendService, IntuitionMarketGapData } from '../price-trend/price-trend.service';
@@ -26,6 +26,7 @@ interface PredictionData {
   styleUrl: './intuition-vs-market-analysis.component.scss',
 })
 export class IntuitionVsMarketAnalysisComponent implements OnInit, OnDestroy {
+  @Input() predictionTitle: string = '';
   predictionData: PredictionData | null = null;
   showInfoPopover = false;
   isAnalysisExpanded = true;
@@ -115,29 +116,71 @@ export class IntuitionVsMarketAnalysisComponent implements OnInit, OnDestroy {
     let hint = '';
 
     if (gap >= 30) {
-      title = `🔵 GAP GRANDE POSITIVO: +${gap}%`;
+      title = `🔵 ${option.name.toUpperCase()} (GAP +${gap}%)`;
       message = `La comunidad (${option.fierceIntuition}%) es significativamente más optimista que el mercado (${option.marketPrice}%).`;
       hint = `📌 Oportunidad: Si crees que el mercado eventualmente subirá para alcanzar la intuición, podrías comprar antes de que otros reaccionen.`;
       type = 'positive';
     } else if (gap <= -30) {
-      title = `🟢 GAP GRANDE NEGATIVO: ${gap}%`;
+      title = `🟢 ${option.name.toUpperCase()} (GAP ${gap}%)`;
       message = `El mercado (${option.marketPrice}%) confía mucho más en esta opción que la comunidad (${option.fierceIntuition}%).`;
       hint = `📌 Oportunidad inversa: El dinero ("smart money") ve valor real aquí. Podría ser una oportunidad de compra antes de que la comunidad lo descubra.`;
       type = 'negative';
     } else if (gap > -10 && gap < 10) {
-      title = `⚪ GAP PEQUEÑO: ${gap >= 0 ? '+' : ''}${gap}%`;
+      title = `⚪ ${option.name.toUpperCase()} (GAP ${gap >= 0 ? '+' : ''}${gap}%)`;
       message = `La comunidad (${option.fierceIntuition}%) y el mercado (${option.marketPrice}%) están alineados.`;
       hint = `📌 Neutral: La señal es clara y aceptada por todos. No hay discrepancias significativas para arbitraje.`;
       type = 'neutral';
     } else {
       // Intermediate cases
-      title = `🟡 GAP MODERADO: ${gap >= 0 ? '+' : ''}${gap}%`;
+      title = `🟡 ${option.name.toUpperCase()} (GAP ${gap >= 0 ? '+' : ''}${gap}%)`;
       message = `Existe una discrepancia moderada entre la opinión (${option.fierceIntuition}%) y el precio real (${option.marketPrice}%).`;
       hint = `📌 Observación: Monitorea si la tendencia de votos cambia o si el volumen empieza a subir.`;
       type = gap > 0 ? 'positive' : 'negative';
     }
 
     return { title, message, hint, type };
+  }
+
+  copyAIPrompt() {
+    if (!this.predictionData) return;
+
+    let tableData = '| Opción | Intuición | Mercado | GAP |\n| :--- | :--- | :--- | :--- |\n';
+    this.predictionData.options.forEach(opt => {
+      tableData += `| ${opt.name} | ${opt.fierceIntuition}% | ${opt.marketPrice}% | ${opt.gap >= 0 ? '+' : ''}${opt.gap}% |\n`;
+    });
+
+    const prompt = `📊 ANÁLISIS DE PREDICCIÓN EN PLATAFORMA DE MERCADOS
+
+🎯 Título de la predicción:
+${this.predictionTitle || 'Predicción actual'}
+
+📌 CONTEXTO:
+- Intuición Fierce = % de votos populares de la comunidad (holders)
+- Mercado Real = % de probabilidad según el dinero apostado (precio)
+- GAP = Intuición - Mercado (diferencia)
+  - GAP positivo (+): la comunidad cree más que el dinero
+  - GAP negativo (-): el dinero cree más que la comunidad
+  - GAP grande (>30% o <-30%) puede indicar oportunidades
+
+📊 DATOS DE LA PREDICCIÓN:
+
+${tableData}
+
+🔍 INSTRUCCIONES PARA EL ANÁLISIS:
+
+Genera un análisis para cada opción que incluya:
+
+1️⃣ PARA PRINCIPIANTES (lenguaje simple, enfoque en qué significa y qué hacer)
+2️⃣ PARA AVANZADOS (términos de trading, oportunidades de arbitraje, señales)
+3️⃣ CONCLUSIÓN GENERAL (una frase que resuma el estado actual de la predicción)
+
+Usa los GAPs para identificar posibles oportunidades o riesgos. Aplica la lógica de que los GAPs grandes tienden a converger con el tiempo.`;
+
+    navigator.clipboard.writeText(prompt).then(() => {
+      // You could add a temporary toast or change button text here
+      console.log('Prompt copiado al portapapeles');
+      alert('Prompt copiado al portapapeles con éxito');
+    });
   }
 
   getGap(option: MarketOption): number {

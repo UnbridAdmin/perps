@@ -113,6 +113,14 @@
                         <p class="suggestion-text">{{ getOptionAnalysis(option).hint }}</p>
                     </div>
                 </div>
+
+                <!-- NEW: Copy Prompt Button -->
+                <div class="copy-prompt-container">
+                    <button class="copy-prompt-btn" (click)="copyAIPrompt()">
+                        <i class="fa-solid fa-copy"></i> Copiar Prompt para tu IA favorita
+                    </button>
+                    <p class="copy-hint">Copia estos datos para obtener un análisis profundo en ChatGPT, Claude o tu IA preferida.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -123,11 +131,15 @@
             <span class="popover-title">💡 ¿Qué significa esto?</span>
         </div>
         <div class="popover-content">
-            <p>La <strong>Intuición Fierce</strong> muestra cómo votó la comunidad de holders.</p>
-            <p>Cuando hay un <strong>GAP grande</strong> entre intuición y mercado, puede ser una <strong>oportunidad de trading</strong>.</p>
+            <p><strong>Intuición Fierce</strong> = Voto popular de holders.</p>
+            <p><strong>Mercado Real</strong> = Fierce apostado.</p>
+            <p>El <strong>GAP</strong> es la diferencia entre ambos.</p>
+            
+            <p><strong>GAP grande (+)</strong> → La comunidad cree más que el dinero.</p>
+            <p><strong>GAP grande (-)</strong> → El dinero cree más que la comunidad.</p>
+            
             <div class="example-box">
-                <p class="example-title">Ejemplo:</p>
-                <p>Si la comunidad dice <span class="highlight">78%</span> pero el mercado solo <span class="highlight">45%</span>, el mercado podría estar subvaluando esta opción.</p>
+                <p>Los GAPs grandes suelen señalar oportunidades, porque eventualmente intuición y mercado tienden a converger.</p>
             </div>
         </div>
     </div>
