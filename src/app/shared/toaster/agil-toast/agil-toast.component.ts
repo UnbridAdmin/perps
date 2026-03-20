@@ -11,9 +11,9 @@ import {
   import { Toast, ToastrService, ToastPackage } from 'ngx-toastr';
   
   @Component({
-    selector: 'app-toast',
-    styleUrls: ['./toast.component.scss'],
-    templateUrl: './toast.component.html',
+    selector: 'app-agil-toast',
+    styleUrls: ['./agil-toast.component.scss'],
+    templateUrl: './agil-toast.component.html',
     animations: [
         trigger('flyInOut', [
             state('inactive', style({
@@ -42,7 +42,7 @@ import {
     preserveWhitespaces: false,
     standalone: false
 })
-  export class ToastComponent extends Toast {
+  export class AgilToastComponent extends Toast {
     // used for demo purposes
     undoString = 'undo';
   

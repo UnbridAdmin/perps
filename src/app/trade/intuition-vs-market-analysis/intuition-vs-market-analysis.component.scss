@@ -1,0 +1,434 @@
+@use '../../../styles/variables' as *;
+
+.intuition-market-analysis-container {
+  background: #111214;
+  border: 1px solid #2f3336;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  font-family: 'Inter', sans-serif;
+  color: white;
+}
+
+.section-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, #2f3336, transparent);
+  margin: 32px 0;
+}
+
+.widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  &.clickable {
+    cursor: pointer;
+    &:hover h3 { color: #ba68c8; }
+  }
+
+  .header-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .flame-icon, .money-icon, .purple-flame {
+      font-size: 20px;
+    }
+    
+    .money-icon { color: #00e676; }
+    .purple-flame { color: #9c27b0; }
+
+    h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: white;
+      margin: 0;
+      transition: color 0.2s;
+    }
+
+    .info-btn {
+      background: rgba(156, 39, 176, 0.1);
+      border: 1px solid rgba(156, 39, 176, 0.2);
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      color: #ba68c8;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      
+      &:hover {
+        background: rgba(156, 39, 176, 0.2);
+      }
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+  }
+
+  .ia-tag {
+    background: rgba(255, 255, 255, 0.05);
+    color: #94a3b8;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+
+    &.active {
+      background: rgba(156, 39, 176, 0.15);
+      border-color: rgba(156, 39, 176, 0.4);
+      color: #e040fb;
+    }
+
+    .toggle-icon {
+      font-size: 9px;
+    }
+  }
+}
+
+// 1. Fierce Ranking Section
+.fierce-ranking {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ranking-card {
+  background: #18191c;
+  border: 1px solid #2f3336;
+  border-radius: 10px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.rank-circle {
+  width: 28px;
+  height: 28px;
+  background: #9c27b0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 13px;
+  font-weight: 800;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(156, 39, 176, 0.3);
+}
+
+.option-content {
+  flex: 1;
+
+  .option-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+
+    .option-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .option-percentage {
+      font-size: 15px;
+      font-weight: 800;
+      color: #e040fb;
+    }
+  }
+
+  .custom-progress-bar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    overflow: hidden;
+
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #9c27b0, #ba68c8);
+      border-radius: 4px;
+    }
+  }
+}
+
+// 2. Real Market Section
+.market-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.market-card {
+  background: #16181c;
+  border: 1px solid #2f3336;
+  border-radius: 10px;
+  padding: 16px 20px;
+}
+
+.market-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+
+  .option-name {
+    font-size: 16px;
+    font-weight: 800;
+    color: white;
+  }
+
+  .market-metrics {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .market-val {
+      font-size: 16px;
+      font-weight: 800;
+      color: #00e676;
+    }
+
+    .market-vol {
+      font-size: 11px;
+      color: #94a3b8;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+  }
+}
+
+.market-bottom {
+  display: flex;
+  justify-content: flex-end;
+
+  .gap-indicator {
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  &.pos .gap-indicator { color: #00e676; }
+  &.neg .gap-indicator { color: #f87171; }
+}
+
+// 3. Comparative Cards Section
+.binary-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.binary-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid #2f3336;
+  border-radius: 12px;
+  padding: 18px 24px;
+
+  .card-title {
+    font-size: 14px;
+    font-weight: 900;
+    color: white;
+    margin-bottom: 16px;
+    letter-spacing: 0.8px;
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 0.5fr;
+    align-items: end;
+  }
+
+  .grid-col {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .grid-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #6b7280;
+    letter-spacing: 1px;
+  }
+
+  .grid-value {
+    font-size: 22px;
+    font-weight: 900;
+
+    &.intuition { color: #e040fb; }
+    &.market { color: #00e676; }
+    &.gap {
+      color: white;
+      text-align: right;
+    }
+  }
+}
+
+.insight-bar {
+  background: rgba(156, 39, 176, 0.1);
+  border: 1px solid rgba(156, 39, 176, 0.2);
+  border-radius: 10px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+
+  .insight-icon { font-size: 18px; }
+  .insight-text {
+    font-size: 14px;
+    color: #ba68c8;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+}
+
+// AI Automated Report
+.ai-automated-report {
+  .report-header {
+    margin-bottom: 16px;
+    h4 {
+      font-size: 12px;
+      font-weight: 900;
+      color: #94a3b8;
+      letter-spacing: 1px;
+      margin: 0;
+    }
+  }
+
+  .option-report-card {
+    background: #18191c;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 12px;
+    border-left: 4px solid #2f3336;
+    transition: transform 0.2s;
+
+    &:hover {
+      transform: translateX(4px);
+    }
+
+    &.positive { border-left-color: #e040fb; }
+    &.negative { border-left-color: #00e676; }
+    &.neutral { border-left-color: #6b7280; }
+
+    .report-title {
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    &.positive .report-title { color: #e040fb; }
+    &.negative .report-title { color: #00e676; }
+    &.neutral .report-title { color: #94a3b8; }
+
+    .report-body {
+      .analysis-text {
+        font-size: 13px;
+        color: #e2e8f0;
+        margin: 0 0 8px 0;
+        line-height: 1.5;
+      }
+
+      .suggestion-text {
+        font-size: 13px;
+        color: #ba68c8;
+        font-weight: 600;
+        margin: 8px 0 0 0;
+      }
+    }
+  }
+
+  .copy-prompt-container {
+    margin-top: 24px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px dashed rgba(156, 39, 176, 0.3);
+    border-radius: 12px;
+    text-align: center;
+
+    .copy-prompt-btn {
+      background: linear-gradient(135deg, #9c27b0, #ba68c8);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 15px rgba(156, 39, 176, 0.2);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(156, 39, 176, 0.4);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+
+      i { font-size: 16px; }
+    }
+
+    .copy-hint {
+      font-size: 12px;
+      color: #71767b;
+      margin-top: 12px;
+      margin-bottom: 0;
+    }
+  }
+}
+
+// Popover
+.info-popover {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: #1a1d23;
+  border: 1px solid #2f3336;
+  border-radius: 16px;
+  padding: 24px;
+  width: 90%; max-width: 400px;
+  z-index: 101;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+
+  .popover-header { margin-bottom: 16px; }
+  .popover-title {
+    font-size: 18px; font-weight: 800; color: #9c27b0;
+  }
+  .popover-content {
+    color: #e2e8f0; font-size: 15px; line-height: 1.6;
+    p { margin-bottom: 16px; }
+    strong { color: #9c27b0; }
+    .example-box {
+      background: rgba(156, 39, 176, 0.1);
+      border: 1px solid rgba(156, 39, 176, 0.2);
+      border-radius: 12px;
+      padding: 16px;
+      .example-title { color: #9c27b0; font-weight: 700; margin-bottom: 8px; }
+    }
+  }
+}
+.popover-backdrop {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7); z-index: 100; backdrop-filter: blur(4px);
+}

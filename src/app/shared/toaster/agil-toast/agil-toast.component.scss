@@ -1,18 +1,22 @@
+@use '../../../../styles/variables' as *;
+
 :host {
-  background-color: var(--color-secondary-6);
+  background-color: $background-color;
   position: fixed;
   right: 10px;
   opacity: 0.9;
   border-radius: 5px;
-  color: var(--color-secondary-7);
+  color: $text-primary;
 }
 
 :host.border-blue {
   //border-left: 4px solid #04c4f3;
 }
+
 :host.border-green {
   //border-left: 4px solid #51d21a;
 }
+
 :host.border-red {
   //border-left: 4px solid red;
 }
@@ -21,14 +25,18 @@
   background-color: transparent;
   min-height: 85px;
   padding-bottom: 25px;
+
   .toast-content {
     display: flex;
+
     .toast-left-content {
       width: 20%;
+
       .notification-icon {
         margin-left: 15px;
         margin-top: 30%;
         width: 25%;
+
         img {
           width: auto;
           height: 49px;
@@ -36,16 +44,19 @@
         }
       }
     }
+
     // .notification-header {
     //   display: flex;
     //   margin-top: 10px;
     // }
     .toast-right-content {
       width: 80%;
+
       .notification-close-icon {
         float: right;
         position: relative;
         top: 8px;
+
         img {
           float: right;
           margin-right: 15px;
@@ -54,15 +65,17 @@
           text-align: right;
         }
       }
+
       .notification-title {
         width: 100%;
         float: left;
         font-weight: 600;
         margin-left: 15px;
-        color:var(--color-secondary-5);
+        color: $text-primary;
       }
+
       .notification-message {
-        color:var(--color-secondary-5);
+        color: $text-primary;
         width: 100%;
         margin-top: 20px;
         margin-top: 13px;
@@ -72,7 +85,8 @@
       }
     }
   }
-  .toast-progress{
-    background-color: var(--color-secondary-2);
+
+  .toast-progress {
+    background-color: $primary-color;
   }
 }

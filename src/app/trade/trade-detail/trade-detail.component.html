@@ -25,13 +25,76 @@
   <div class="main-content">
     <div class="left-column">
       <app-outcome [tradeData]="tradeData" (onSelectOption)="selectedOptionData = $event"></app-outcome>
-      <app-comments></app-comments>
+      
+      <!-- Featured Comment Section (King of the Hill) -->
+      <div class="featured-comment-container-standalone">
+        <app-featured-comment [comment]="currentPrediction?.featuredComment"
+          (overthrow)="toggleOverthrowForm()"></app-featured-comment>
+  
+        <!-- In-line Overthrow Form (Accordion Style) -->
+        <div class="overthrow-form-container" *ngIf="overthrowForm.isExpanded">
+          <div class="overthrow-header">
+            <i class="fa-solid fa-crown"></i> Destrona al Rey
+          </div>
+  
+          <div class="overthrow-body">
+            <div class="input-row">
+              <div class="user-avatar-small">
+                <img src="https://api.dicebear.com/9.x/fun-emoji/svg?seed=you" alt="You">
+              </div>
+              <div class="input-area">
+                <textarea placeholder="Escribe tu mensaje para ser el nuevo Rey..."
+                  [(ngModel)]="overthrowForm.text" rows="2">
+                </textarea>
+  
+                <!-- GIF Preview -->
+                <div class="gif-preview-mini" *ngIf="overthrowForm.gifUrl">
+                  <img [src]="overthrowForm.gifUrl" alt="GIF">
+                  <button class="remove-btn" (click)="overthrowForm.gifUrl = ''">
+                    <i class="fa-solid fa-circle-xmark"></i>
+                  </button>
+                </div>
+  
+                <!-- GIF Input -->
+                <div class="gif-url-input-mini" *ngIf="overthrowForm.showGifInput">
+                  <input type="text" [(ngModel)]="overthrowForm.gifUrl"
+                    placeholder="GIF URL...">
+                </div>
+              </div>
+            </div>
+  
+            <div class="overthrow-actions">
+              <div class="left-tools">
+                <button class="tool-btn" (click)="toggleOverthrowGifInput()"
+                  [class.active]="overthrowForm.showGifInput">
+                  <i class="fa-solid fa-photo-film"></i>
+                </button>
+              </div>
+              <div class="right-actions">
+                <div class="cost-info">
+                  🔥 Burns <span>{{ (currentPrediction?.featuredComment?.burnedAmount || 0) + 1 }} F</span>
+                </div>
+                <button class="overthrow-btn" (click)="submitOverthrow()"
+                  [disabled]="!(overthrowForm.text.trim() || overthrowForm.gifUrl.trim()) || overthrowForm.isSubmitting">
+                  <span *ngIf="!overthrowForm.isSubmitting">Dethrone</span>
+                  <span *ngIf="overthrowForm.isSubmitting"><i
+                      class="fa-solid fa-circle-notch fa-spin"></i> Processing...</span>
+                </button>
+                <button class="cancel-link" (click)="cancelOverthrow()">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <app-post-comments [predictionId]="predictionId" [prediction]="currentPrediction"></app-post-comments>
     </div>
     <div class="right-column">
       <app-trading-panel [optionData]="selectedOptionData" [userBalance]="tradeData?.user_balance"
         [predictionTitle]="tradeData?.prediction?.prediction_title"
-        [predictionType]="tradeData?.prediction?.prediction_type" [options]="tradeData?.options"></app-trading-panel>
-      <app-price-trend></app-price-trend>
+        [predictionType]="tradeData?.prediction?.prediction_type" [options]="tradeData?.options"
+        [predictionId]="predictionId"></app-trading-panel>
+      <app-intuition-vs-market-analysis [predictionTitle]="tradeData?.prediction?.prediction_title"></app-intuition-vs-market-analysis>
     </div>
   </div>
 </div>

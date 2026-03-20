@@ -22,6 +22,7 @@ export class TradingPanelComponent implements OnInit {
   @Input() predictionTitle: string = '';
   @Input() predictionType: string = 'MULTIPLE';
   @Input() options: any[] = [];
+  @Input() predictionId: number = 0;
 
   isBuyMode = true;
   selectedOption: 'yes' | 'no' = 'yes';
@@ -71,7 +72,7 @@ export class TradingPanelComponent implements OnInit {
 
       // Extract data for the selected side
       const selectedObj = this.selectedOption === 'yes' ? yesOption : noOption;
-      
+
       if (selectedObj) {
         this.predictionOptionId = selectedObj.option_multiple_id;
         if (this.selectedOption === 'yes') {
@@ -88,7 +89,7 @@ export class TradingPanelComponent implements OnInit {
       this.yesPrice = Number(this.optionData.price) || 0;
       this.noPrice = Number((1 - this.yesPrice).toFixed(5));
       this.predictionOptionId = this.optionData.option_multiple_id;
-      
+
       // Handle YES/NO shares and avg prices for MULTIPLE
       if (this.selectedOption === 'yes') {
         this.userShares = Number(this.optionData.user_shares_yes) || 0;
@@ -236,6 +237,7 @@ export class TradingPanelComponent implements OnInit {
 
     // Pass data to modal
     modalRef.componentInstance.predictionTitle = this.predictionTitle;
+    modalRef.componentInstance.predictionId = this.predictionId.toString();
     if (this.predictionType === 'BINARY') {
       modalRef.componentInstance.optionTitle = this.selectedOption === 'yes' ? 'YES' : 'NO';
     } else {

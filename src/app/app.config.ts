@@ -1,4 +1,4 @@
-import { ApplicationConfig } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
@@ -10,14 +10,14 @@ import { AuthorizationService } from './services/authorization.service';
 import { WalletConnectService } from './services/walletconnect.service';
 import { CommonService } from './shared/commonService';
 import { CacheService } from './services/cache.service';
-import { ToastComponent } from './shared/toast/toast.component';
+import { AgilToastComponent } from './shared/toaster/agil-toast/agil-toast.component';
+import { SharedModule } from './shared/shared.module';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideHttpClient(withFetch()),
     provideAnimations(),
-    provideToastr(),
     ApiServices,
     AuthorizationService,
     WalletConnectService,
@@ -29,7 +29,8 @@ export const appConfig: ApplicationConfig = {
       preventDuplicates: true,
       enableHtml: true,
       progressBar: true,
-      toastComponent: ToastComponent
+      toastComponent: AgilToastComponent
     }),
+    importProvidersFrom(SharedModule)
   ],
 };

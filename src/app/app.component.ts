@@ -4,7 +4,6 @@ import { Router, RouterOutlet, NavigationEnd, ActivatedRoute } from '@angular/ro
 import { HeaderComponent } from './header/header.component';
 import { SidebarMenuComponent } from './sidebar-menu/sidebar-menu.component';
 import { NewsComponent } from './news/news.component';
-import { ToastComponent } from './shared/toast/toast.component';
 import { WalletConnectService, WalletState } from './services/walletconnect.service';
 import { CommonService } from './shared/commonService';
 import { AuthorizationService } from './services/authorization.service';
@@ -510,7 +509,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.activeTab = tab;
     // Si estamos en home, actualizar el componente
     if (this.isHomePage) {
-      this.router.navigate(['/home'], { 
+      this.router.navigate(['/home'], {
         queryParams: { tab },
         queryParamsHandling: 'merge'
       });

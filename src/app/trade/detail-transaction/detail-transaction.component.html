@@ -60,5 +60,9 @@
                 Confirmar {{ isBuyMode ? 'Compra' : 'Venta' }}
             </button>
         </div>
+
+        <div class="comments-container" *ngIf="predictionId">
+            <app-comments [predictionId]="predictionId"></app-comments>
+        </div>
     </div>
 </div>

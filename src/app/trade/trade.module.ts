@@ -20,7 +20,7 @@ import { OutcomeComponent } from './outcome/outcome.component';
     GraphComponent,
     ResolutionComponent,
     TradingPanelComponent,
-    OutcomeComponent
+    OutcomeComponent,
   ]
 })
 export class TradeModule { }
