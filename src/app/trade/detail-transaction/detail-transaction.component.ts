@@ -1,11 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { CommentsComponent } from '../comments/comments.component';
 
 @Component({
     selector: 'app-detail-transaction',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, CommentsComponent],
     templateUrl: './detail-transaction.component.html',
     styleUrl: './detail-transaction.component.scss'
 })
@@ -16,6 +17,7 @@ export class DetailTransactionComponent {
     @Input() isBuyMode: boolean = true;
     @Input() price: number = 0;
     @Input() potentialReturn: number = 0; // profit for buy, proceeds for sell
+    @Input() predictionId: string = '';
 
     constructor(private activeModal: NgbActiveModal) { }
 
