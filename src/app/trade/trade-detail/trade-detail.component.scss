@@ -11,23 +11,35 @@
 
 .back-button {
   padding: 16px;
-  button {
-    background: none;
-    border: none;
-    color: $text-primary;
-    cursor: pointer;
-    font-size: 16px;
+
+  .back-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+
     &:hover {
-      color: $primary-color;
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateX(-4px);
+    }
+
+    i {
+      font-size: 1.8rem;
+      color: #fff;
+      position: relative;
+      top: 1px;
     }
   }
 }
 
 .prediction-header {
-  border-bottom: 1px solid $border-color;
+  //border-bottom: 1px solid $border-color;
   padding: 16px;
 }
 
@@ -84,6 +96,12 @@
   display: flex;
   align-items: center;
   gap: 8px;
+
+  span {
+    font-size: 1.5rem;
+    color: $money-green;
+    font-weight: 700;
+  }
 }
 
 
@@ -110,7 +128,7 @@
 
 .featured-comment-container-standalone {
   margin: 0 16px;
-  
+
   ::ng-deep .featured-comment-container {
     max-width: 100%;
     margin: 0;
@@ -158,7 +176,12 @@
         border-radius: 50%;
         overflow: hidden;
         flex-shrink: 0;
-        img { width: 100%; height: 100%; object-fit: cover; }
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
       }
 
       .input-area {
@@ -173,7 +196,10 @@
           resize: none;
           outline: none;
           padding: 4px 0;
-          &::placeholder { color: rgba(255, 255, 255, 0.4); }
+
+          &::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+          }
         }
 
         .gif-preview-mini {
@@ -185,7 +211,12 @@
           border-radius: 12px;
           overflow: hidden;
           border: 1px solid rgba(247, 208, 68, 0.2);
-          img { width: 100%; display: block; }
+
+          img {
+            width: 100%;
+            display: block;
+          }
+
           .remove-btn {
             position: absolute;
             top: 4px;
@@ -202,6 +233,7 @@
 
         .gif-url-input-mini {
           margin-top: 8px;
+
           input {
             width: 100%;
             background: rgba(255, 255, 255, 0.05);
@@ -211,7 +243,10 @@
             border-radius: 8px;
             font-size: 0.9rem;
             outline: none;
-            &:focus { border-color: #F7D044; }
+
+            &:focus {
+              border-color: #F7D044;
+            }
           }
         }
       }
@@ -228,6 +263,7 @@
       .left-tools {
         display: flex;
         gap: 8px;
+
         .tool-btn {
           background: transparent;
           border: none;
@@ -241,8 +277,14 @@
           align-items: center;
           justify-content: center;
           transition: background 0.2s;
-          &:hover { background: rgba(247, 208, 68, 0.1); }
-          &.active { background: rgba(247, 208, 68, 0.2); }
+
+          &:hover {
+            background: rgba(247, 208, 68, 0.1);
+          }
+
+          &.active {
+            background: rgba(247, 208, 68, 0.2);
+          }
         }
       }
 
@@ -255,7 +297,10 @@
           font-size: 0.8rem;
           color: #ff4b4b;
           font-weight: 700;
-          span { text-decoration: underline; }
+
+          span {
+            text-decoration: underline;
+          }
         }
 
         .overthrow-btn {
@@ -267,7 +312,11 @@
           font-weight: 800;
           font-size: 0.85rem;
           cursor: pointer;
-          &:disabled { opacity: 0.5; cursor: not-allowed; }
+
+          &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+          }
         }
 
         .cancel-link {
@@ -276,7 +325,10 @@
           color: rgba(255, 255, 255, 0.5);
           font-size: 0.85rem;
           cursor: pointer;
-          &:hover { color: white; }
+
+          &:hover {
+            color: white;
+          }
         }
       }
     }

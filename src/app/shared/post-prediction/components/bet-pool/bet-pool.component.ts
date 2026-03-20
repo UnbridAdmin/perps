@@ -20,8 +20,14 @@ export class BetPoolComponent {
     burnRate: number = 0.05; // 5% configurable
 
     onSelectOption(optionId: number) {
-        this.selectedOptionId = optionId;
-        this.calculatePotentialProfit();
+        if (this.selectedOptionId === optionId) {
+            // Toggle: si la opción ya está seleccionada, colapsar
+            this.selectedOptionId = null;
+            this.potentialProfit = 0;
+        } else {
+            this.selectedOptionId = optionId;
+            this.calculatePotentialProfit();
+        }
     }
 
     onAmountChange() {
@@ -44,19 +50,19 @@ export class BetPoolComponent {
 
         const newOptionPool = optionPool + this.betAmount;
         const newTotalPool = poolAmount + this.betAmount;
-        
+
         const userShare = (userInvestment + this.betAmount) / newOptionPool;
         const distributablePool = newTotalPool * (1 - this.burnRate);
-        
+
         const estimatedPayout = userShare * distributablePool;
         this.potentialProfit = estimatedPayout - (userInvestment + this.betAmount);
     }
 
     onConfirmVote() {
         if (this.selectedOptionId && this.betAmount > 0) {
-            this.vote.emit({ 
-                optionId: this.selectedOptionId, 
-                amount: this.betAmount 
+            this.vote.emit({
+                optionId: this.selectedOptionId,
+                amount: this.betAmount
             });
         }
     }

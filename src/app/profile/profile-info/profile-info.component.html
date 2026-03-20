@@ -11,7 +11,9 @@
 <ng-container *ngIf="!isLoading && userProfile">
   <!-- Top Header -->
   <div class="top-header">
-    <button routerLink="/home" class="back-btn">←</button>
+    <button routerLink="/home" class="back-btn">
+      <i class='bx bx-left-arrow-alt'></i>
+    </button>
     <div class="user-info">
       <div class="user-name">{{ userProfile.username }}</div>
       <div class="predictions-count">125 predictions</div>

@@ -107,12 +107,12 @@
         </div>
         <!-- Mechanic 2: Bet/Pot -->
         <div class="tab" (click)="toggleBetPopover(i)" [class.active]="activeBetPopover === i" title="Pool de apuestas">
-          🎲 {{ prediction.marketInfo?.poolAmount || '0' }}
+          🎲 <div class="money">{{ prediction.marketInfo?.poolAmount || '0' }}</div>
         </div>
         <!-- Mechanic 3: Trading Market -->
         <div class="tab" (click)="toggleMarketPopover(i)" [class.active]="activeMarketPopover === i"
           title="Mercado Trading">
-          📊 {{ prediction.totalVolume | number:'1.0-0' }} F
+          📊 <div class="money">{{ prediction.totalVolume | number:'1.0-0' }} F</div>
         </div>
       </div>
       <!-- <button class="predict-btn btn-primary" (click)="navigateToTrade(prediction)">🎯 Trade</button> -->

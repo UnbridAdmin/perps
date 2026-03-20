@@ -1,3 +1,5 @@
+@use '../../../../../styles/variables' as *;
+
 .bet-collapsible-panel {
     margin-top: 16px;
     background: rgba(26, 26, 26, 0.95);
@@ -6,7 +8,7 @@
     border-radius: 16px;
     padding: 20px;
     animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border-left: 4px solid #ff9800;
+    border-left: 4px solid #4ade80;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
@@ -20,7 +22,7 @@
     .panel-title {
         font-size: 16px;
         font-weight: 700;
-        color: #ff9800;
+        color: #4ade80;
         letter-spacing: 0.5px;
     }
 
@@ -114,19 +116,21 @@
         background: rgba(255, 255, 255, 0.03);
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 8px;
-        min-height: 52px;
+        min-height: 50px;
         cursor: pointer;
         overflow: hidden;
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 2;
 
         &.active {
-            border-color: #ff9800;
+            border-color: #4ade80;
             border-bottom-left-radius: 0;
             border-bottom-right-radius: 0;
-            background: rgba(255, 152, 0, 0.08);
-            
-            .option-progress { background: rgba(255, 152, 0, 0.15); }
+            background: rgba(0, 0, 0, 0.4);
+
+            .option-progress {
+                background: rgba(255, 152, 0, 0.15);
+            }
         }
 
         .option-progress {
@@ -167,7 +171,7 @@
                     .option-percentage-tag {
                         font-size: 11px;
                         font-weight: 700;
-                        color: #ff9800;
+                        color: #4ade80;
                         background: rgba(255, 152, 0, 0.1);
                         padding: 2px 6px;
                         border-radius: 4px;
@@ -180,7 +184,8 @@
                     align-items: flex-end;
                     gap: 2px;
 
-                    .investment-info, .pool-info {
+                    .investment-info,
+                    .pool-info {
                         display: flex;
                         gap: 6px;
                         align-items: center;
@@ -192,7 +197,7 @@
 
                         .value {
                             font-weight: 700;
-                            color: #e1e8ed;
+                            color: $money-green;
                         }
                     }
 
@@ -206,12 +211,12 @@
 
     .betting-simulator-inline {
         background: rgba(0, 0, 0, 0.4);
-        border: 1px solid #ff9800;
+        border: 1px solid #4ade80;
         border-top: none;
         border-bottom-left-radius: 8px;
         border-bottom-right-radius: 8px;
         padding: 16px;
-        margin-top: -1px;
+        margin-top: -8px;
         margin-bottom: 8px;
         animation: expandDown 0.3s ease-out;
         z-index: 1;
@@ -234,17 +239,25 @@
                 flex-direction: column;
                 gap: 4px;
 
-                label { font-size: 10px; color: #888; text-transform: uppercase; }
+                label {
+                    font-size: 10px;
+                    color: #888;
+                    text-transform: uppercase;
+                }
+
                 input {
-                    background: rgba(255,255,255,0.05);
-                    border: 1px solid rgba(255,255,255,0.1);
+                    background: rgba(255, 255, 255, 0.05);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
                     border-radius: 6px;
                     color: white;
                     padding: 8px 12px;
                     font-size: 14px;
                     width: 100%;
                     outline: none;
-                    &:focus { border-color: #ff9800; }
+
+                    &:focus {
+                        border-color: #4ade80;
+                    }
                 }
             }
 
@@ -252,20 +265,44 @@
                 text-align: right;
                 display: flex;
                 flex-direction: column;
-                
-                .label { font-size: 10px; color: #888; }
-                .value { font-size: 16px; font-weight: 800; color: #71767b; }
-                .roi { font-size: 10px; color: #4ade80; font-weight: 600; }
-                
-                &.positive .value { color: #4ade80; }
+
+                .label {
+                    font-size: 10px;
+                    color: #888;
+                }
+
+                .value {
+                    font-size: 16px;
+                    font-weight: 800;
+                    color: #71767b;
+                }
+
+                .roi {
+                    font-size: 10px;
+                    color: #4ade80;
+                    font-weight: 600;
+                }
+
+                &.positive .value {
+                    color: #4ade80;
+                }
             }
         }
     }
 }
 
 @keyframes expandDown {
-    from { opacity: 0; transform: translateY(-10px); height: 0; }
-    to { opacity: 1; transform: translateY(0); height: auto; }
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+        height: 0;
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        height: auto;
+    }
 }
 
 .betting-simulator {
@@ -308,7 +345,7 @@
             outline: none;
 
             &:focus {
-                border-color: #ff9800;
+                border-color: #4ade80;
                 box-shadow: 0 0 0 2px rgba(255, 152, 0, 0.2);
             }
         }
@@ -322,7 +359,9 @@
         text-align: right;
 
         &.positive {
-            .calc-value { color: #4ade80; }
+            .calc-value {
+                color: #4ade80;
+            }
         }
 
         .calc-label {
@@ -347,7 +386,7 @@
 
 .confirm-bet-btn {
     width: 100%;
-    background: linear-gradient(to right, #ff9800, #f57c00);
+    background: #16a34a;
     border: none;
     border-radius: 10px;
     color: white;
@@ -375,11 +414,23 @@
 }
 
 @keyframes slideDown {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
