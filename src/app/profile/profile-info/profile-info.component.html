@@ -30,11 +30,13 @@
     </div>
 
     <!-- Follow Button -->
-    <button class="follow-btn" *ngIf="isOwnProfile" (click)="openEditProfileModal()">
-      <span>☰</span> Edit Profile
+    <button class="follow-btn own" *ngIf="isOwnProfile" (click)="openEditProfileModal()">
+      <i class='bx bx-edit-alt'></i> Edit Profile
     </button>
-    <button class="follow-btn" *ngIf="!isOwnProfile">
-      <span>☰</span> Follow
+    <button class="btn btn-success follow-btn" *ngIf="!isOwnProfile" (click)="followUser()"
+      [disabled]="isFollowingLoading">
+      <i class='bx' [ngClass]="isFollowingLoading ? 'bx-loader-alt bx-spin' : 'bx-user-plus'"></i>
+      {{ isFollowingLoading ? 'Processing...' : 'Follow' }}
     </button>
   </div>
 
@@ -68,14 +70,13 @@
     <div class="handle">@{{ userProfile.username }}</div>
 
     <div class="stats">
-      <div class="stat-item">
+      <div class="stat-item clickable" [routerLink]="['/profile/followers', userProfile.username]"
+        [queryParams]="{tab: 'followers'}">
         <span>👥</span> <strong>{{ userProfile.followers }}</strong> Followers
       </div>
-      <div class="stat-item">
+      <div class="stat-item clickable" [routerLink]="['/profile/followers', userProfile.username]"
+        [queryParams]="{tab: 'following'}">
         <span>👤</span> <strong>{{ userProfile.following }}</strong> Following
-      </div>
-      <div class="stat-item">
-        <span>📺</span> <strong>{{ userProfile.subscribers }}</strong> Subscribers
       </div>
     </div>
 
