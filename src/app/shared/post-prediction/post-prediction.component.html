@@ -1,37 +1,40 @@
-<div class="prediction-list" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50"
+<div class="prediction-list env-wrap" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50"
   (scrolled)="onScroll()">
-  <!-- No backdrop needed for inline panels -->
 
   <!-- Loading indicator -->
   <div class="loading-indicator" *ngIf="isLoading && predictions.length === 0">
     Loading predictions...
   </div>
 
-  <div class="prediction-card" *ngFor="let prediction of predictions; let i = index">
-    <!-- Quick Trade Shortcut -->
-    <button class="quick-trade-shortcut" (click)="navigateToTrade(prediction)" title="Ir al Trading">
+  <div class="env-card" *ngFor="let prediction of predictions; let i = index">
+    <!-- Quick Trade Shortcut (keep to preserve functionality, adapt minimally if needed) -->
+    <button class="quick-trade-shortcut" (click)="navigateToTrade(prediction)" title="Ir al Trading"
+      style="position: absolute; right: 12px; top: 12px;">
       <img src="https://ipfs.unbrid.com/envision/trading.webp" alt="Trade">
     </button>
-    <div class="prediction-header">
-      <div class="prediction-avatar"
-        [style.backgroundImage]="'url(' + (prediction.creatorAvatar || 'https://api.dicebear.com/9.x/fun-emoji/svg') + ')'">
+
+    <div class="env-card-header">
+      <div class="env-avatar"
+        [style.backgroundImage]="'url(' + (prediction.creatorAvatar || 'https://api.dicebear.com/9.x/fun-emoji/svg') + ')'"
+        [style.backgroundSize]="'cover'" [style.backgroundPosition]="'center'">
       </div>
-      <div class="prediction-info">
-        <h3 [routerLink]="['/', prediction.creator]">{{ prediction.creator }}</h3>
-        <p>
-          <span class="category-link" (click)="navigateToCategory(prediction.prediction_category_id)">{{
-            prediction.category }}</span>
-          <span> • {{ prediction.participants }} participants</span>
-        </p>
+      <div class="env-user-info">
+        <div class="env-username" [routerLink]="['/', prediction.creator]" style="cursor: pointer;">{{
+          prediction.creator }} <span class="env-participants">· {{ prediction.participants }} participantes</span>
+        </div>
+        <span class="env-tag tag-sports" (click)="navigateToCategory(prediction.prediction_category_id)"
+          style="cursor: pointer;">{{ prediction.category }}</span>
       </div>
     </div>
+
     <!-- Question with optional thumbnail -->
-    <div class="prediction-content" (click)="navigateToPostDetail(prediction.prediction_id)" style="cursor: pointer;">
-      <!-- Image thumbnail (optional) -->
-      <div class="prediction-thumbnail" *ngIf="prediction.imageUrl">
-        <img [src]="prediction.imageUrl" alt="Prediction image" />
+    <div class="env-card-img-row" (click)="navigateToPostDetail(prediction.prediction_id)" style="cursor: pointer;">
+      <div class="env-thumb" *ngIf="prediction.imageUrl">
+        <img [src]="prediction.imageUrl" alt="Prediction image"
+          style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
       </div>
-      <div class="prediction-question">
+      <div class="env-thumb" *ngIf="!prediction.imageUrl">❓</div>
+      <div class="env-title">
         {{ prediction.question }}
       </div>
     </div>
@@ -43,7 +46,7 @@
     </app-fierce-intuition>
 
     <!-- Featured Comment Section (King of the Hill) -->
-    <div class="featured-comment-container">
+    <div class="featured-comment-container" style="border: none; margin: 0; padding: 0;">
       <app-featured-comment [comment]="prediction.featuredComment"
         (overthrow)="toggleOverthrowForm(i)"></app-featured-comment>
 
@@ -85,7 +88,6 @@
                 [class.active]="overthrowFormsState[prediction.prediction_id].showGifInput">
                 <i class="fa-solid fa-photo-film"></i>
               </button>
-              <!-- <button class="tool-btn"><i class="fa-regular fa-face-smile"></i></button> -->
             </div>
             <div class="right-actions">
               <div class="cost-info">
@@ -103,27 +105,32 @@
         </div>
       </div>
     </div>
-    <!-- Action Buttons -->
-    <div class="prediction-tabs-container" *ngIf="prediction.actions">
-      <div class="prediction-tabs" [ngClass]="{'tabs-inactive': activeMarketPopover !== i && activeBetPopover !== i}">
-        <!-- Mechanic 4: Messages -->
-        <div class="tab" (click)="navigateToPostDetail(prediction.prediction_id)" title="Comentarios">
-          <img src="https://ipfs.unbrid.com/envision/opinion.webp" alt="Comments" class="tab-icon"> {{
-          prediction.actions.comments || '0' }}
+
+    <!-- Action Buttons (Tabs) -->
+    <div class="env-card-footer" *ngIf="prediction.actions">
+      <button class="env-tab" (click)="navigateToPostDetail(prediction.prediction_id)" title="Comentarios">
+        <i class="fa-regular fa-comment"></i>
+        <span>{{ prediction.actions.comments || '0' }}</span>
+      </button>
+      <div class="env-tab-divider"></div>
+      <button class="env-tab" (click)="toggleBetPopover(i)" [class.active]="activeBetPopover === i"
+        title="Pool de apuestas">
+        <i class="fa-regular fa-clock"></i>
+        <div class="env-tab-content">
+          <span>Apuestas</span>
+          <small class="vol-label" *ngIf="prediction.betVolume">Vol. {{ prediction.betVolume | number }} Fierce</small>
         </div>
-        <!-- Mechanic 2: Bet/Pot -->
-        <div class="tab" (click)="toggleBetPopover(i)" [class.active]="activeBetPopover === i" title="Pool de apuestas">
-          <img src="https://ipfs.unbrid.com/envision/bet.webp" alt="Bets" class="tab-icon">
-          <div class="money">{{ prediction.marketInfo?.poolAmount || '0' }} Vol</div>
+      </button>
+      <div class="env-tab-divider"></div>
+      <button class="env-tab" (click)="toggleMarketPopover(i)" [class.active]="activeMarketPopover === i"
+        title="Mercado Trading">
+        <i class="fa-solid fa-chart-line"></i>
+        <div class="env-tab-content">
+          <span>Mercado</span>
+          <small class="vol-label" *ngIf="prediction.marketVolume">Vol.{{ prediction.marketVolume | number }}
+            Fierce</small>
         </div>
-        <!-- Mechanic 3: Trading Market -->
-        <div class="tab" (click)="toggleMarketPopover(i)" [class.active]="activeMarketPopover === i"
-          title="Mercado Trading">
-          <img src="https://ipfs.unbrid.com/envision/chart.webp" alt="Trading" class="tab-icon">
-          <div class="money">{{ prediction.totalVolume | number:'1.0-0' }} F Vol</div>
-        </div>
-      </div>
-      <!-- <button class="predict-btn btn-primary" (click)="navigateToTrade(prediction)">🎯 Trade</button> -->
+      </button>
     </div>
 
     <!-- Expanded Panels -->

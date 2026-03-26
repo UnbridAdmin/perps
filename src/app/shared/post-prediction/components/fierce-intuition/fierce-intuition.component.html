@@ -1,34 +1,29 @@
-<div class="sentiment-section" *ngIf="prediction?.options && prediction.options.length > 0">
-    <div class="sentiment-header">
-        <div class="sentiment-title-section">
-            <span class="sentiment-title">🔥 Intuición Fierce</span>
-            <a class="how-it-works-link" (click)="onShowHowItWorks()">How it works?</a>
-        </div>
-        <span class="sentiment-total">{{ prediction.sentimentVotes?.total || 0 | number:'1.0-0' }} votos</span>
+<div class="env-vote-section" *ngIf="prediction?.options && prediction.options.length > 0">
+  <div class="env-vote-header">
+    <div class="env-fierce-label">
+      <span class="dot"></span> Intuición Fierce
+      <span class="env-how" (click)="onShowHowItWorks()">¿cómo funciona?</span>
     </div>
+    <span class="env-vote-count">{{ prediction.sentimentVotes?.total || 0 | number:'1.0-0' }} votos</span>
+  </div>
 
-    <!-- Voting Options - Not Voted State -->
-    <div class="sentiment-options" *ngIf="!hasVoted">
-        <div class="sentiment-vote-btn" *ngFor="let option of visibleOptions" (click)="onVote(option.id)">
-            <div class="percentage-bar" [style.width.%]="option.percentage"></div>
-            <span class="vote-btn-text">{{ option.title }}</span>
-            <span class="vote-percentage">{{ option.percentage }}%</span>
-        </div>
+  <div class="env-options">
+    <div class="env-option" 
+         *ngFor="let option of visibleOptions" 
+         [class.selected]="hasVoted && votedOptionId === option.id"
+         (click)="!hasVoted ? onVote(option.id) : null">
+      <div class="env-option-bar" [class.green]="option.percentage > 50" [style.width.%]="option.percentage"></div>
+      <span class="env-option-label">
+        {{ option.title }}
+        <i class="fa-solid fa-circle-check" *ngIf="hasVoted && votedOptionId === option.id" style="color: var(--env-purple); font-size: 13px; margin-left: 4px;"></i>
+      </span>
+      <span class="env-option-pct" [style.color]="(hasVoted && votedOptionId === option.id) ? 'var(--env-purple)' : ''">{{ option.percentage }}%</span>
     </div>
+  </div>
 
-    <!-- Results - Voted State -->
-    <div class="sentiment-results" *ngIf="hasVoted">
-        <div class="result-option" *ngFor="let option of visibleOptions" [class.selected]="votedOptionId === option.id">
-            <div class="percentage-bar" [style.width.%]="option.percentage"></div>
-            <span class="result-label">{{ option.title }}</span>
-            <span class="result-percentage">{{ option.percentage }}%</span>
-        </div>
-    </div>
-
-    <!-- View More Button -->
-    <div class="view-more-container" *ngIf="remainingOptionsCount > 0">
-        <button class="view-more-btn" (click)="showAllOptions = !showAllOptions">
-            {{ showAllOptions ? 'Colapsar opciones ▲' : '... ver ' + remainingOptionsCount + ' opciones más ▼' }}
-        </button>
-    </div>
+  <!-- View More Button via Model or just expand inline -->
+  <button class="env-show-more" *ngIf="remainingOptionsCount > 0" (click)="showAllOptions = !showAllOptions">
+    <span>{{ showAllOptions ? 'ocultar opciones' : 'ver ' + remainingOptionsCount + ' opciones más' }}</span>
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" [style.transform]="showAllOptions ? 'rotate(180deg)' : 'none'"><path d="M2 4l4 4 4-4" stroke="#9b5cff" stroke-width="1.5" stroke-linecap="round"/></svg>
+  </button>
 </div>

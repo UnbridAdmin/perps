@@ -1,62 +1,32 @@
-<div class="featured-comment-container" [class.is-king]="!!comment">
-    <div class="burn-banner">
-        <span class="burn-icon">👑</span>
-        <span class="burn-text">Rey de la Colina</span>
-        <div class="info-tooltip">
-            <span class="info-icon"><i class="fa-solid fa-info"></i></span>
-            <div class="tooltip-text">Quema Fierce para fijar tu comentario aquí y ganar visibilidad. El comentario con más
-                tokens quemados será el único que se mantenga en la cima.</div>
-        </div>
+<div class="env-hill-section" (click)="comment ? toggleExpanded() : onOverthrow()" [title]="comment ? 'Click para ver más o destronar' : 'Sé el primero'">
+  <div class="env-hill-left">
+    <span class="env-crown">👑</span>
+    <div>
+      <div class="env-hill-text">Rey de la Colina</div>
+      <div class="env-hill-sub">
+        <ng-container *ngIf="comment">
+            {{ comment.user }} lidera el trono (🔥 {{ comment.burnedAmount | number }} F)
+        </ng-container>
+        <ng-container *ngIf="!comment">
+            Nadie ocupa el trono aún — sé el primero
+        </ng-container>
+      </div>
     </div>
+  </div>
+  <button class="env-hill-btn" (click)="comment ? onOverthrow($event) : onOverthrow(); $event.stopPropagation()">
+    Quemar Fierce
+  </button>
+</div>
 
-    <div class="comment-content" *ngIf="comment; else beTheFirst" (click)="toggleExpanded()" [class.expanded]="isExpanded">
-        <div class="comment-grid" [class.has-gif]="!!comment.gifUrl">
-            <!-- Columna 1: Datos del Usuario -->
-            <div class="user-column">
-                <div class="user-info">
-                    <div class="avatar"
-                        [routerLink]="['/', comment.user]"
-                        (click)="$event.stopPropagation()"
-                        [style.backgroundImage]="'url(' + (comment.avatar || 'https://api.dicebear.com/9.x/fun-emoji/svg') + ')'">
-                    </div>
-                    <div class="user-details">
-                        <span class="username" 
-                            [routerLink]="['/', comment.user]"
-                            (click)="$event.stopPropagation()">@{{ comment.user }}</span>
-                        <span class="burned-amount">
-                            <i class="fa-solid fa-fire-flame-curved"></i> {{ comment.burnedAmount | number }} F
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Columna 2: Mensaje -->
-            <div class="message-column">
-                <p class="comment-text" [class.truncated]="!isExpanded">"{{ comment.text }}"</p>
-            </div>
-
-            <!-- Columna 3: GIF (si existe) -->
-            <div class="gif-column" *ngIf="comment.gifUrl">
-                <div class="featured-gif">
-                    <img [src]="comment.gifUrl" alt="Featured GIF">
-                </div>
-            </div>
-        </div>
-
-        <!-- Acciones (mostradas al expandir) -->
-        <div class="comment-actions" *ngIf="isExpanded">
-            <button class="overthrow-btn" (click)="onOverthrow($event)">
-                <i class="fa-solid fa-chess-king"></i> Destronar al Rey
-            </button>
-        </div>
+<!-- Comment content when expanded -->
+<div class="comment-content" *ngIf="comment && isExpanded" style="padding: 12px 16px;">
+  <div class="comment-grid" [class.has-gif]="!!comment.gifUrl" style="display: flex; gap: 12px; align-items: flex-start;">
+    <div class="env-avatar" [style.backgroundImage]="'url(' + (comment.avatar || 'https://api.dicebear.com/9.x/fun-emoji/svg') + ')'" [style.backgroundSize]="'cover'"></div>
+    <div style="flex: 1; font-size: 13px; color: var(--env-text);">
+      "{{ comment.text }}"
     </div>
-
-    <ng-template #beTheFirst>
-        <div class="be-first-content">
-            <p class="empty-text">Nadie ha reclamado el trono aún.</p>
-            <button class="overthrow-btn first-btn" (click)="onOverthrow()">
-                <i class="fa-solid fa-fire"></i> Quemar Fierce para reinar
-            </button>
-        </div>
-    </ng-template>
+    <div class="gif-column" *ngIf="comment.gifUrl">
+      <img [src]="comment.gifUrl" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;">
+    </div>
+  </div>
 </div>

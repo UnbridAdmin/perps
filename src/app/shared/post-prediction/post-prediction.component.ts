@@ -115,6 +115,8 @@ interface Prediction {
     likes: number;
     volume: string;
   };
+  betVolume?: number;
+  marketVolume?: number;
 }
 
 @Component({
@@ -209,7 +211,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
       this.loadSubscription.unsubscribe();
       this.loadSubscription = undefined;
     }
-    
+
     this.currentPage = 1;
     this.predictions = [];
     this.apiPredictions = [];
@@ -229,7 +231,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     // Increment request token to track this specific call across async gaps
     const requestToken = ++this.currentRequestToken;
     console.log('PostPrediction: loadPredictions started, token:', requestToken, 'userId:', this.userId);
-    
+
     this.isLoading = true;
     const params: any = {
       page: this.currentPage,
@@ -357,7 +359,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
           total: totalVotes
         },
         marketInfo: {
-          poolAmount: `${(apiPred as any).prediction_mutual_amount || 0} F`,
+          poolAmount: `${(apiPred as any).prediction_mutual_amount || 0}`,
           participants: totalParticipants,
           options: apiPred.options.map(opt => ({
             label: opt.prediction_option_title,
@@ -370,6 +372,8 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
           likes: Math.floor(Math.random() * 100),
           volume: `$${apiPred.totalVolume || 0}`
         },
+        betVolume: Math.floor((apiPred.totalVolume || 0) * 0.4), // 40% del volumen total para apuestas
+        marketVolume: Math.floor((apiPred.totalVolume || 0) * 0.6), // 60% del volumen total para mercado
         featuredComment: apiPred.king_comment ? {
           user: apiPred.king_comment.username,
           avatar: apiPred.king_comment.avatar || 'https://api.dicebear.com/9.x/fun-emoji/svg',
@@ -457,9 +461,9 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
 
           // 1. Update total amount
           if (!prediction.marketInfo) {
-            prediction.marketInfo = { poolAmount: '0 F', participants: 0, options: [] };
+            prediction.marketInfo = { poolAmount: '0', participants: 0, options: [] };
           }
-          prediction.marketInfo.poolAmount = poolData.marketInfo?.poolAmount || '0 F';
+          prediction.marketInfo.poolAmount = poolData.marketInfo?.poolAmount || '0';
 
           // 2. Synchronize existing options with pool data
           if (prediction.options && poolData.options) {

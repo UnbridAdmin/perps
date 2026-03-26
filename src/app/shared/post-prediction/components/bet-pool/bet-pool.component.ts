@@ -70,4 +70,9 @@ export class BetPoolComponent {
     onClose() {
         this.close.emit();
     }
+
+    getPoolAmountWithoutUnit(): string {
+        const poolAmount = this.prediction.marketInfo?.poolAmount || '0';
+        return poolAmount.replace(/[^0-9.]/g, '');
+    }
 }
