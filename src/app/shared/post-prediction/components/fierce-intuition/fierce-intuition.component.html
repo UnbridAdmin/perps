@@ -13,7 +13,10 @@
          [class.selected]="hasVoted && votedOptionId === option.id"
          (click)="!hasVoted ? onVote(option.id) : null">
       <div class="env-option-bar" [class.green]="option.percentage > 50" [style.width.%]="option.percentage"></div>
-      <span class="env-option-label">{{ option.title }}</span>
+      <span class="env-option-label">
+        {{ option.title }}
+        <i class="fa-solid fa-circle-check" *ngIf="hasVoted && votedOptionId === option.id" style="color: var(--env-purple); font-size: 13px; margin-left: 4px;"></i>
+      </span>
       <span class="env-option-pct" [style.color]="(hasVoted && votedOptionId === option.id) ? 'var(--env-purple)' : ''">{{ option.percentage }}%</span>
     </div>
   </div>
