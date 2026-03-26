@@ -8,6 +8,10 @@
   </div>
 
   <div class="prediction-card" *ngFor="let prediction of predictions; let i = index">
+    <!-- Quick Trade Shortcut -->
+    <button class="quick-trade-shortcut" (click)="navigateToTrade(prediction)" title="Ir al Trading">
+      <img src="https://ipfs.unbrid.com/envision/trading.webp" alt="Trade">
+    </button>
     <div class="prediction-header">
       <div class="prediction-avatar"
         [style.backgroundImage]="'url(' + (prediction.creatorAvatar || 'https://api.dicebear.com/9.x/fun-emoji/svg') + ')'">
@@ -21,14 +25,15 @@
         </p>
       </div>
     </div>
-    <div class="prediction-question" (click)="navigateToPostDetail(prediction.prediction_id)" style="cursor: pointer;">
-      {{ prediction.question }}
-    </div>
-
-    <!-- Image (optional) -->
-    <div class="prediction-image" *ngIf="prediction.imageUrl" (click)="navigateToPostDetail(prediction.prediction_id)"
-      style="cursor: pointer;">
-      <img [src]="prediction.imageUrl" alt="Prediction image" />
+    <!-- Question with optional thumbnail -->
+    <div class="prediction-content" (click)="navigateToPostDetail(prediction.prediction_id)" style="cursor: pointer;">
+      <!-- Image thumbnail (optional) -->
+      <div class="prediction-thumbnail" *ngIf="prediction.imageUrl">
+        <img [src]="prediction.imageUrl" alt="Prediction image" />
+      </div>
+      <div class="prediction-question">
+        {{ prediction.question }}
+      </div>
     </div>
 
     <!-- Sentiment Voting Section -->
@@ -103,16 +108,19 @@
       <div class="prediction-tabs" [ngClass]="{'tabs-inactive': activeMarketPopover !== i && activeBetPopover !== i}">
         <!-- Mechanic 4: Messages -->
         <div class="tab" (click)="navigateToPostDetail(prediction.prediction_id)" title="Comentarios">
-          💬 {{ prediction.actions.comments || '0' }}
+          <img src="https://ipfs.unbrid.com/envision/opinion.webp" alt="Comments" class="tab-icon"> {{
+          prediction.actions.comments || '0' }}
         </div>
         <!-- Mechanic 2: Bet/Pot -->
         <div class="tab" (click)="toggleBetPopover(i)" [class.active]="activeBetPopover === i" title="Pool de apuestas">
-          🎲 <div class="money">{{ prediction.marketInfo?.poolAmount || '0' }}</div>
+          <img src="https://ipfs.unbrid.com/envision/bet.webp" alt="Bets" class="tab-icon">
+          <div class="money">{{ prediction.marketInfo?.poolAmount || '0' }} Vol</div>
         </div>
         <!-- Mechanic 3: Trading Market -->
         <div class="tab" (click)="toggleMarketPopover(i)" [class.active]="activeMarketPopover === i"
           title="Mercado Trading">
-          📊 <div class="money">{{ prediction.totalVolume | number:'1.0-0' }} F</div>
+          <img src="https://ipfs.unbrid.com/envision/chart.webp" alt="Trading" class="tab-icon">
+          <div class="money">{{ prediction.totalVolume | number:'1.0-0' }} F Vol</div>
         </div>
       </div>
       <!-- <button class="predict-btn btn-primary" (click)="navigateToTrade(prediction)">🎯 Trade</button> -->
