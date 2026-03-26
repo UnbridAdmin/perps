@@ -9,12 +9,12 @@
   <div class="env-pool-pozo">
     <div>
       <div class="env-pozo-label">Pozo acumulado</div>
-      <div class="env-pozo-val">{{ prediction.marketInfo?.poolAmount || '0 Fierce' }} Fierce</div>
+      <div class="env-pozo-val">{{ getPoolAmountWithoutUnit() }}</div>
     </div>
   </div>
 
   <div class="env-empty-hint"
-    *ngIf="!prediction.marketInfo?.poolAmount || prediction.marketInfo?.poolAmount === '0 Fierce'">
+    *ngIf="!prediction.marketInfo?.poolAmount || getPoolAmountWithoutUnit() === '0' || getPoolAmountWithoutUnit() === '0.0'">
     <strong>¡Sé el primero en apostar</strong> y establece las probabilidades!
   </div>
 

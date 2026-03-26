@@ -115,19 +115,21 @@
       <div class="env-tab-divider"></div>
       <button class="env-tab" (click)="toggleBetPopover(i)" [class.active]="activeBetPopover === i"
         title="Pool de apuestas">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-          <circle cx="8" cy="8" r="5.5" />
-          <path d="M8 5v3.5l2.5 1.5" />
-        </svg>
-        <span>Apuestas</span>
+        <i class="fa-regular fa-clock"></i>
+        <div class="env-tab-content">
+          <span>Apuestas</span>
+          <small class="vol-label" *ngIf="prediction.betVolume">Vol. {{ prediction.betVolume | number }} Fierce</small>
+        </div>
       </button>
       <div class="env-tab-divider"></div>
       <button class="env-tab" (click)="toggleMarketPopover(i)" [class.active]="activeMarketPopover === i"
         title="Mercado Trading">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-          <polyline points="2,12 6,7 9,10 14,4" />
-        </svg>
-        <span>Mercado</span>
+        <i class="fa-solid fa-chart-line"></i>
+        <div class="env-tab-content">
+          <span>Mercado</span>
+          <small class="vol-label" *ngIf="prediction.marketVolume">Vol.{{ prediction.marketVolume | number }}
+            Fierce</small>
+        </div>
       </button>
     </div>
 
