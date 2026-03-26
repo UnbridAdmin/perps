@@ -16,6 +16,7 @@ interface TradeOptionData {
   option_multiple_id: number;
   change: number;
   avg_buy_price: number;
+  prediction_option_image: string | null;
 }
 
 @Component({
