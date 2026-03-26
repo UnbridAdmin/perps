@@ -1,13 +1,20 @@
 <div class="market-collapsible-panel fade-in">
-    <!-- Pro Badge -->
-    <div class="pro-badge">
-        <span class="pro-icon">⚡</span>
-        <span class="pro-text">Mercado Pro / Para usuarios experimentados</span>
+    <!-- Header with Pro Badge and Close Button -->
+    <div class="panel-top-header">
+        <div class="pro-badge">
+            <span class="pro-icon">⚡</span>
+            <span class="pro-text">Mercado Pro / Para usuarios experimentados</span>
+        </div>
+        <div class="top-actions">
+            <button class="quick-trade-btn" (click)="onTrade()">
+                🎯 Buy/Sell
+            </button>
+            <button class="close-panel-btn" (click)="onClose()">×</button>
+        </div>
     </div>
 
     <div class="panel-header">
         <span class="panel-title">📊 Mercado Oficial (Trading)</span>
-        <button class="close-panel-btn" (click)="onClose()">×</button>
     </div>
 
     <div class="market-stats">

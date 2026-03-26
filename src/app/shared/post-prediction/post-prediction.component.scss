@@ -35,6 +35,36 @@
 
 }
 
+.quick-trade-shortcut {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(74, 222, 128, 0.1);
+  border: 1px solid rgba(74, 222, 128, 0.3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.2s ease;
+  z-index: 10;
+
+  img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+  }
+
+  &:hover {
+    background: rgba(74, 222, 128, 0.2);
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(74, 222, 128, 0.3);
+  }
+}
+
 .prediction-header {
   display: flex;
   align-items: center;
@@ -93,24 +123,34 @@
   }
 }
 
-.prediction-question {
-  font-size: 1.5rem;
+// Prediction content with thumbnail layout
+.prediction-content {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
   margin-bottom: 16px;
-  line-height: 1.4;
-  color: #e7e9ea;
 }
 
-// Image styles
-.prediction-image {
-  margin-bottom: 16px;
+.prediction-thumbnail {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #2f3336;
 
   img {
     width: 100%;
-    max-height: 250px;
-    border-radius: 12px;
+    height: 100%;
     object-fit: cover;
-    border: 1px solid #2f3336;
   }
+}
+
+.prediction-question {
+  font-size: 1.1rem;
+  line-height: 1.4;
+  color: #e7e9ea;
+  flex: 1;
 }
 
 
@@ -213,6 +253,12 @@
     border-radius: 8px 8px 0 0;
     background: rgba(255, 255, 255, 0.041);
 
+    .tab-icon {
+      width: 25px;
+      height: 25px;
+      object-fit: contain;
+    }
+
     .money {
       color: $money-green;
     }
@@ -276,6 +322,19 @@
     padding: 12px;
   }
 
+  .prediction-content {
+    gap: 12px;
+  }
+
+  .prediction-thumbnail {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+  }
+
+  .prediction-question {
+    font-size: 1rem;
+  }
 
   .info-icon {
     width: 22px;
