@@ -15,19 +15,19 @@ export class AuthorizationService {
     }
 
     public ping() {
-        return this.apiService.pingApiCall('/user/ping', 'GET', '');
+        return this.apiService.pingApiCall('user/ping', 'GET', '');
     }
 
     public login(data: LoginModel) {
-        return this.apiService.publicApiCall('/user/sign-in', 'POST', data);
+        return this.apiService.publicApiCall('user/sign-in', 'POST', data);
     }
 
     public logout() {
-        return this.apiService.apiCall('/user/logout', 'GET', '');
+        return this.apiService.apiCall('user/logout', 'GET', '');
     }
 
     public refreshToken() {
-        return this.apiService.apiCall('/user/refresh-cookie', 'GET', '');
+        return this.apiService.apiCall('user/refresh-cookie', 'GET', '');
     }
 
     public scheduleRefresh() {

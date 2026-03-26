@@ -582,3 +582,593 @@
     transform: translateY(0);
   }
 }
+
+:host ::ng-deep {
+  --env-bg: transparent;
+  --env-card: #1a1a22;
+  --env-card2: #22222e;
+  --env-border: rgba(255, 255, 255, 0.08);
+  --env-purple: #9b5cff;
+  --env-purple-dim: rgba(155, 92, 255, 0.15);
+  --env-green: #2ecc8a;
+  --env-green-dim: rgba(46, 204, 138, 0.15);
+  --env-amber: #f59e0b;
+  --env-text: #f0f0f5;
+  --env-muted: #8888a0;
+  --env-tag-sports: rgba(155, 92, 255, 0.2);
+  --env-tag-sports-t: #c4a0ff;
+  --env-tag-elec: rgba(46, 204, 138, 0.2);
+  --env-tag-elec-t: #6eddb4;
+
+  .env-wrap {
+    padding: 20px 0;
+    max-width: 680px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .env-card {
+    background: var(--env-card);
+    border: 0.5px solid $border-color;
+    border-radius: 14px;
+    margin-bottom: 24px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .env-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px 0;
+  }
+
+  .env-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--env-purple-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .env-avatar svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .env-user-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .env-username {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--env-text);
+  }
+
+  .env-tag {
+    font-size: 11px;
+    padding: 2px 7px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-top: 2px;
+  }
+
+  .tag-sports {
+    background: var(--env-tag-sports);
+    color: var(--env-tag-sports-t);
+  }
+
+  .tag-elec {
+    background: var(--env-tag-elec);
+    color: var(--env-tag-elec-t);
+  }
+
+  .env-participants {
+    font-size: 11px;
+    color: var(--env-muted);
+    margin-left: 4px;
+    font-weight: 400;
+  }
+
+  .env-card-img-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px 0;
+    margin-bottom: 4px;
+  }
+
+  .env-thumb {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: var(--env-card2);
+    border: 0.5px solid $border-color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+
+  .env-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--env-text);
+    line-height: 1.4;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .env-vote-section {
+    padding: 12px 16px 0;
+  }
+
+  .env-vote-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .env-fierce-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--env-purple);
+    font-weight: 500;
+  }
+
+  .env-fierce-label .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--env-purple);
+  }
+
+  .env-how {
+    font-size: 11px;
+    color: var(--env-muted);
+    text-decoration: underline;
+    cursor: pointer;
+    margin-left: 4px;
+    font-weight: 400;
+  }
+
+  .env-vote-count {
+    font-size: 11px;
+    color: var(--env-muted);
+  }
+
+  .env-options {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .env-option {
+    position: relative;
+    height: 38px;
+    border-radius: 8px;
+    background: var(--env-card2);
+    border: 0.5px solid $border-color;
+    cursor: pointer;
+    overflow: hidden;
+    transition: border-color 0.15s;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+  }
+
+  .env-option:hover {
+    border-color: rgba(155, 92, 255, 0.4);
+  }
+
+  .env-option.selected {
+    border-color: var(--env-purple);
+  }
+
+  .env-option-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: var(--env-purple-dim);
+    border-radius: 8px;
+    transition: width 0.4s ease;
+    pointer-events: none;
+  }
+
+  .env-option-bar.green {
+    background: var(--env-green-dim);
+  }
+
+  .env-option-label {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    font-size: 13px;
+    color: var(--env-text);
+  }
+
+  .env-option-pct {
+    position: relative;
+    z-index: 1;
+    font-size: 12px;
+    color: var(--env-muted);
+    font-weight: 500;
+    min-width: 32px;
+    text-align: right;
+  }
+
+  .env-option.selected .env-option-pct {
+    color: var(--env-purple);
+  }
+
+  .env-show-more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--env-purple);
+    border-top: 0.5px solid $border-color;
+    margin-top: 8px;
+    border-radius: 0px !important;
+    background: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    width: 100%;
+    transition: background 0.15s;
+    font-weight: 500;
+  }
+
+  .env-show-more:hover {
+    background: var(--env-purple-dim);
+  }
+
+  .env-card-footer {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 10px 16px 14px;
+    border-top: 0.5px solid $border-color;
+    margin-top: 12px;
+  }
+
+  .env-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--env-muted);
+    border: none;
+    background: none;
+    transition: all 0.15s;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+
+  .env-tab:hover {
+    background: var(--env-card2);
+    color: var(--env-text);
+  }
+
+  .env-tab.active {
+    background: var(--env-purple-dim);
+    color: var(--env-purple);
+  }
+
+  .env-tab svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+
+  .env-tab-divider {
+    width: 0.5px;
+    height: 18px;
+    background:
+      $border-color;
+    margin: 0 4px;
+  }
+
+  .env-panel {
+    margin: 0 16px 14px;
+    background: var(--env-card2);
+    border: 0.5px solid $border-color;
+    border-radius: 10px;
+    padding: 14px;
+  }
+
+  .env-panel-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--env-text);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .env-panel-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: var(--env-amber);
+    color: #1a1a22;
+    font-weight: 500;
+  }
+
+  .env-pool-pozo {
+    background: #0f0f13;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid $border-color;
+  }
+
+  .env-pozo-label {
+    font-size: 11px;
+    color: var(--env-muted);
+    margin-bottom: 2px;
+  }
+
+  .env-pozo-val {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--env-text);
+  }
+
+  .env-burn-badge {
+    font-size: 10px;
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--env-amber);
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  .env-empty-hint {
+    text-align: center;
+    font-size: 12px;
+    color: var(--env-muted);
+    padding: 6px 0 10px;
+  }
+
+  .env-empty-hint strong {
+    color: var(--env-green);
+  }
+
+  .env-pool-opts {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .env-pool-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #0f0f13;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    border: 0.5px solid $border-color;
+    transition: border-color 0.15s;
+  }
+
+  .env-pool-row:hover {
+    border-color: var(--env-green);
+  }
+
+  .env-pool-row-label {
+    font-size: 13px;
+    color: var(--env-text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+  }
+
+  .env-pool-pct {
+    font-size: 11px;
+    color: var(--env-muted);
+    font-weight: 400;
+  }
+
+  .env-pool-total {
+    font-size: 12px;
+    color: var(--env-muted);
+  }
+
+  .env-market-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .env-stat-box {
+    background: #0f0f13;
+    border-radius: 8px;
+    padding: 8px 10px;
+    border: 1px solid $border-color;
+  }
+
+  .env-stat-label {
+    font-size: 10px;
+    color: var(--env-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+  }
+
+  .env-stat-val {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--env-text);
+  }
+
+  .env-market-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12px;
+  }
+
+  .env-market-table th {
+    font-size: 10px;
+    color: var(--env-muted);
+    text-align: left;
+    padding: 0 0 6px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-bottom: none;
+  }
+
+  .env-market-table th:last-child {
+    text-align: right;
+  }
+
+  .env-market-table td {
+    font-size: 13px;
+    color: var(--env-text);
+    padding: 6px 0;
+    border-top: 0.5px solid $border-color;
+    vertical-align: middle;
+  }
+
+  .env-market-table td:last-child {
+    text-align: right;
+    font-size: 12px;
+    color: var(--env-muted);
+  }
+
+  .env-price {
+    color: var(--env-green);
+    font-weight: 500;
+  }
+
+  .env-prob-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+
+  .env-prob-bar {
+    height: 4px;
+    border-radius: 2px;
+    background:
+      $border-color;
+    width: 40px;
+    overflow: hidden;
+  }
+
+  .env-prob-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: var(--env-green);
+  }
+
+  .env-market-cta {
+    display: flex;
+    width: 100%;
+    margin-top: 12px;
+    background: var(--env-green);
+    color: #010101;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    transition: opacity 0.15s;
+  }
+
+  .env-market-cta:hover {
+    opacity: 0.85;
+  }
+
+  .env-hill-section {
+    margin: 12px 16px 0;
+    background: rgba(193, 134, 35, 0.08);
+    border: 0.5px solid rgba(193, 134, 35, 0.25);
+    border-radius: 8px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .env-hill-section:hover {
+    background: rgba(193, 134, 35, 0.12);
+  }
+
+  .env-hill-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .env-crown {
+    font-size: 14px;
+  }
+
+  .env-hill-text {
+    font-size: 12px;
+    color: #c18623;
+    font-weight: 500;
+  }
+
+  .env-hill-sub {
+    font-size: 11px;
+    color: var(--env-muted);
+    margin-top: 1px;
+  }
+
+  .env-hill-btn {
+    font-size: 11px;
+    padding: 1px 12px;
+    border-radius: 10px !important;
+    background: rgba(193, 134, 35, 0.15);
+    color: #c18623;
+    border: 0.5px solid rgba(193, 134, 35, 0.3);
+    cursor: pointer;
+    white-space: nowrap;
+    font-weight: 500;
+    height: 40px !important;
+  }
+
+  .env-hill-btn:hover {
+    background: rgba(193, 134, 35, 0.25);
+  }
+}
