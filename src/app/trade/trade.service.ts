@@ -62,6 +62,7 @@ interface TradeOptionData {
   avg_buy_price: number;
   avg_buy_price_yes?: number;
   avg_buy_price_no?: number;
+  prediction_option_image: string | null;
 }
 
 interface BuyVoteResponse {
@@ -174,7 +175,8 @@ export class TradeService {
         change: option.change,
         avg_buy_price: option.avg_buy_price,
         avg_buy_price_yes: option.avg_buy_price_yes,
-        avg_buy_price_no: option.avg_buy_price_no
+        avg_buy_price_no: option.avg_buy_price_no,
+        prediction_option_image: option.prediction_option_image || null
       })) || [],
       user_balance: backendData.user_balance || 0
     };

@@ -1,6 +1,10 @@
 <div class="outcomes-list">
   <div class="outcome-section" *ngFor="let outcome of outcomes">
     <div class="outcome-header" [class.active]="outcome.expanded" (click)="toggleOutcome(outcome.id)">
+      <div class="outcome-image"
+        *ngIf="outcome.optionData?.prediction_option_image && outcome.optionData.prediction_option_image !== ''">
+        <img [src]="outcome.optionData.prediction_option_image" [alt]="outcome.date">
+      </div>
       <div class="outcome-info">
         <div class="outcome-date">{{ outcome.date }}</div>
         <div class="outcome-volume">{{ outcome.volume }}</div>
