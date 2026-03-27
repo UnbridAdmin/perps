@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ApiServices } from '../services/api.service';
+import { Subject } from 'rxjs';
 
 // Request interfaces
 interface BuyVoteParams {
@@ -93,8 +94,17 @@ interface TradeDetailsResponse {
   providedIn: 'root'
 })
 export class TradeService {
+  private tradeCompletedSource = new Subject<{ success: boolean; predictionId: number }>();
+  tradeCompleted$ = this.tradeCompletedSource.asObservable();
 
   constructor(private apiService: ApiServices) { }
+
+  /**
+   * Notify that a trade operation has been completed
+   */
+  public notifyTradeCompleted(success: boolean, predictionId: number): void {
+    this.tradeCompletedSource.next({ success, predictionId });
+  }
 
   /**
    * Buy votes for a prediction option (authenticated users)

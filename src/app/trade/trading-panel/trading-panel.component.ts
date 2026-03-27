@@ -8,6 +8,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DetailTransactionComponent } from '../detail-transaction/detail-transaction.component';
 import { WalletConnectService } from '../../services/walletconnect.service';
 import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
+import { SidebarMenuService } from '../../sidebar-menu/sidebar-menu.service';
 
 @Component({
   selector: 'app-trading-panel',
@@ -23,6 +24,7 @@ export class TradingPanelComponent implements OnInit {
   @Input() predictionType: string = 'MULTIPLE';
   @Input() options: any[] = [];
   @Input() predictionId: number = 0;
+  @Input() bParam: number = 10;
 
   isBuyMode = true;
   selectedOption: 'yes' | 'no' = 'yes';
@@ -42,7 +44,8 @@ export class TradingPanelComponent implements OnInit {
     private authService: AuthorizationService,
     private walletConnectService: WalletConnectService,
     private confirmDialogService: ConfirmDialogService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private sidebarMenuService: SidebarMenuService
   ) { }
 
   ngOnInit() {
@@ -162,10 +165,10 @@ export class TradingPanelComponent implements OnInit {
     if (!price) return 0;
     if (this.isBuyMode && !this.amount) return price;
     if (!this.isBuyMode && !this.sharesToSell) return price;
-    
-    // Predeterminamos b = 10 que es el default de la plataforma
-    const b = 10;
-    
+
+    // Usamos el bParam de la predicción (del DB) o 10 como fallback
+    const b = Number(this.bParam) || 10;
+
     if (this.isBuyMode) {
       // Estimación del impacto de la compra
       const impact = (1 - price) * ((Number(this.amount) || 0) / b);
@@ -180,16 +183,18 @@ export class TradingPanelComponent implements OnInit {
   }
 
   get toWin(): number {
-    const avgPrice = this.estAvgPrice;
-    if (!avgPrice || !this.amount) return 0;
-    const payout = (Number(this.amount) / avgPrice);
+    const price = this.selectedOption === 'yes' ? this.yesPrice : this.noPrice;
+    if (!price || !this.amount) return 0;
+    // Payout logic according to Polymarket mockup: Amount / price
+    const payout = (Number(this.amount) / price);
     return parseFloat(payout.toFixed(2));
   }
 
   get potentialProceeds(): number {
-    const avgPrice = this.estAvgPrice;
-    if (!avgPrice || !this.sharesToSell) return 0;
-    return parseFloat((Number(this.sharesToSell) * avgPrice).toFixed(2));
+    const price = this.selectedOption === 'yes' ? this.yesPrice : this.noPrice;
+    if (!price || !this.sharesToSell) return 0;
+    // Expected proceeds according to Polymarket mockup: Shares * price
+    return parseFloat((Number(this.sharesToSell) * price).toFixed(2));
   }
 
   async setAmount(value: number) {
@@ -345,7 +350,9 @@ export class TradingPanelComponent implements OnInit {
               message1: `Has comprado exitosamente por ${this.amount} Fierce.`
             });
             console.log('Vote purchased successfully:', buyVoteData);
-            // Handle success - maybe update prices, show confirmation, etc.
+            // Notify trade completion to update outcomes and balance
+            this.tradeService.notifyTradeCompleted(true, this.predictionId);
+            this.sidebarMenuService.notifyBalanceUpdate();
           } else {
             console.error('Error purchasing vote:', buyVoteData?.message);
           }
@@ -357,7 +364,9 @@ export class TradingPanelComponent implements OnInit {
               message1: `Has comprado exitosamente por ${this.amount} Fierce.`
             });
             console.log('Vote purchased successfully:', response.data);
-            // Handle success - maybe update prices, show confirmation, etc.
+            // Notify trade completion to update outcomes and balance
+            this.tradeService.notifyTradeCompleted(true, this.predictionId);
+            this.sidebarMenuService.notifyBalanceUpdate();
           } else {
             console.error('Error purchasing vote:', response.data?.message);
           }
@@ -424,6 +433,9 @@ export class TradingPanelComponent implements OnInit {
           console.log('Shares sold successfully:', response.data);
           // Update user shares
           this.userShares = Math.max(0, this.userShares - this.sharesToSell);
+          // Notify trade completion to update outcomes and balance
+          this.tradeService.notifyTradeCompleted(true, this.predictionId);
+          this.sidebarMenuService.notifyBalanceUpdate();
         } else {
           console.error('Error selling shares:', response.data?.message);
         }

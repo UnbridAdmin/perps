@@ -13,11 +13,11 @@
   <div class="trade-options">
     <button class="option-btn" [class.selected]="selectedOption === 'yes'" (click)="selectOption('yes')">
       <span class="option-label">Yes</span>
-      <span class="option-price">{{ yesPrice | number:'1.2-2' }} $F</span>
+      <span class="option-price">{{ yesPrice | number:'1.2-2' }} ¢</span>
     </button>
     <button class="option-btn option-btn-no" [class.selected]="selectedOption === 'no'" (click)="selectOption('no')">
       <span class="option-label">No</span>
-      <span class="option-price">{{ noPrice | number:'1.2-2' }} $F</span>
+      <span class="option-price">{{ noPrice | number:'1.2-2' }} ¢</span>
     </button>
   </div>
 
@@ -30,10 +30,10 @@
         placeholder="0" />
       <div class="quick-amounts">
         <ng-container *ngIf="isBuyMode">
-          <button class="quick-btn" (click)="setAmount(1)">+$F1</button>
-          <button class="quick-btn" (click)="setAmount(5)">+$F5</button>
-          <button class="quick-btn" (click)="setAmount(10)">+$F10</button>
-          <button class="quick-btn" (click)="setAmount(100)">+$F100</button>
+          <button class="quick-btn" (click)="setAmount(1)">+$1</button>
+          <button class="quick-btn" (click)="setAmount(5)">+$5</button>
+          <button class="quick-btn" (click)="setAmount(10)">+$10</button>
+          <button class="quick-btn" (click)="setAmount(100)">+$100</button>
           <button class="quick-btn max-btn" (click)="setMaxAmount()">Max</button>
         </ng-container>
         <ng-container *ngIf="!isBuyMode">
@@ -50,7 +50,7 @@
         <span class="value win-amount">$F {{ toWin | number:'1.2-2' }}</span>
       </div>
       <div class="sub-info" *ngIf="estAvgPrice > 0">
-        <span class="label">Avg. Price {{ (estAvgPrice) | number:'1.0-0' }}$F <i
+        <span class="label">Avg. Price {{ (estAvgPrice) | number:'1.2-2' }}¢ <i
             class="fa-solid fa-circle-info info-icon"></i></span>
       </div>
     </div>
@@ -61,7 +61,7 @@
         <span class="value receive-amount">$F {{ potentialProceeds | number:'1.2-2' }}</span>
       </div>
       <div class="sub-info" *ngIf="estAvgPrice > 0">
-        <span class="label">Avg. Price {{ (estAvgPrice) | number:'1.0-0' }}$F <i
+        <span class="label">Avg. Price {{ (estAvgPrice) | number:'1.2-2' }}¢ <i
             class="fa-solid fa-circle-info info-icon"></i></span>
       </div>
     </div>
