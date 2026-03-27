@@ -145,33 +145,37 @@ export class TradeService {
    * Map backend trade details response to frontend format
    */
   public mapTradeDetailsResponse(apiResponse: any): TradeDetailsData | null {
-    if (!apiResponse?.data?.prediction) {
-      return null;
-    }
+    const data = apiResponse?.data;
+    if (!data) return null;
 
-    const backendData = apiResponse.data;
+    // Support both nested and flat structure
+    const predictionInfo = data.prediction || data;
+    if (!predictionInfo) return null;
+
+    const backendData = data;
+    const p = predictionInfo;
 
     return {
       prediction: {
-        prediction_id: backendData.prediction.prediction_id,
-        prediction_category_id: backendData.prediction.prediction_category_id,
-        prediction_title: backendData.prediction.prediction_title,
-        prediction_type: backendData.prediction.prediction_type,
-        prediction_image: backendData.prediction.prediction_image,
-        prediction_create_at: backendData.prediction.prediction_create_at,
-        prediction_user_id: backendData.prediction.prediction_user_id,
-        fee_rate: backendData.prediction.fee_rate,
-        b_param: backendData.prediction.b_param,
-        status: backendData.prediction.status,
-        options: backendData.prediction.options || [],
-        userVotedOption: backendData.prediction.userVotedOption,
-        totalParticipants: backendData.prediction.totalParticipants,
-        createdAt: backendData.prediction.createdAt,
-        creatorUsername: backendData.prediction.creatorUsername,
-        creatorAvatar: backendData.prediction.creatorAvatar,
-        totalVolume: backendData.prediction.totalVolume
+        prediction_id: p.prediction_id || p.predictionId,
+        prediction_category_id: p.prediction_category_id || p.predictionCategoryId,
+        prediction_title: p.prediction_title || p.predictionTitle,
+        prediction_type: p.prediction_type || p.predictionType,
+        prediction_image: p.prediction_image || p.predictionImage || p.imageUrl,
+        prediction_create_at: p.prediction_create_at || p.predictionCreateAt || p.createdAt,
+        prediction_user_id: p.prediction_user_id,
+        fee_rate: p.fee_rate,
+        b_param: p.b_param,
+        status: p.status,
+        options: p.options || [],
+        userVotedOption: p.userVotedOption,
+        totalParticipants: p.totalParticipants,
+        createdAt: p.createdAt,
+        creatorUsername: p.creatorUsername || p.creator,
+        creatorAvatar: p.creatorAvatar,
+        totalVolume: p.totalVolume || p.marketVolume
       },
-      options: backendData.options?.map((option: any) => ({
+      options: (backendData.options || p.options)?.map((option: any) => ({
         option_id: option.option_id || option.id,
         option_title: option.option_title || option.label,
         price: option.price,
