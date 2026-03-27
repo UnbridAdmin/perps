@@ -356,6 +356,11 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
   private clearApplicationState(): void {
     this.commonService.saveAccountAddress('');
     this.userAddress = '';
+    this.unbridBalance = 0;
+    this.username = '';
+    this.isAuthenticated = false;
+    this.walletConnected = false;
+    this.userProfileImage = 'https://ipfs.unbrid.com/app/user-profile.webp';
   }
 
   private async logout(): Promise<void> {

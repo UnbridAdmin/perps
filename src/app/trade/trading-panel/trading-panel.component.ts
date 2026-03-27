@@ -33,6 +33,7 @@ export class TradingPanelComponent implements OnInit {
   yesPrice = 0;
   noPrice = 0;
   avgPrice = 0;
+  avgSellPrice = 0;
 
   isLoading = false;
 
@@ -78,9 +79,11 @@ export class TradingPanelComponent implements OnInit {
         if (this.selectedOption === 'yes') {
           this.userShares = Number(selectedObj.user_shares_yes) || 0;
           this.avgPrice = Number(selectedObj.avg_buy_price_yes) || selectedObj.price;
+          this.avgSellPrice = Number(selectedObj.avg_sell_price_yes) || 0;
         } else {
           this.userShares = Number(selectedObj.user_shares_no) || 0;
           this.avgPrice = Number(selectedObj.avg_buy_price_no) || selectedObj.price;
+          this.avgSellPrice = Number(selectedObj.avg_sell_price_no) || 0;
         }
       }
     }
@@ -94,9 +97,11 @@ export class TradingPanelComponent implements OnInit {
       if (this.selectedOption === 'yes') {
         this.userShares = Number(this.optionData.user_shares_yes) || 0;
         this.avgPrice = Number(this.optionData.avg_buy_price_yes) || this.yesPrice;
+        this.avgSellPrice = Number(this.optionData.avg_sell_price_yes) || 0;
       } else {
         this.userShares = Number(this.optionData.user_shares_no) || 0;
         this.avgPrice = Number(this.optionData.avg_buy_price_no) || this.noPrice;
+        this.avgSellPrice = Number(this.optionData.avg_sell_price_no) || 0;
       }
     }
 
@@ -152,24 +157,45 @@ export class TradingPanelComponent implements OnInit {
     return true;
   }
 
-  get toWin(): number {
+  get estAvgPrice(): number {
     const price = this.selectedOption === 'yes' ? this.yesPrice : this.noPrice;
-    if (!price || !this.amount) return 0;
-    // (Amount / Price) = Total Tokens if Win. 
-    // Potential Profit = Total Tokens - Amount
-    const profit = (Number(this.amount) / price) - Number(this.amount);
-    return parseFloat(profit.toFixed(2));
+    if (!price) return 0;
+    if (this.isBuyMode && !this.amount) return price;
+    if (!this.isBuyMode && !this.sharesToSell) return price;
+    
+    // Predeterminamos b = 10 que es el default de la plataforma
+    const b = 10;
+    
+    if (this.isBuyMode) {
+      // Estimación del impacto de la compra
+      const impact = (1 - price) * ((Number(this.amount) || 0) / b);
+      const endPrice = Math.min(0.999, price + impact);
+      return (price + endPrice) / 2;
+    } else {
+      // Estimación del impacto de la venta
+      const impact = (price * ((Number(this.sharesToSell) || 0) / b));
+      const endPrice = Math.max(0.001, price - impact);
+      return (price + endPrice) / 2;
+    }
+  }
+
+  get toWin(): number {
+    const avgPrice = this.estAvgPrice;
+    if (!avgPrice || !this.amount) return 0;
+    const payout = (Number(this.amount) / avgPrice);
+    return parseFloat(payout.toFixed(2));
   }
 
   get potentialProceeds(): number {
-    const price = this.selectedOption === 'yes' ? this.yesPrice : this.noPrice;
-    if (!price || !this.sharesToSell) return 0;
-    return parseFloat((Number(this.sharesToSell) * price).toFixed(2));
+    const avgPrice = this.estAvgPrice;
+    if (!avgPrice || !this.sharesToSell) return 0;
+    return parseFloat((Number(this.sharesToSell) * avgPrice).toFixed(2));
   }
 
   async setAmount(value: number) {
     if (!await this.checkWalletConnection()) return;
-    this.amount = Math.min(this.amount + value, this.maxAmount);
+    this.amount = parseFloat((Number(this.amount) + value).toFixed(2));
+    if (this.amount > this.maxAmount) this.amount = this.maxAmount;
   }
 
   async setMaxAmount() {
@@ -185,6 +211,11 @@ export class TradingPanelComponent implements OnInit {
   async setAllSharesToSell() {
     if (!await this.checkWalletConnection()) return;
     this.sharesToSell = this.userShares;
+  }
+
+  async setSharesPercent(percent: number) {
+    if (!await this.checkWalletConnection()) return;
+    this.sharesToSell = parseFloat((this.userShares * (percent / 100)).toFixed(2));
   }
 
   get isTradeButtonDisabled(): boolean {

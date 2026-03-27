@@ -54,6 +54,8 @@ export class CommonService {
     saveAccountAddress(address: string) {
         if (address) {
             sessionStorage.setItem('accountAddress', address);
+        } else {
+            sessionStorage.removeItem('accountAddress');
         }
     }
 

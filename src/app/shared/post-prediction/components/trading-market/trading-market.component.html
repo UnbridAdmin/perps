@@ -27,7 +27,14 @@
     </thead>
     <tbody>
       <tr *ngFor="let option of (prediction.marketInfo?.options || prediction.options)">
-        <td>{{ option.label || option.prediction_option_title }}</td>
+        <td>
+          <div class="option-name-info">
+            {{ option.label || option.title || option.prediction_option_title }}
+            <div class="user-avg-price" *ngIf="option.avgBuyPrice > 0" title="Tu precio promedio de compra">
+              <small>Mío: {{ option.avgBuyPrice | number:'1.3-4' }} F</small>
+            </div>
+          </div>
+        </td>
         <td class="env-price">{{ (option.percentage / 100) || 0 | number:'1.2-2' }} Fierce</td>
         <td>
           <div class="env-prob-bar-wrap">

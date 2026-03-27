@@ -1059,6 +1059,19 @@
     padding: 6px 0;
     border-top: 0.5px solid $border-color;
     vertical-align: middle;
+
+    .option-name-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .user-avg-price {
+      font-size: 10px;
+      color: var(--env-amber);
+      font-weight: 600;
+      opacity: 0.9;
+    }
   }
 
   .env-market-table td:last-child {

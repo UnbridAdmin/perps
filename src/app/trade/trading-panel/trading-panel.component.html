@@ -13,11 +13,11 @@
   <div class="trade-options">
     <button class="option-btn" [class.selected]="selectedOption === 'yes'" (click)="selectOption('yes')">
       <span class="option-label">Yes</span>
-      <span class="option-price">{{ yesPrice | number:'1.2-2' }} F</span>
+      <span class="option-price">{{ yesPrice | number:'1.2-2' }} $F</span>
     </button>
     <button class="option-btn option-btn-no" [class.selected]="selectedOption === 'no'" (click)="selectOption('no')">
       <span class="option-label">No</span>
-      <span class="option-price">{{ noPrice | number:'1.2-2' }} F</span>
+      <span class="option-price">{{ noPrice | number:'1.2-2' }} $F</span>
     </button>
   </div>
 
@@ -30,39 +30,39 @@
         placeholder="0" />
       <div class="quick-amounts">
         <ng-container *ngIf="isBuyMode">
-          <button class="quick-btn" (click)="setAmount(1)">+1</button>
-          <button class="quick-btn" (click)="setAmount(20)">+20</button>
-          <button class="quick-btn" (click)="setAmount(100)">+100</button>
+          <button class="quick-btn" (click)="setAmount(1)">+$F1</button>
+          <button class="quick-btn" (click)="setAmount(5)">+$F5</button>
+          <button class="quick-btn" (click)="setAmount(10)">+$F10</button>
+          <button class="quick-btn" (click)="setAmount(100)">+$F100</button>
           <button class="quick-btn max-btn" (click)="setMaxAmount()">Max</button>
         </ng-container>
         <ng-container *ngIf="!isBuyMode">
-          <button class="quick-btn" (click)="setSharesToSell(1)">+1</button>
-          <button class="quick-btn" (click)="setSharesToSell(10)">+10</button>
-          <button class="quick-btn" (click)="setSharesToSell(100)">+100</button>
-          <button class="quick-btn max-btn" (click)="setAllSharesToSell()">All</button>
+          <button class="quick-btn" (click)="setSharesPercent(25)">25%</button>
+          <button class="quick-btn" (click)="setSharesPercent(50)">50%</button>
+          <button class="quick-btn max-btn" (click)="setAllSharesToSell()">Max</button>
         </ng-container>
       </div>
     </div>
 
-    <div class="trade-info" *ngIf="isBuyMode">
-      <div class="info-row">
-        <span class="info-label">To win (Profit)</span>
-        <span class="info-amount">{{ toWin }} F</span>
+    <div class="trade-info-container" *ngIf="isBuyMode">
+      <div class="main-info">
+        <span class="label">To win 💸</span>
+        <span class="value win-amount">$F {{ toWin | number:'1.2-2' }}</span>
       </div>
-      <div class="avg-price-row">
-        <span class="avg-label">Price per share</span>
-        <span class="avg-value">{{ (selectedOption === 'yes' ? yesPrice : noPrice) | number:'1.2-5' }} F</span>
+      <div class="sub-info" *ngIf="estAvgPrice > 0">
+        <span class="label">Avg. Price {{ (estAvgPrice) | number:'1.0-0' }}$F <i
+            class="fa-solid fa-circle-info info-icon"></i></span>
       </div>
     </div>
 
-    <div class="trade-info" *ngIf="!isBuyMode">
-      <div class="info-row">
-        <span class="info-label">Est. Proceeds</span>
-        <span class="info-amount">{{ potentialProceeds }} F</span>
+    <div class="trade-info-container" *ngIf="!isBuyMode">
+      <div class="main-info">
+        <span class="label">You'll receive 💸</span>
+        <span class="value receive-amount">$F {{ potentialProceeds | number:'1.2-2' }}</span>
       </div>
-      <div class="avg-price-row">
-        <span class="avg-label">Avg. Buy Price</span>
-        <span class="avg-value">{{ avgPrice | number:'1.3-3' }} F</span>
+      <div class="sub-info" *ngIf="estAvgPrice > 0">
+        <span class="label">Avg. Price {{ (estAvgPrice) | number:'1.0-0' }}$F <i
+            class="fa-solid fa-circle-info info-icon"></i></span>
       </div>
     </div>
 

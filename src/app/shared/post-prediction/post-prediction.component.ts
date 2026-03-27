@@ -498,8 +498,10 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
           const marketData = response.data;
 
           // Update prediction info
-          prediction.totalVolume = marketData.totalVolume;
-          prediction.prediction_end_date = marketData.predictionEndDate;
+          if (marketData.prediction) {
+            prediction.totalVolume = marketData.prediction.totalVolume;
+            prediction.prediction_end_date = marketData.prediction.prediction_end_date;
+          }
 
           // Update marketInfo structure if needed or directly set options
           if (!prediction.marketInfo) {
@@ -511,10 +513,13 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
           // Map backend options to frontend structure
           if (marketData.options) {
             prediction.marketInfo.options = marketData.options.map((opt: any) => ({
-              label: opt.label,
+              id: opt.option_id,
+              label: opt.option_title,
               percentage: opt.percentage,
-              poolAmount: opt.poolAmount,
-              id: opt.id
+              poolAmount: opt.volume,
+              avgBuyPrice: opt.avg_buy_price,
+              avgSellPrice: opt.avg_sell_price,
+              userShares: opt.user_shares
             }));
           }
         }
