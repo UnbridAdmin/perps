@@ -54,7 +54,7 @@ export class OutcomeComponent implements OnInit, OnChanges {
         return {
           id: id,
           date: option.option_title,
-          volume: `Vol.${option.volume.toFixed(2)} Fierce`,
+          volume: `Vol.${(Number(option.volume) || 0).toFixed(2)} Fierce`,
           percentage: Math.round(option.percentage),
           change: option.change || 0, // Use real change from backend
           expanded: false, // Will be set after sorting
