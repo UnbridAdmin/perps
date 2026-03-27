@@ -39,7 +39,7 @@
 
   <div class="main-content">
     <div class="left-column">
-      <app-outcome [tradeData]="tradeData" (onSelectOption)="selectedOptionData = $event"></app-outcome>
+      <app-outcome [tradeData]="tradeData" [isBuyMode]="isBuyMode" (onSelectOption)="handleOptionSelect($event)"></app-outcome>
 
       <!-- Featured Comment Section (King of the Hill) -->
       <div class="featured-comment-container-standalone">
@@ -104,7 +104,7 @@
       <app-post-comments [predictionId]="predictionId" [prediction]="currentPrediction"></app-post-comments>
     </div>
     <div class="right-column">
-      <app-trading-panel [optionData]="selectedOptionData" [userBalance]="tradeData?.user_balance"
+      <app-trading-panel [optionData]="selectedOptionData" [initialSide]="selectedSide" [isBuyMode]="isBuyMode" (onModeChange)="isBuyMode = $event" [userBalance]="tradeData?.user_balance"
         [predictionTitle]="tradeData?.prediction?.prediction_title"
         [predictionType]="tradeData?.prediction?.prediction_type" [options]="tradeData?.options"
         [bParam]="tradeData?.prediction?.b_param"

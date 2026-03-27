@@ -19,7 +19,7 @@
   </div>
 
   <div class="env-pool-opts">
-    <ng-container *ngFor="let option of prediction.options">
+    <ng-container *ngFor="let option of sortedOptions">
       <div class="env-pool-row" [class.active]="selectedOptionId === (option.prediction_option_id || option.id)"
         (click)="onSelectOption(option.prediction_option_id || option.id)"
         [style.borderColor]="selectedOptionId === (option.prediction_option_id || option.id) ? 'var(--env-green)' : 'transparent'">

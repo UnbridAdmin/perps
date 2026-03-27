@@ -6,7 +6,7 @@ import { CommentsComponent } from '../comments/comments.component';
 @Component({
     selector: 'app-detail-transaction',
     standalone: true,
-    imports: [CommonModule, CommentsComponent],
+    imports: [CommonModule],
     templateUrl: './detail-transaction.component.html',
     styleUrl: './detail-transaction.component.scss'
 })

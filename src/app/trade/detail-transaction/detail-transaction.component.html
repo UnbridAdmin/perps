@@ -39,8 +39,8 @@
                 <div class="step-item">
                     <div class="step-number">🏷️</div>
                     <div class="step-text">
-                        <h3>Precio</h3>
-                        <p>{{ price | number:'1.2-6' }} Fierce</p>
+                        <h3>Probabilidad</h3>
+                        <p>{{ price | number:'1.2-6' }} %</p>
                     </div>
                 </div>
 
@@ -59,10 +59,6 @@
             <button class="btn-confirm" (click)="confirmTransaction()">
                 Confirmar {{ isBuyMode ? 'Compra' : 'Venta' }}
             </button>
-        </div>
-
-        <div class="comments-container" *ngIf="predictionId">
-            <app-comments [predictionId]="predictionId"></app-comments>
         </div>
     </div>
 </div>

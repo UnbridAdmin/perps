@@ -29,6 +29,8 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
   tradeData: any = null;
   currentPrediction: any = null;
   selectedOptionData: any = null;
+  selectedSide: 'yes' | 'no' = 'yes';
+  isBuyMode: boolean = true;
   isLoading = false;
   private subscriptions: Subscription = new Subscription();
 
@@ -73,6 +75,19 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
         }
       })
     );
+  }
+
+  handleOptionSelect(event: any) {
+    if (event.optionData) {
+      this.selectedOptionData = event.optionData;
+      this.selectedSide = event.side || 'yes';
+      if (event.isBuyMode !== undefined) {
+        this.isBuyMode = event.isBuyMode;
+      }
+    } else {
+      this.selectedOptionData = event;
+      this.selectedSide = 'yes';
+    }
   }
 
   async loadTradeDetails(): Promise<void> {

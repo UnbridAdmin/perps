@@ -1,7 +1,12 @@
 <div class="trading-panel">
   <div class="selected-outcome" *ngIf="optionData && predictionType === 'MULTIPLE'">
     <span class="label">Outcome</span>
-    <span class="value">{{ optionData.option_title }}</span>
+    <div class="outcome-info-row">
+      <div class="outcome-image" *ngIf="optionData.prediction_option_image">
+        <img [src]="optionData.prediction_option_image" [alt]="optionData.option_title">
+      </div>
+      <span class="value">{{ optionData.option_title }}</span>
+    </div>
   </div>
   <div class="trading-header">
     <div class="tabs">

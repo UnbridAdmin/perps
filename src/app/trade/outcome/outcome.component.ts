@@ -30,6 +30,7 @@ export class OutcomeComponent implements OnInit, OnChanges {
   Math = Math;
 
   @Input() tradeData: any = null;
+  @Input() isBuyMode: boolean = true;
   @Output() onSelectOption = new EventEmitter<any>();
 
   outcomes: any[] = [];
@@ -56,10 +57,18 @@ export class OutcomeComponent implements OnInit, OnChanges {
           volume: `Vol.${option.volume.toFixed(2)} Fierce`,
           percentage: Math.round(option.percentage),
           change: option.change || 0, // Use real change from backend
-          expanded: index === 0, // Expand first option by default
+          expanded: false, // Will be set after sorting
           optionData: option // Keep original option data for further use
         };
       });
+
+      // Sort outcomes by percentage in descending order (highest first)
+      this.outcomes.sort((a, b) => b.percentage - a.percentage);
+
+      // Expand the first option after sorting (highest percentage)
+      if (this.outcomes.length > 0) {
+        this.outcomes[0].expanded = true;
+      }
 
       // Initialize active tabs for each outcome
       this.activeTab = {};
@@ -69,17 +78,23 @@ export class OutcomeComponent implements OnInit, OnChanges {
     }
   }
 
-  toggleOutcome(outcomeId: string) {
+  toggleOutcome(outcomeId: string, side?: 'yes' | 'no') {
     const outcome = this.outcomes.find(o => o.id === outcomeId);
     if (outcome) {
-      if (outcome.expanded) {
+      if (outcome.expanded && !side) {
         outcome.expanded = false;
       } else {
         this.outcomes.forEach(o => o.expanded = false);
         outcome.expanded = true;
-        this.onSelectOption.emit(outcome.optionData);
+        this.onSelectOption.emit({ optionData: outcome.optionData, side: side || 'yes', isBuyMode: this.isBuyMode });
       }
     }
+  }
+
+  buyOption(event: Event, optionData: any, side: 'yes' | 'no') {
+    event.stopPropagation();
+    const id = `option_${optionData.option_id}`;
+    this.toggleOutcome(id, side);
   }
 
   switchTab(outcomeId: string, tabName: string) {

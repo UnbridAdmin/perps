@@ -75,4 +75,15 @@ export class BetPoolComponent {
         const poolAmount = this.prediction.marketInfo?.poolAmount || '0';
         return poolAmount.replace(/[^0-9.]/g, '');
     }
+
+    get sortedOptions(): any[] {
+        if (!this.prediction?.options || !Array.isArray(this.prediction.options)) {
+            return [];
+        }
+        return [...this.prediction.options].sort((a: any, b: any) => {
+            const percentageA = a.poolPercentage || a.percentage || 0;
+            const percentageB = b.poolPercentage || b.percentage || 0;
+            return percentageB - percentageA;
+        });
+    }
 }
