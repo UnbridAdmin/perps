@@ -32,4 +32,8 @@ export class PostPredictionService {
     return this.apiService.apiCall('predictions/cast-intuition-vote', 'POST', params);
   }
 
+  public getTradingMarketData(predictionId: number) {
+    return this.apiService.publicApiCall('predictions/get-trading-market-data-by-prediction-id', 'GET', { prediction_id: predictionId });
+  }
+
 }

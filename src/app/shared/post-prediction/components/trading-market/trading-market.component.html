@@ -12,12 +12,8 @@
       <div class="env-stat-val">{{ prediction.totalVolume | number:'1.0-0' }} Fierce</div>
     </div>
     <div class="env-stat-box">
-      <div class="env-stat-label">Liquidez</div>
-      <div class="env-stat-val">{{ prediction.marketInfo?.poolAmount || '0' }} Fierce</div>
-    </div>
-    <div class="env-stat-box">
-      <div class="env-stat-label">Traders</div>
-      <div class="env-stat-val">{{ prediction.marketInfo?.participants || 0 }}</div>
+      <div class="env-stat-label">Fecha Fin</div>
+      <div class="env-stat-val">{{ prediction.prediction_end_date || 'N/A' }}</div>
     </div>
   </div>
 
@@ -25,20 +21,23 @@
     <thead>
       <tr>
         <th>Opción</th>
-        <th>Precio/acción</th>
-        <th>Prob.</th>
+        <th>Precio</th>
+        <th>Prob. / Vol.</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let option of prediction.marketInfo?.options">
-        <td>{{ option.label }}</td>
-        <td class="env-price">{{ (option.percentage / 100) | number:'1.2-2' }} Fierce</td>
+      <tr *ngFor="let option of (prediction.marketInfo?.options || prediction.options)">
+        <td>{{ option.label || option.prediction_option_title }}</td>
+        <td class="env-price">{{ (option.percentage / 100) || 0 | number:'1.2-2' }} Fierce</td>
         <td>
           <div class="env-prob-bar-wrap">
             <div class="env-prob-bar">
               <div class="env-prob-bar-fill" [style.width.%]="option.percentage"></div>
             </div>
-            <span>{{ option.percentage }}%</span>
+            <span>{{ option.percentage | number:'1.0-0' }}%
+              <small style="opacity: 0.7; margin-left: 4px;" *ngIf="option.poolAmount">({{ option.poolAmount |
+                number:'1.0-0' }} Fierce)</small>
+            </span>
           </div>
         </td>
       </tr>
