@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TradingHistoryComponent } from './components/trading-history/trading-history.component';
+import { BetPoolHistoryComponent } from './components/bet-pool-history/bet-pool-history.component';
 
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [CommonModule, FormsModule, TradingHistoryComponent],
+  imports: [CommonModule, FormsModule, TradingHistoryComponent, BetPoolHistoryComponent],
   templateUrl: './history.component.html',
   styleUrls: ['./history.component.scss']
 })
