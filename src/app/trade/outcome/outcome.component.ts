@@ -30,6 +30,7 @@ export class OutcomeComponent implements OnInit, OnChanges {
   Math = Math;
 
   @Input() tradeData: any = null;
+  @Input() isBuyMode: boolean = true;
   @Output() onSelectOption = new EventEmitter<any>();
 
   outcomes: any[] = [];
@@ -69,17 +70,23 @@ export class OutcomeComponent implements OnInit, OnChanges {
     }
   }
 
-  toggleOutcome(outcomeId: string) {
+  toggleOutcome(outcomeId: string, side?: 'yes' | 'no') {
     const outcome = this.outcomes.find(o => o.id === outcomeId);
     if (outcome) {
-      if (outcome.expanded) {
+      if (outcome.expanded && !side) {
         outcome.expanded = false;
       } else {
         this.outcomes.forEach(o => o.expanded = false);
         outcome.expanded = true;
-        this.onSelectOption.emit(outcome.optionData);
+        this.onSelectOption.emit({ optionData: outcome.optionData, side: side || 'yes', isBuyMode: this.isBuyMode });
       }
     }
+  }
+
+  buyOption(event: Event, optionData: any, side: 'yes' | 'no') {
+    event.stopPropagation();
+    const id = `option_${optionData.option_id}`;
+    this.toggleOutcome(id, side);
   }
 
   switchTab(outcomeId: string, tabName: string) {

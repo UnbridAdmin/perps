@@ -17,6 +17,16 @@
             {{ outcome.change > 0 ? '▲' : '▼' }} {{ Math.abs(outcome.change) }}%
           </span>
         </div>
+
+        <div class="buy-buttons">
+          <button class="buy-btn yes" (click)="buyOption($event, outcome.optionData, 'yes')">
+            {{ isBuyMode ? 'Buy' : 'Sell' }} Yes {{ (outcome.optionData.price * 100).toFixed(1) }}¢
+          </button>
+          <button class="buy-btn no" (click)="buyOption($event, outcome.optionData, 'no')">
+            {{ isBuyMode ? 'Buy' : 'Sell' }} No {{ ((1 - outcome.optionData.price) * 100).toFixed(1) }}¢
+          </button>
+        </div>
+
         <span class="expand-icon">▼</span>
       </div>
     </div>

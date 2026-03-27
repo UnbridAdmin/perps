@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TradeService } from '../trade.service';
@@ -25,8 +25,9 @@ export class TradingPanelComponent implements OnInit {
   @Input() options: any[] = [];
   @Input() predictionId: number = 0;
   @Input() bParam: number = 10;
-
-  isBuyMode = true;
+  @Input() initialSide: 'yes' | 'no' = 'yes';
+  @Input() isBuyMode: boolean = true;
+  @Output() onModeChange = new EventEmitter<boolean>();
   selectedOption: 'yes' | 'no' = 'yes';
   amount = 1;
   sharesToSell = 0;
@@ -50,6 +51,7 @@ export class TradingPanelComponent implements OnInit {
 
   ngOnInit() {
     this.updateFromOptionData();
+    this.onModeChange.emit(this.isBuyMode);
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -59,7 +61,11 @@ export class TradingPanelComponent implements OnInit {
       else if (title === 'NO') this.selectedOption = 'no';
     }
 
-    if (changes['optionData'] || changes['userBalance'] || changes['predictionTitle'] || changes['options'] || changes['predictionType']) {
+    if (changes['initialSide'] && this.initialSide) {
+      this.selectedOption = this.initialSide;
+    }
+
+    if (changes['optionData'] || changes['userBalance'] || changes['predictionTitle'] || changes['options'] || changes['predictionType'] || changes['initialSide']) {
       this.updateFromOptionData();
     }
   }
@@ -126,6 +132,7 @@ export class TradingPanelComponent implements OnInit {
 
   toggleMode(buyMode: boolean) {
     this.isBuyMode = buyMode;
+    this.onModeChange.emit(this.isBuyMode);
     this.updateFromOptionData();
 
     // When switching to SELL mode, auto-load shares
