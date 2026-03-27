@@ -172,10 +172,10 @@ export class TradeService {
         totalVolume: backendData.prediction.totalVolume
       },
       options: backendData.options?.map((option: any) => ({
-        option_id: option.option_id,
-        option_title: option.option_title,
+        option_id: option.option_id || option.id,
+        option_title: option.option_title || option.label,
         price: option.price,
-        volume: option.volume,
+        volume: option.volume || option.poolAmount,
         percentage: option.percentage,
         resolution: option.resolution,
         user_shares: option.user_shares,
@@ -186,7 +186,7 @@ export class TradeService {
         avg_buy_price: option.avg_buy_price,
         avg_buy_price_yes: option.avg_buy_price_yes,
         avg_buy_price_no: option.avg_buy_price_no,
-        prediction_option_image: option.prediction_option_image || null
+        prediction_option_image: option.prediction_option_image || option.imageUrl || null
       })) || [],
       user_balance: backendData.user_balance || 0
     };

@@ -57,10 +57,18 @@ export class OutcomeComponent implements OnInit, OnChanges {
           volume: `Vol.${option.volume.toFixed(2)} Fierce`,
           percentage: Math.round(option.percentage),
           change: option.change || 0, // Use real change from backend
-          expanded: index === 0, // Expand first option by default
+          expanded: false, // Will be set after sorting
           optionData: option // Keep original option data for further use
         };
       });
+
+      // Sort outcomes by percentage in descending order (highest first)
+      this.outcomes.sort((a, b) => b.percentage - a.percentage);
+
+      // Expand the first option after sorting (highest percentage)
+      if (this.outcomes.length > 0) {
+        this.outcomes[0].expanded = true;
+      }
 
       // Initialize active tabs for each outcome
       this.activeTab = {};
