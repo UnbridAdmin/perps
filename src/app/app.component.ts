@@ -283,6 +283,9 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   private handleImmediateDisconnect(): void {
     this.isFirstConnection = true;
+    this.isDisconnecting = true;
+    this.clearAllStorage();
+    this.clearApplicationState();
     this.authorizationService.clearSession();
     this.signing = true;
 
@@ -293,13 +296,14 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private clearAllStorage(): void {
     sessionStorage.clear();
-    const keysToRemove = ['expirationDate', 'signatureData', 'accountAddress'];
+    const keysToRemove = ['expirationDate', 'signatureData', 'accountAddress', 'username', 'user_id', 'sessionAddress'];
     keysToRemove.forEach(key => localStorage.removeItem(key));
     this.cacheService.clear();
   }
 
   private clearApplicationState(): void {
     this.commonService.saveAccountAddress('');
+    this.commonService.updateUserAddress.next(true);
     this.walletConnectService.updateBalance.next(true);
     this.signing = true;
     this.isProcessingLogin = false;

@@ -1,10 +1,13 @@
 <div class="create-prediction-container">
   <div class="header">
-    <button class="back-btn" (click)="goBack()">← Volver</button>
+    <button class="back-btn" (click)="goBack()">
+      <i class='bx bx-left-arrow-alt'></i>
+    </button>
     <h2>Create Prediction</h2>
   </div>
 
   <div class="content">
+    <!-- Form Section - Left Side -->
     <div class="form-section">
       <div class="form-row">
         <div class="form-group">
@@ -58,12 +61,15 @@
       </button>
     </div>
 
+    <!-- Preview Section - Right Side -->
     <div class="preview-section">
       <h3>Preview</h3>
       <div class="env-card">
         <!-- Quick Trade Shortcut -->
-        <button class="quick-trade-shortcut" title="Ir al Trading" style="position: absolute; right: 12px; top: 12px; background: none; border: none; padding: 0; cursor: pointer;">
-          <img src="https://ipfs.unbrid.com/envision/trading.webp" alt="Trade" style="width: 28px; height: 28px; object-fit: cover;">
+        <button class="quick-trade-shortcut" title="Ir al Trading"
+          style="position: absolute; right: 12px; top: 12px; background: none; border: none; padding: 0; cursor: pointer;">
+          <img src="https://ipfs.unbrid.com/envision/trading.webp" alt="Trade"
+            style="width: 28px; height: 28px; object-fit: cover;">
         </button>
 
         <div class="env-card-header">
@@ -117,44 +123,46 @@
           </button>
         </div>
       </div>
-    </div>
 
-    <!-- Info Section about Fees and Rewards - Moved to bottom -->
-    <div class="info-section" *ngIf="perpsParams">
-      <div class="info-card">
-        <h3>💰 Creation Cost</h3>
-        <p class="price-highlight">{{ perpsParams.price_prediction }} Fierce Tokens</p>
-        <p class="info-text">Will be deducted from your balance when creating the prediction</p>
-      </div>
-
-      <div class="rewards-info">
-        <h4>🎁 Reward Distribution</h4>
-
-        <div class="reward-item">
-          <span class="reward-icon">🏆</span>
-          <div class="reward-details">
-            <strong>Your Creator Reward (Mutual Bets)</strong>
-            <p>You will receive <strong>{{ perpsParams.users_rewards }}%</strong> of the mutual bets pool for each bet
-              placed on your prediction</p>
-          </div>
+      <!-- Cost Info Section - Below Preview -->
+      <div class="info-section" *ngIf="perpsParams">
+        <div class="info-card">
+          <h3>💰 Creation Cost</h3>
+          <p class="price-highlight">{{ perpsParams.price_prediction }} Fierce Tokens</p>
+          <p class="info-text">Will be deducted from your balance when creating the prediction</p>
         </div>
 
-        <div class="reward-item">
-          <span class="reward-icon">📈</span>
-          <div class="reward-details">
-            <strong>Your Trading Market Reward</strong>
-            <p>You will receive <strong>{{ perpsParams.market_rewards }}%</strong> of each trading operation made on
-              your prediction</p>
-          </div>
-        </div>
+        <div class="rewards-info">
+          <h4>🎁 Reward Distribution</h4>
 
-        <div class="reward-item">
-          <span class="reward-icon">🔥</span>
-          <div class="reward-details">
-            <strong>Platform Fee</strong>
-            <p><strong>{{ perpsParams.envision_burn }}%</strong> will be allocated to the platform as a service fee</p>
+          <div class="reward-item">
+            <span class="reward-icon">🏆</span>
+            <div class="reward-details">
+              <strong>Your Creator Reward (Mutual Bets)</strong>
+              <p>You will receive <strong>{{ perpsParams.users_rewards }}%</strong> of the mutual bets pool for each bet
+                placed on your prediction</p>
+            </div>
+          </div>
+
+          <div class="reward-item">
+            <span class="reward-icon">📈</span>
+            <div class="reward-details">
+              <strong>Your Trading Market Reward</strong>
+              <p>You will receive <strong>{{ perpsParams.market_rewards }}%</strong> of each trading operation made on
+                your prediction</p>
+            </div>
+          </div>
+
+          <div class="reward-item">
+            <span class="reward-icon">🔥</span>
+            <div class="reward-details">
+              <strong>Platform Fee</strong>
+              <p><strong>{{ perpsParams.envision_burn }}%</strong> will be allocated to the platform as a service fee
+              </p>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { OutcomeComponent } from '../outcome/outcome.component';
@@ -15,7 +15,7 @@ import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog
 import { SidebarMenuService } from '../../sidebar-menu/sidebar-menu.service';
 import { ApiServices } from '../../services/api.service';
 import { FormsModule } from '@angular/forms';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-trade-detail',
@@ -24,12 +24,13 @@ import { firstValueFrom } from 'rxjs';
   templateUrl: './trade-detail.component.html',
   styleUrl: './trade-detail.component.scss',
 })
-export class TradeDetailComponent implements OnInit {
+export class TradeDetailComponent implements OnInit, OnDestroy {
   predictionId: number = 0;
   tradeData: any = null;
   currentPrediction: any = null;
   selectedOptionData: any = null;
   isLoading = false;
+  private subscriptions: Subscription = new Subscription();
 
   // Overthrow form state
   overthrowForm = {
@@ -54,12 +55,24 @@ export class TradeDetailComponent implements OnInit {
 
   ngOnInit() {
     // Get prediction ID from route params
-    this.route.params.subscribe(params => {
-      this.predictionId = +params['id'] || 0;
-      if (this.predictionId) {
-        this.loadTradeDetails();
-      }
-    });
+    this.subscriptions.add(
+      this.route.params.subscribe(params => {
+        this.predictionId = +params['id'] || 0;
+        if (this.predictionId) {
+          this.loadTradeDetails();
+        }
+      })
+    );
+
+    // Subscribe to trade completion notifications to refresh data
+    this.subscriptions.add(
+      this.tradeService.tradeCompleted$.subscribe(({ success, predictionId }) => {
+        if (success && predictionId === this.predictionId) {
+          console.log('Trade completed, refreshing trade details...');
+          this.loadTradeDetails();
+        }
+      })
+    );
   }
 
   async loadTradeDetails(): Promise<void> {
@@ -105,6 +118,10 @@ export class TradeDetailComponent implements OnInit {
         console.error('Error loading trade details:', error);
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   goBack() {

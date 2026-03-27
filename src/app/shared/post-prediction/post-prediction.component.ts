@@ -59,6 +59,7 @@ interface ApiPrediction {
   creatorUsername: string;
   creatorAvatar: string;
   totalVolume: number;
+  prediction_mutual_amount: number;
   categoryName: string | null;
   totalComments: number;
   king_comment: ApiKingComment | null;
@@ -117,6 +118,7 @@ interface Prediction {
   };
   betVolume?: number;
   marketVolume?: number;
+  prediction_end_date?: string;
 }
 
 @Component({
@@ -359,7 +361,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
           total: totalVotes
         },
         marketInfo: {
-          poolAmount: `${(apiPred as any).prediction_mutual_amount || 0}`,
+          poolAmount: apiPred.prediction_mutual_amount?.toString() || '0',
           participants: totalParticipants,
           options: apiPred.options.map(opt => ({
             label: opt.prediction_option_title,
@@ -372,8 +374,8 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
           likes: Math.floor(Math.random() * 100),
           volume: `$${apiPred.totalVolume || 0}`
         },
-        betVolume: Math.floor((apiPred.totalVolume || 0) * 0.4), // 40% del volumen total para apuestas
-        marketVolume: Math.floor((apiPred.totalVolume || 0) * 0.6), // 60% del volumen total para mercado
+        betVolume: apiPred.prediction_mutual_amount || 0, // Volumen de apuestas desde prediction_mutual_amount
+        marketVolume: apiPred.totalVolume || 0, // Volumen de mercado desde totalVolume
         featuredComment: apiPred.king_comment ? {
           user: apiPred.king_comment.username,
           avatar: apiPred.king_comment.avatar || 'https://api.dicebear.com/9.x/fun-emoji/svg',
@@ -416,6 +418,9 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
       this.activeMarketPopover = index;
       this.activeSentimentPopover = null;
       this.activeBetPopover = null;
+
+      // Load real market data
+      this.loadTradingMarketData(index);
     }
   }
 
@@ -480,6 +485,46 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
         }
       },
       error: (err) => console.error('Error loading pool data:', err)
+    });
+  }
+
+  private loadTradingMarketData(index: number): void {
+    const prediction = this.predictions[index];
+    const predictionId = prediction.prediction_id;
+
+    this.postPredictionService.getTradingMarketData(predictionId).subscribe({
+      next: (response: any) => {
+        if (response.success && response.data) {
+          const marketData = response.data;
+
+          // Update prediction info
+          if (marketData.prediction) {
+            prediction.totalVolume = marketData.prediction.totalVolume;
+            prediction.prediction_end_date = marketData.prediction.prediction_end_date;
+          }
+
+          // Update marketInfo structure if needed or directly set options
+          if (!prediction.marketInfo) {
+            prediction.marketInfo = { poolAmount: '0', participants: 0, options: [] };
+          }
+
+          prediction.marketInfo.poolAmount = marketData.totalVolume?.toString() || '0';
+
+          // Map backend options to frontend structure
+          if (marketData.options) {
+            prediction.marketInfo.options = marketData.options.map((opt: any) => ({
+              id: opt.option_id,
+              label: opt.option_title,
+              percentage: opt.percentage,
+              poolAmount: opt.volume,
+              avgBuyPrice: opt.avg_buy_price,
+              avgSellPrice: opt.avg_sell_price,
+              userShares: opt.user_shares
+            }));
+          }
+        }
+      },
+      error: (err) => console.error('Error loading trading market data:', err)
     });
   }
 

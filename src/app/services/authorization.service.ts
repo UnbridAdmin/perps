@@ -74,7 +74,7 @@ export class AuthorizationService {
     }
 
     public clearSession(): void {
-        const keysToRemove = ['expirationDate', 'signatureData', 'accountAddress', 'sessionAddress', 'username'];
+        const keysToRemove = ['expirationDate', 'signatureData', 'accountAddress', 'sessionAddress', 'username', 'user_id'];
         keysToRemove.forEach(key => localStorage.removeItem(key));
 
         sessionStorage.removeItem('accountAddress');

@@ -53,7 +53,7 @@ export class OutcomeComponent implements OnInit, OnChanges {
         return {
           id: id,
           date: option.option_title,
-          volume: `${option.volume.toFixed(2)} Fierce Vol.`,
+          volume: `Vol.${option.volume.toFixed(2)} Fierce`,
           percentage: Math.round(option.percentage),
           change: option.change || 0, // Use real change from backend
           expanded: index === 0, // Expand first option by default

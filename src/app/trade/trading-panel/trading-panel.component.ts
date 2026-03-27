@@ -8,6 +8,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DetailTransactionComponent } from '../detail-transaction/detail-transaction.component';
 import { WalletConnectService } from '../../services/walletconnect.service';
 import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
+import { SidebarMenuService } from '../../sidebar-menu/sidebar-menu.service';
 
 @Component({
   selector: 'app-trading-panel',
@@ -23,6 +24,7 @@ export class TradingPanelComponent implements OnInit {
   @Input() predictionType: string = 'MULTIPLE';
   @Input() options: any[] = [];
   @Input() predictionId: number = 0;
+  @Input() bParam: number = 10;
 
   isBuyMode = true;
   selectedOption: 'yes' | 'no' = 'yes';
@@ -33,6 +35,7 @@ export class TradingPanelComponent implements OnInit {
   yesPrice = 0;
   noPrice = 0;
   avgPrice = 0;
+  avgSellPrice = 0;
 
   isLoading = false;
 
@@ -41,7 +44,8 @@ export class TradingPanelComponent implements OnInit {
     private authService: AuthorizationService,
     private walletConnectService: WalletConnectService,
     private confirmDialogService: ConfirmDialogService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private sidebarMenuService: SidebarMenuService
   ) { }
 
   ngOnInit() {
@@ -78,9 +82,11 @@ export class TradingPanelComponent implements OnInit {
         if (this.selectedOption === 'yes') {
           this.userShares = Number(selectedObj.user_shares_yes) || 0;
           this.avgPrice = Number(selectedObj.avg_buy_price_yes) || selectedObj.price;
+          this.avgSellPrice = Number(selectedObj.avg_sell_price_yes) || 0;
         } else {
           this.userShares = Number(selectedObj.user_shares_no) || 0;
           this.avgPrice = Number(selectedObj.avg_buy_price_no) || selectedObj.price;
+          this.avgSellPrice = Number(selectedObj.avg_sell_price_no) || 0;
         }
       }
     }
@@ -94,9 +100,11 @@ export class TradingPanelComponent implements OnInit {
       if (this.selectedOption === 'yes') {
         this.userShares = Number(this.optionData.user_shares_yes) || 0;
         this.avgPrice = Number(this.optionData.avg_buy_price_yes) || this.yesPrice;
+        this.avgSellPrice = Number(this.optionData.avg_sell_price_yes) || 0;
       } else {
         this.userShares = Number(this.optionData.user_shares_no) || 0;
         this.avgPrice = Number(this.optionData.avg_buy_price_no) || this.noPrice;
+        this.avgSellPrice = Number(this.optionData.avg_sell_price_no) || 0;
       }
     }
 
@@ -152,24 +160,47 @@ export class TradingPanelComponent implements OnInit {
     return true;
   }
 
+  get estAvgPrice(): number {
+    const price = this.selectedOption === 'yes' ? this.yesPrice : this.noPrice;
+    if (!price) return 0;
+    if (this.isBuyMode && !this.amount) return price;
+    if (!this.isBuyMode && !this.sharesToSell) return price;
+
+    // Usamos el bParam de la predicción (del DB) o 10 como fallback
+    const b = Number(this.bParam) || 10;
+
+    if (this.isBuyMode) {
+      // Estimación del impacto de la compra
+      const impact = (1 - price) * ((Number(this.amount) || 0) / b);
+      const endPrice = Math.min(0.999, price + impact);
+      return (price + endPrice) / 2;
+    } else {
+      // Estimación del impacto de la venta
+      const impact = (price * ((Number(this.sharesToSell) || 0) / b));
+      const endPrice = Math.max(0.001, price - impact);
+      return (price + endPrice) / 2;
+    }
+  }
+
   get toWin(): number {
     const price = this.selectedOption === 'yes' ? this.yesPrice : this.noPrice;
     if (!price || !this.amount) return 0;
-    // (Amount / Price) = Total Tokens if Win. 
-    // Potential Profit = Total Tokens - Amount
-    const profit = (Number(this.amount) / price) - Number(this.amount);
-    return parseFloat(profit.toFixed(2));
+    // Payout logic according to Polymarket mockup: Amount / price
+    const payout = (Number(this.amount) / price);
+    return parseFloat(payout.toFixed(2));
   }
 
   get potentialProceeds(): number {
     const price = this.selectedOption === 'yes' ? this.yesPrice : this.noPrice;
     if (!price || !this.sharesToSell) return 0;
+    // Expected proceeds according to Polymarket mockup: Shares * price
     return parseFloat((Number(this.sharesToSell) * price).toFixed(2));
   }
 
   async setAmount(value: number) {
     if (!await this.checkWalletConnection()) return;
-    this.amount = Math.min(this.amount + value, this.maxAmount);
+    this.amount = parseFloat((Number(this.amount) + value).toFixed(2));
+    if (this.amount > this.maxAmount) this.amount = this.maxAmount;
   }
 
   async setMaxAmount() {
@@ -185,6 +216,11 @@ export class TradingPanelComponent implements OnInit {
   async setAllSharesToSell() {
     if (!await this.checkWalletConnection()) return;
     this.sharesToSell = this.userShares;
+  }
+
+  async setSharesPercent(percent: number) {
+    if (!await this.checkWalletConnection()) return;
+    this.sharesToSell = parseFloat((this.userShares * (percent / 100)).toFixed(2));
   }
 
   get isTradeButtonDisabled(): boolean {
@@ -314,7 +350,9 @@ export class TradingPanelComponent implements OnInit {
               message1: `Has comprado exitosamente por ${this.amount} Fierce.`
             });
             console.log('Vote purchased successfully:', buyVoteData);
-            // Handle success - maybe update prices, show confirmation, etc.
+            // Notify trade completion to update outcomes and balance
+            this.tradeService.notifyTradeCompleted(true, this.predictionId);
+            this.sidebarMenuService.notifyBalanceUpdate();
           } else {
             console.error('Error purchasing vote:', buyVoteData?.message);
           }
@@ -326,7 +364,9 @@ export class TradingPanelComponent implements OnInit {
               message1: `Has comprado exitosamente por ${this.amount} Fierce.`
             });
             console.log('Vote purchased successfully:', response.data);
-            // Handle success - maybe update prices, show confirmation, etc.
+            // Notify trade completion to update outcomes and balance
+            this.tradeService.notifyTradeCompleted(true, this.predictionId);
+            this.sidebarMenuService.notifyBalanceUpdate();
           } else {
             console.error('Error purchasing vote:', response.data?.message);
           }
@@ -393,6 +433,9 @@ export class TradingPanelComponent implements OnInit {
           console.log('Shares sold successfully:', response.data);
           // Update user shares
           this.userShares = Math.max(0, this.userShares - this.sharesToSell);
+          // Notify trade completion to update outcomes and balance
+          this.tradeService.notifyTradeCompleted(true, this.predictionId);
+          this.sidebarMenuService.notifyBalanceUpdate();
         } else {
           console.error('Error selling shares:', response.data?.message);
         }

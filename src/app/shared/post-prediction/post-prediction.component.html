@@ -7,11 +7,15 @@
   </div>
 
   <div class="env-card" *ngFor="let prediction of predictions; let i = index">
-    <!-- Quick Trade Shortcut (keep to preserve functionality, adapt minimally if needed) -->
-    <button class="quick-trade-shortcut" (click)="navigateToTrade(prediction)" title="Ir al Trading"
-      style="position: absolute; right: 12px; top: 12px;">
-      <img src="https://ipfs.unbrid.com/envision/trading.webp" alt="Trade">
-    </button>
+    <!-- Quick Action Buttons -->
+    <div class="quick-action-buttons">
+      <button class="quick-action-btn bet-btn" (click)="toggleBetPopover(i)" title="Pool de apuestas">
+        BET
+      </button>
+      <button class="quick-action-btn trade-btn" (click)="navigateToTrade(prediction)" title="Ir al Trading">
+        TRADE
+      </button>
+    </div>
 
     <div class="env-card-header">
       <div class="env-avatar"
