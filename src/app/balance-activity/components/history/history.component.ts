@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TradingHistoryComponent } from './components/trading-history/trading-history.component';
 
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TradingHistoryComponent],
   templateUrl: './history.component.html',
   styleUrls: ['./history.component.scss']
 })

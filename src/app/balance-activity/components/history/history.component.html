@@ -25,7 +25,7 @@
     </div>
   </div>
 
-  <div class="activity-table">
+  <div class="activity-table" *ngIf="activeTab !== 'trading'">
     <div class="table-header">
       <div class="col">ACTIVITY</div>
       <div class="col">MARKET</div>
@@ -61,4 +61,6 @@
       </div>
     </div>
   </div>
+
+  <app-trading-history *ngIf="activeTab === 'trading'"></app-trading-history>
 </div>
