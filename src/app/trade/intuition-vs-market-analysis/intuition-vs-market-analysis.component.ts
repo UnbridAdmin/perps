@@ -38,7 +38,7 @@ export class IntuitionVsMarketAnalysisComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private priceTrendService: PriceTrendService,
     private commonService: CommonService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.routeSub = this.route.params.subscribe(params => {
@@ -68,7 +68,7 @@ export class IntuitionVsMarketAnalysisComponent implements OnInit, OnDestroy {
   }
 
   private mapData(apiData: IntuitionMarketGapData[]) {
-    const options: MarketOption[] = apiData.map(item => ({
+    let options: MarketOption[] = apiData.map(item => ({
       id: item.prediction_option_id.toString(),
       name: item.prediction_option_title,
       fierceIntuition: Math.round(item.intuition_percentage),
@@ -77,9 +77,12 @@ export class IntuitionVsMarketAnalysisComponent implements OnInit, OnDestroy {
       gap: Math.round(item.gap)
     }));
 
-    const isBinary = options.length === 2 && 
+    // Sort options by marketPrice in descending order (highest percentage first)
+    options.sort((a, b) => b.marketPrice - a.marketPrice);
+
+    const isBinary = options.length === 2 &&
       (options.some(o => o.name.toUpperCase() === 'SÍ' || o.name.toUpperCase() === 'YES') ||
-       options.some(o => o.name.toUpperCase() === 'NO'));
+        options.some(o => o.name.toUpperCase() === 'NO'));
 
     this.predictionData = {
       type: isBinary ? 'binary' : 'multiple',
