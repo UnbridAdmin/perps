@@ -80,10 +80,7 @@ export class BetPoolComponent {
         if (!this.prediction?.options || !Array.isArray(this.prediction.options)) {
             return [];
         }
-        return [...this.prediction.options].sort((a: any, b: any) => {
-            const percentageA = a.poolPercentage || a.percentage || 0;
-            const percentageB = b.poolPercentage || b.percentage || 0;
-            return percentageB - percentageA;
-        });
+        // Backend already sorts by percentage (highest to lowest), no need to sort here
+        return this.prediction.options;
     }
 }
