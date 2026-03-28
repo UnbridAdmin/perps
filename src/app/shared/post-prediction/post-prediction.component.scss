@@ -552,8 +552,13 @@
   }
 
   .env-tab.active {
-    background: var(--env-purple-dim);
+    background: transparent;
     color: var(--env-purple);
+  }
+
+  .env-tab.active-green {
+    background: transparent;
+    color: var(--env-green);
   }
 
   .env-tab-divider {
