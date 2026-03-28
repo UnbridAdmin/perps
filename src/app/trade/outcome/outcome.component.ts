@@ -72,10 +72,7 @@ export class OutcomeComponent implements OnInit, OnChanges {
           };
         });
 
-      // Sort outcomes by percentage in descending order (highest first)
-      this.outcomes.sort((a, b) => b.percentage - a.percentage);
-
-      // Expand the first option after sorting (highest percentage)
+      // Expand the first option (which is already sorted by the backend)
       if (this.outcomes.length > 0) {
         this.outcomes[0].expanded = true;
       }
@@ -112,8 +109,12 @@ export class OutcomeComponent implements OnInit, OnChanges {
   }
 
   getPriceYes(option: any): number {
+    // Priority: 1. Backend-provided dynamic price
+    if (this.isBuyMode && option.buy_price) return Number(option.buy_price);
+    if (!this.isBuyMode && option.sell_price) return Number(option.sell_price);
+
+    // 2. Manual AMM math fallback
     if (!this.tradeData?.prediction) return option.price || 0.5;
-    
     const b = this.tradeData.prediction.b_param || 10;
     const feeRate = this.tradeData.prediction.fee_rate || 0.01;
     const spotPrice = option.price || 0.5;
@@ -128,12 +129,11 @@ export class OutcomeComponent implements OnInit, OnChanges {
   }
 
   getPriceNo(option: any): number {
+    // Note: Backend currently doesn't provide buy_price/sell_price for the 'NO' side in MULTIPLE markets
     if (!this.tradeData?.prediction) return 1 - (option.price || 0.5);
 
     const b = this.tradeData.prediction.b_param || 10;
     const feeRate = this.tradeData.prediction.fee_rate || 0.01;
-    
-    // The "NO" side spot price is essentially 1 - spotPrice
     const spotPrice = 1 - (option.price || 0.5);
 
     return this.tradeService.calculateEffectivePrice(

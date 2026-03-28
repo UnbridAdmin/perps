@@ -140,15 +140,16 @@ export class TradingPanelComponent implements OnInit {
     // 2. Logic for MULTIPLE predictions
     else if (this.optionData) {
       this.predictionOptionId = this.optionData.option_multiple_id;
+      const spotPrice = Number(this.optionData.price) || 0.5;
 
       // Handle YES/NO shares and avg prices for MULTIPLE
       if (this.selectedOption === 'yes') {
         this.userShares = Number(this.optionData.user_shares_yes) || 0;
-        this.avgPrice = Number(this.optionData.avg_buy_price_yes) || this.optionData.price;
+        this.avgPrice = Number(this.optionData.avg_buy_price_yes) || spotPrice;
         this.avgSellPrice = Number(this.optionData.avg_sell_price_yes) || 0;
       } else {
         this.userShares = Number(this.optionData.user_shares_no) || 0;
-        this.avgPrice = Number(this.optionData.avg_buy_price_no) || (1 - this.avgPrice);
+        this.avgPrice = Number(this.optionData.avg_buy_price_no) || (1 - spotPrice);
         this.avgSellPrice = Number(this.optionData.avg_sell_price_no) || 0;
       }
     }
