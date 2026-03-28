@@ -33,10 +33,54 @@ export class TradingPanelComponent implements OnInit {
   sharesToSell = 0;
   maxAmount = 0;
 
-  yesPrice = 0;
-  noPrice = 0;
   avgPrice = 0;
   avgSellPrice = 0;
+
+  get yesPrice(): number {
+    return this.calculateEffectivePrice('yes');
+  }
+
+  get noPrice(): number {
+    return this.calculateEffectivePrice('no');
+  }
+
+  calculateEffectivePrice(option: 'yes' | 'no'): number {
+    let targetObj: any;
+    if (this.predictionType?.toUpperCase() === 'BINARY' && this.options && this.options.length > 0) {
+      targetObj = this.options.find(o => o.option_title?.toUpperCase() === option.toUpperCase());
+    } else {
+      targetObj = this.optionData;
+    }
+
+    if (!targetObj) return 0.5;
+
+    // Base spot price
+    let spotPrice = Number(targetObj.price) || 0.5;
+
+    if (this.predictionType?.toUpperCase() === 'MULTIPLE' && option === 'no') {
+      // For synthetic No, calculate its own spot
+      spotPrice = 1 - (Number(this.optionData.price) || 0.5);
+    }
+
+    // Default return if no buy/sell prices available and amount is 0
+    const b = Number(this.bParam) || 10;
+    
+    if (this.isBuyMode) {
+      const amount = Number(this.amount) || 1; // Default to 1 for display
+      const net = amount * 0.99; // 1% fee estimate
+      const impact = (1 - spotPrice) * (net / b);
+      const endPrice = Math.min(0.999, spotPrice + impact);
+      const avgPrice = (spotPrice + endPrice) / 2;
+      return avgPrice / 0.99;
+    } else {
+      const shares = Number(this.sharesToSell) || 1; // Default to 1 for display
+      const estimatedProceeds = shares * spotPrice;
+      const impact = (spotPrice * (estimatedProceeds / b));
+      const endPrice = Math.max(0.001, spotPrice - impact);
+      const avgPrice = (spotPrice + endPrice) / 2;
+      return avgPrice * 0.99;
+    }
+  }
 
   isLoading = false;
 
@@ -76,10 +120,6 @@ export class TradingPanelComponent implements OnInit {
       const yesOption = this.options.find(o => o.option_title?.toUpperCase() === 'YES');
       const noOption = this.options.find(o => o.option_title?.toUpperCase() === 'NO');
 
-      // Set button prices
-      if (yesOption) this.yesPrice = Number(yesOption.price) || 0;
-      if (noOption) this.noPrice = Number(noOption.price) || 0;
-
       // Extract data for the selected side
       const selectedObj = this.selectedOption === 'yes' ? yesOption : noOption;
 
@@ -98,18 +138,16 @@ export class TradingPanelComponent implements OnInit {
     }
     // 2. Logic for MULTIPLE predictions
     else if (this.optionData) {
-      this.yesPrice = Number(this.optionData.price) || 0;
-      this.noPrice = Number((1 - this.yesPrice).toFixed(5));
       this.predictionOptionId = this.optionData.option_multiple_id;
 
       // Handle YES/NO shares and avg prices for MULTIPLE
       if (this.selectedOption === 'yes') {
         this.userShares = Number(this.optionData.user_shares_yes) || 0;
-        this.avgPrice = Number(this.optionData.avg_buy_price_yes) || this.yesPrice;
+        this.avgPrice = Number(this.optionData.avg_buy_price_yes) || this.optionData.price;
         this.avgSellPrice = Number(this.optionData.avg_sell_price_yes) || 0;
       } else {
         this.userShares = Number(this.optionData.user_shares_no) || 0;
-        this.avgPrice = Number(this.optionData.avg_buy_price_no) || this.noPrice;
+        this.avgPrice = Number(this.optionData.avg_buy_price_no) || (1 - this.avgPrice);
         this.avgSellPrice = Number(this.optionData.avg_sell_price_no) || 0;
       }
     }
@@ -168,39 +206,22 @@ export class TradingPanelComponent implements OnInit {
   }
 
   get estAvgPrice(): number {
-    const price = this.selectedOption === 'yes' ? this.yesPrice : this.noPrice;
-    if (!price) return 0;
-    if (this.isBuyMode && !this.amount) return price;
-    if (!this.isBuyMode && !this.sharesToSell) return price;
-
-    // Usamos el bParam de la predicción (del DB) o 10 como fallback
-    const b = Number(this.bParam) || 10;
-
-    if (this.isBuyMode) {
-      // Estimación del impacto de la compra
-      const impact = (1 - price) * ((Number(this.amount) || 0) / b);
-      const endPrice = Math.min(0.999, price + impact);
-      return (price + endPrice) / 2;
-    } else {
-      // Estimación del impacto de la venta
-      const impact = (price * ((Number(this.sharesToSell) || 0) / b));
-      const endPrice = Math.max(0.001, price - impact);
-      return (price + endPrice) / 2;
-    }
+    return this.selectedOption === 'yes' ? this.yesPrice : this.noPrice;
   }
 
   get toWin(): number {
-    const price = this.selectedOption === 'yes' ? this.yesPrice : this.noPrice;
+    const price = this.estAvgPrice;
     if (!price || !this.amount) return 0;
-    // Payout logic according to Polymarket mockup: Amount / price
+    // Payout logic: Each share pays $1 if correct.
+    // Shares = amount / effective_price
     const payout = (Number(this.amount) / price);
     return parseFloat(payout.toFixed(2));
   }
 
   get potentialProceeds(): number {
-    const price = this.selectedOption === 'yes' ? this.yesPrice : this.noPrice;
+    const price = this.estAvgPrice;
     if (!price || !this.sharesToSell) return 0;
-    // Expected proceeds according to Polymarket mockup: Shares * price
+    // Expected proceeds: Shares * effective_price
     return parseFloat((Number(this.sharesToSell) * price).toFixed(2));
   }
 

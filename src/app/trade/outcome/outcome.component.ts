@@ -17,6 +17,8 @@ interface TradeOptionData {
   change: number;
   avg_buy_price: number;
   prediction_option_image: string | null;
+  buy_price?: number;
+  sell_price?: number;
 }
 
 @Component({
@@ -99,5 +101,24 @@ export class OutcomeComponent implements OnInit, OnChanges {
 
   switchTab(outcomeId: string, tabName: string) {
     this.activeTab[outcomeId] = tabName;
+  }
+
+  getPriceYes(option: any): number {
+    if (this.isBuyMode) {
+      return Number(option.buy_price) || option.price;
+    } else {
+      return Number(option.sell_price) || option.price;
+    }
+  }
+
+  getPriceNo(option: any): number {
+    // Basic spread calculation for No (synthetic)
+    if (this.isBuyMode) {
+      const yesSell = Number(option.sell_price) || option.price;
+      return 1 - yesSell;
+    } else {
+      const yesBuy = Number(option.buy_price) || option.price;
+      return 1 - yesBuy;
+    }
   }
 }
