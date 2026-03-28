@@ -52,10 +52,14 @@ export class BetPoolComponent {
         const newOptionPool = optionPool + this.betAmount;
         const newTotalPool = poolAmount + this.betAmount;
 
+        // Porcentaje a repartir (100% - burn - fee). Por defecto 70%
+        const betBurn = this.prediction.betBurn !== undefined ? parseFloat(this.prediction.betBurn) : 5;
+        const betFee = this.prediction.betPlatformRewards !== undefined ? parseFloat(this.prediction.betPlatformRewards) : 25;
+        const rewardMultiplier = Math.max(0, 100 - betBurn - betFee) / 100;
+
+        const distributablePool = newTotalPool * rewardMultiplier;
+
         const userShare = (userInvestment + this.betAmount) / newOptionPool;
-        // Distributable pool = total pool (without deductions - more attractive for users)
-        // Burn and fee are shown in badges but not deducted from potential profit calculation
-        const distributablePool = newTotalPool;
 
         const estimatedPayout = userShare * distributablePool;
         this.potentialProfit = estimatedPayout - (userInvestment + this.betAmount);

@@ -1,9 +1,8 @@
 <div class="env-panel fade-in" style="display: block;">
   <div class="env-panel-title">
     Pool de Apuestas Mutuas
-    <span class="env-burn-badge"
-      *ngIf="(prediction.betBurn !== null && prediction.betBurn !== undefined) || (prediction.betPlatformRewards !== null && prediction.betPlatformRewards !== undefined)">
-      🔥 {{ prediction.betBurn || 0 }}% burn + {{ prediction.betPlatformRewards || 0 }}% fee
+    <span class="env-burn-badge" title="Deducciones del pozo total">
+      🔥 {{ prediction.betBurn !== undefined ? prediction.betBurn : 5 }}% burn + {{ prediction.betPlatformRewards !== undefined ? prediction.betPlatformRewards : 25 }}% fee
     </span>
     <button class="close-panel-btn" (click)="onClose()"
       style="background: none; border: none; color: var(--env-muted); cursor: pointer; float: right; font-size: 16px;">×</button>
