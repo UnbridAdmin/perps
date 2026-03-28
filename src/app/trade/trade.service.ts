@@ -234,4 +234,34 @@ export class TradeService {
   public getOptionColor(side: string): string {
     return side.toLowerCase() === 'yes' ? '#22c55e' : '#ef4444';
   }
+
+  /**
+   * Calculate effective price considering slippage and fees (AMM logic)
+   */
+  public calculateEffectivePrice(
+    isBuyMode: boolean,
+    amount: number, // USD amount if buy, shares if sell
+    spotPrice: number,
+    b: number,
+    feeRate: number
+  ): number {
+    if (b <= 0) return spotPrice;
+    
+    const feeFactor = 1 - (feeRate || 0.01);
+
+    if (isBuyMode) {
+      const net = amount * feeFactor;
+      // Linear approximation of LMSR price impact for display
+      const impact = (1 - spotPrice) * (net / b);
+      const endPrice = Math.min(0.999, spotPrice + impact);
+      const avgPrice = (spotPrice + endPrice) / 2;
+      return Math.min(0.999, avgPrice / feeFactor);
+    } else {
+      const shares = amount;
+      const impact = spotPrice * (shares / b);
+      const endPrice = Math.max(0.001, spotPrice - impact);
+      const avgPrice = (spotPrice + endPrice) / 2;
+      return Math.max(0.001, avgPrice * feeFactor);
+    }
+  }
 }
