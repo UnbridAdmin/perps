@@ -1,0 +1,57 @@
+<div class="bet-history-container">
+    <div class="table-container" *ngIf="history.length > 0">
+      <table class="history-table">
+          <thead>
+              <tr>
+                  <th class="col-activity">Activity</th>
+                  <th class="col-market">Market</th>
+                  <th class="col-value text-end">Bet Amount</th>
+                  <th class="col-time text-end">Time</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr *ngFor="let item of history" class="history-row">
+                  <td class="activity-cell">
+                      <span class="activity-badge bet">BET</span>
+                  </td>
+                  <td class="market-cell">
+                      <div class="market-content">
+                          <div class="market-image" *ngIf="item.prediction_image">
+                              <img [src]="item.prediction_image" alt="Market">
+                          </div>
+                          <div class="market-info">
+                              <div class="prediction-title">{{ item.prediction_title }}</div>
+                              <div class="market-details">
+                                  <span class="option-title">{{ item.option_title }}</span>
+                              </div>
+                          </div>
+                      </div>
+                  </td>
+                  <td class="value-cell text-end">
+                      {{ item.amount.toFixed(2) }} F
+                  </td>
+                  <td class="time-cell text-end">
+                      {{ formatDate(item.timestamp) }}
+                  </td>
+              </tr>
+          </tbody>
+      </table>
+      
+      <div class="load-more" *ngIf="hasMore">
+          <button class="btn-load-more" (click)="loadMore()" [disabled]="loading">
+              {{ loading ? 'Loading...' : 'Load More' }}
+          </button>
+      </div>
+    </div>
+  
+    <div class="empty-state" *ngIf="!loading && history.length === 0">
+      <div class="empty-icon">🎲</div>
+      <div class="empty-text">No bets found</div>
+      <div class="empty-subtext">Bets you place in the pool will appear here.</div>
+    </div>
+  
+    <div class="loading-state" *ngIf="loading && history.length === 0">
+      <div class="spinner"></div>
+      <p>Retrieving your bets...</p>
+    </div>
+  </div>

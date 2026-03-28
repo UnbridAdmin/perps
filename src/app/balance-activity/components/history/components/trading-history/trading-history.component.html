@@ -1,0 +1,67 @@
+<div class="trading-history-container">
+  <div class="table-container" *ngIf="history.length > 0">
+    <table class="history-table">
+        <thead>
+            <tr>
+                <th class="col-activity">Activity</th>
+                <th class="col-market">Market</th>
+                <th class="col-fee text-end">Fee</th>
+                <th class="col-value text-end">Value</th>
+                <th class="col-time text-end">Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of history" class="history-row">
+                <td class="activity-cell">
+                    <span class="activity-badge" [ngClass]="item.activity.toLowerCase()">{{ item.activity }}</span>
+                </td>
+                <td class="market-cell">
+                    <div class="market-content">
+                        <div class="market-image" *ngIf="item.prediction_image">
+                            <img [src]="item.prediction_image" alt="Market">
+                        </div>
+                        <div class="market-info">
+                            <div class="prediction-title">{{ item.prediction_title }}</div>
+                            <div class="market-details">
+                                <span class="side-badge" *ngIf="item.side" [ngClass]="item.side.toLowerCase()">{{ item.side }}</span>
+                                <span class="option-title">{{ item.option_title }}</span>
+                                <span class="divider">•</span>
+                                <span class="price">{{ (item.price * 100).toFixed(0) }}¢</span>
+                                <span class="divider">•</span>
+                                <span class="shares">{{ item.shares.toFixed(2) }} shares</span>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td class="fee-cell text-end">
+                    <span class="fee-value" *ngIf="item.fee > 0">-{{ item.fee.toFixed(2) }} F.</span>
+                    <span class="fee-value" *ngIf="!item.fee || item.fee == 0">0.00 F.</span>
+                </td>
+                <td class="value-cell text-end" [ngClass]="item.value < 0 ? 'negative' : 'positive'">
+                    {{ formatValue(item.value) }}
+                </td>
+                <td class="time-cell text-end">
+                    {{ formatDate(item.timestamp) }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div class="load-more" *ngIf="hasMore">
+        <button class="btn-load-more" (click)="loadMore()" [disabled]="loading">
+            {{ loading ? 'Loading...' : 'Load More' }}
+        </button>
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && history.length === 0">
+    <div class="empty-icon">📜</div>
+    <div class="empty-text">No trading activity found</div>
+    <div class="empty-subtext">Your market moves will appear here once you start trading.</div>
+  </div>
+
+  <div class="loading-state" *ngIf="loading && history.length === 0">
+    <div class="spinner"></div>
+    <p>Retrieving your history...</p>
+  </div>
+</div>

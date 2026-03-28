@@ -15,7 +15,7 @@ export class BetPoolComponent {
     @Output() close = new EventEmitter<void>();
 
     selectedOptionId: number | null = null;
-    betAmount: number = 10;
+    betAmount: number = 1;
     potentialProfit: number = 0;
     burnRate: number = 0.05; // 5% configurable
 
