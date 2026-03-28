@@ -5,6 +5,7 @@
             <tr>
                 <th class="col-activity">Activity</th>
                 <th class="col-market">Market</th>
+                <th class="col-fee text-end">Fee</th>
                 <th class="col-value text-end">Value</th>
                 <th class="col-time text-end">Time</th>
             </tr>
@@ -22,6 +23,7 @@
                         <div class="market-info">
                             <div class="prediction-title">{{ item.prediction_title }}</div>
                             <div class="market-details">
+                                <span class="side-badge" *ngIf="item.side" [ngClass]="item.side.toLowerCase()">{{ item.side }}</span>
                                 <span class="option-title">{{ item.option_title }}</span>
                                 <span class="divider">•</span>
                                 <span class="price">{{ (item.price * 100).toFixed(0) }}¢</span>
@@ -30,6 +32,10 @@
                             </div>
                         </div>
                     </div>
+                </td>
+                <td class="fee-cell text-end">
+                    <span class="fee-value" *ngIf="item.fee > 0">-{{ item.fee.toFixed(2) }} F.</span>
+                    <span class="fee-value" *ngIf="!item.fee || item.fee == 0">0.00 F.</span>
                 </td>
                 <td class="value-cell text-end" [ngClass]="item.value < 0 ? 'negative' : 'positive'">
                     {{ formatValue(item.value) }}

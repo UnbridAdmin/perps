@@ -124,6 +124,27 @@
         font-size: 0.75rem;
     }
 
+    .side-badge {
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        line-height: 1;
+        
+        &.yes {
+            background: rgba(30, 215, 96, 0.2);
+            color: #1ed760;
+            border: 1px solid rgba(30, 215, 96, 0.3);
+        }
+        
+        &.no {
+            background: rgba(255, 75, 75, 0.2);
+            color: #ff4b4b;
+            border: 1px solid rgba(255, 75, 75, 0.3);
+        }
+    }
+
     .divider {
         opacity: 0.2;
     }
@@ -150,6 +171,15 @@
     &.negative {
         color: #ff4b4b;
         text-shadow: 0 0 15px rgba(255, 75, 75, 0.2);
+    }
+}
+
+.fee-cell {
+    .fee-value {
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 0.85rem;
+        font-weight: 500;
+        font-family: 'Mono', monospace;
     }
 }
 
@@ -266,7 +296,7 @@
         padding: 15px;
     }
     
-    .col-time, .time-cell {
+    .col-time, .time-cell, .col-fee, .fee-cell {
         display: none;
     }
     
