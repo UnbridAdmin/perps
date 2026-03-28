@@ -31,6 +31,8 @@ interface TradeOptionData {
 export class OutcomeComponent implements OnInit, OnChanges {
   Math = Math;
 
+  constructor(private tradeService: TradeService) {}
+
   @Input() tradeData: any = null;
   @Input() isBuyMode: boolean = true;
   @Output() onSelectOption = new EventEmitter<any>();
@@ -38,8 +40,6 @@ export class OutcomeComponent implements OnInit, OnChanges {
   outcomes: any[] = [];
 
   activeTab: { [key: string]: string } = {};
-
-  constructor(private tradeService: TradeService) { }
 
   ngOnInit() {
     this.mapOptionsToOutcomes();
@@ -51,18 +51,26 @@ export class OutcomeComponent implements OnInit, OnChanges {
 
   private mapOptionsToOutcomes() {
     if (this.tradeData?.options && Array.isArray(this.tradeData.options)) {
-      this.outcomes = this.tradeData.options.map((option: TradeOptionData, index: number) => {
-        const id = `option_${option.option_id}`;
-        return {
-          id: id,
-          date: option.option_title,
-          volume: `Vol.${(Number(option.volume) || 0).toFixed(2)} Fierce`,
-          percentage: Math.round(option.percentage),
-          change: option.change || 0, // Use real change from backend
-          expanded: false, // Will be set after sorting
-          optionData: option // Keep original option data for further use
-        };
-      });
+      const isBinary = this.tradeData?.prediction?.prediction_type?.toUpperCase() === 'BINARY';
+      
+      this.outcomes = this.tradeData.options
+        .filter((opt: any) => {
+          // In binary markets, we usually only want to show the 'YES' side as the primary outcome row
+          if (isBinary && opt.option_title?.toUpperCase() === 'NO') return false;
+          return true;
+        })
+        .map((option: TradeOptionData, index: number) => {
+          const id = `option_${option.option_id}`;
+          return {
+            id: id,
+            date: option.option_title === 'YES' && isBinary ? this.tradeData?.prediction?.prediction_title : option.option_title,
+            volume: `Vol.${(Number(option.volume) || 0).toFixed(2)} Fierce`,
+            percentage: Math.round(option.percentage),
+            change: option.change || 0,
+            expanded: false,
+            optionData: option
+          };
+        });
 
       // Sort outcomes by percentage in descending order (highest first)
       this.outcomes.sort((a, b) => b.percentage - a.percentage);
@@ -104,21 +112,36 @@ export class OutcomeComponent implements OnInit, OnChanges {
   }
 
   getPriceYes(option: any): number {
-    if (this.isBuyMode) {
-      return Number(option.buy_price) || option.price;
-    } else {
-      return Number(option.sell_price) || option.price;
-    }
+    if (!this.tradeData?.prediction) return option.price || 0.5;
+    
+    const b = this.tradeData.prediction.b_param || 10;
+    const feeRate = this.tradeData.prediction.fee_rate || 0.01;
+    const spotPrice = option.price || 0.5;
+
+    return this.tradeService.calculateEffectivePrice(
+      this.isBuyMode,
+      1.0, 
+      spotPrice,
+      b,
+      feeRate
+    );
   }
 
   getPriceNo(option: any): number {
-    // Basic spread calculation for No (synthetic)
-    if (this.isBuyMode) {
-      const yesSell = Number(option.sell_price) || option.price;
-      return 1 - yesSell;
-    } else {
-      const yesBuy = Number(option.buy_price) || option.price;
-      return 1 - yesBuy;
-    }
+    if (!this.tradeData?.prediction) return 1 - (option.price || 0.5);
+
+    const b = this.tradeData.prediction.b_param || 10;
+    const feeRate = this.tradeData.prediction.fee_rate || 0.01;
+    
+    // The "NO" side spot price is essentially 1 - spotPrice
+    const spotPrice = 1 - (option.price || 0.5);
+
+    return this.tradeService.calculateEffectivePrice(
+      this.isBuyMode,
+      1.0, 
+      spotPrice,
+      b,
+      feeRate
+    );
   }
 }

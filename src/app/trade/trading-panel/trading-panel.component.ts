@@ -25,6 +25,7 @@ export class TradingPanelComponent implements OnInit {
   @Input() options: any[] = [];
   @Input() predictionId: number = 0;
   @Input() bParam: number = 10;
+  @Input() feeRate: number = 0.01;
   @Input() initialSide: 'yes' | 'no' = 'yes';
   @Input() isBuyMode: boolean = true;
   @Output() onModeChange = new EventEmitter<boolean>();
@@ -48,38 +49,38 @@ export class TradingPanelComponent implements OnInit {
     let targetObj: any;
     if (this.predictionType?.toUpperCase() === 'BINARY' && this.options && this.options.length > 0) {
       targetObj = this.options.find(o => o.option_title?.toUpperCase() === option.toUpperCase());
+      if (!targetObj && option === 'no' && this.options.length > 0) {
+        targetObj = this.options[0];
+      }
     } else {
       targetObj = this.optionData;
     }
 
     if (!targetObj) return 0.5;
 
-    // Base spot price
-    let spotPrice = Number(targetObj.price) || 0.5;
-
-    if (this.predictionType?.toUpperCase() === 'MULTIPLE' && option === 'no') {
-      // For synthetic No, calculate its own spot
-      spotPrice = 1 - (Number(this.optionData.price) || 0.5);
+    let spotPrice = targetObj.price || 0.5;
+    if (option === 'no') {
+      const isActuallyYesSource = targetObj.option_title?.toUpperCase() === 'YES' || this.predictionType?.toUpperCase() === 'MULTIPLE';
+      if (isActuallyYesSource) spotPrice = 1 - spotPrice;
     }
 
-    // Default return if no buy/sell prices available and amount is 0
-    const b = Number(this.bParam) || 10;
+    const b = this.bParam || 10;
+    const fee = this.feeRate || 0.01;
+    let amt = 1;
     
     if (this.isBuyMode) {
-      const amount = Number(this.amount) || 1; // Default to 1 for display
-      const net = amount * 0.99; // 1% fee estimate
-      const impact = (1 - spotPrice) * (net / b);
-      const endPrice = Math.min(0.999, spotPrice + impact);
-      const avgPrice = (spotPrice + endPrice) / 2;
-      return avgPrice / 0.99;
+      amt = Number(this.amount) || 1;
     } else {
-      const shares = Number(this.sharesToSell) || 1; // Default to 1 for display
-      const estimatedProceeds = shares * spotPrice;
-      const impact = (spotPrice * (estimatedProceeds / b));
-      const endPrice = Math.max(0.001, spotPrice - impact);
-      const avgPrice = (spotPrice + endPrice) / 2;
-      return avgPrice * 0.99;
+      amt = Number(this.sharesToSell) || 1;
     }
+
+    return this.tradeService.calculateEffectivePrice(
+      this.isBuyMode,
+      amt,
+      spotPrice,
+      b,
+      fee
+    );
   }
 
   isLoading = false;
