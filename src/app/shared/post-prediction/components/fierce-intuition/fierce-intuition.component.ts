@@ -27,10 +27,10 @@ export class FierceIntuitionComponent {
 
     get visibleOptions() {
         if (!this.prediction?.options) return [];
-        const options = this.showAllOptions ? this.prediction.options : this.prediction.options.slice(0, 3);
         const total = this.totalVotes;
-        
-        return options.map((option: any) => {
+
+        // Map options with calculated percentages
+        const mappedOptions = this.prediction.options.map((option: any) => {
             const votes = option.votes !== undefined ? option.votes : (option.prediction_intuition_votes || 0);
             return {
                 ...option,
@@ -39,6 +39,12 @@ export class FierceIntuitionComponent {
                 percentage: total > 0 ? Math.round((votes / total) * 100) : 0
             };
         });
+
+        // Sort by percentage descending (highest first)
+        const sortedOptions = mappedOptions.sort((a: any, b: any) => b.percentage - a.percentage);
+
+        // Return only visible options based on showAllOptions state
+        return this.showAllOptions ? sortedOptions : sortedOptions.slice(0, 3);
     }
 
     get remainingOptionsCount() {

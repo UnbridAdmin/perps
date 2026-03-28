@@ -23,24 +23,15 @@ export class TradingMarketComponent {
 
     get sortedOptions(): any[] {
         // Handle different data structures
-        let options: any[] = [];
-
+        // Backend already sorts by percentage (highest to lowest), no need to sort here
         if (this.prediction?.marketInfo?.options && Array.isArray(this.prediction.marketInfo.options)) {
-            options = this.prediction.marketInfo.options;
+            return this.prediction.marketInfo.options;
         } else if (this.prediction?.options && Array.isArray(this.prediction.options)) {
-            options = this.prediction.options;
+            return this.prediction.options;
         } else if (this.prediction?.data?.options && Array.isArray(this.prediction.data.options)) {
-            options = this.prediction.data.options;
+            return this.prediction.data.options;
         }
 
-        if (options.length === 0) {
-            return [];
-        }
-
-        return [...options].sort((a: any, b: any) => {
-            const percentageA = a.percentage || a.poolPercentage || 0;
-            const percentageB = b.percentage || b.poolPercentage || 0;
-            return percentageB - percentageA;
-        });
+        return [];
     }
 }
