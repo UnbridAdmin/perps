@@ -10,9 +10,13 @@
   </div>
 
   <div class="env-pool-pozo">
-    <div>
+    <div class="env-pozo-main">
       <div class="env-pozo-label">Pozo acumulado</div>
       <div class="env-pozo-val">{{ getPoolAmountWithoutUnit() }} Fierce</div>
+    </div>
+    <div class="env-pozo-date">
+      <div class="env-pozo-label">Fecha Fin</div>
+      <div class="env-pozo-val">{{ prediction.prediction_end_date || prediction.predictionEndDate || 'N/A' }}</div>
     </div>
   </div>
 

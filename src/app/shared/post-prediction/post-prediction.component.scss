@@ -607,6 +607,14 @@
     border: 1px solid $border-color;
   }
 
+  .env-pozo-main {
+    flex: 1;
+  }
+
+  .env-pozo-date {
+    text-align: right;
+  }
+
   .env-pozo-label {
     font-size: 11px;
     color: var(--env-muted);
@@ -614,8 +622,13 @@
   }
 
   .env-pozo-val {
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 500;
+    color: var(--env-text);
+  }
+
+  .env-pozo-date .env-pozo-val {
+    font-size: 14px;
     color: var(--env-text);
   }
 
