@@ -63,6 +63,8 @@ interface ApiPrediction {
   categoryName: string | null;
   totalComments: number;
   king_comment: ApiKingComment | null;
+  b_param?: number;
+  fee_rate?: number;
 }
 
 interface GetPredictionsResponse {
@@ -120,6 +122,8 @@ interface Prediction {
   betVolume?: number;
   marketVolume?: number;
   prediction_end_date?: string;
+  b_param?: number;
+  fee_rate?: number;
 }
 
 @Component({
@@ -383,7 +387,9 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
           text: apiPred.king_comment.comment,
           gifUrl: apiPred.king_comment.url_image || undefined,
           burnedAmount: apiPred.king_comment.burned_fierce
-        } : undefined
+        } : undefined,
+        b_param: apiPred.b_param,
+        fee_rate: apiPred.fee_rate
       };
     });
   }
@@ -504,6 +510,9 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
           if (pred) {
             prediction.totalVolume = pred.totalVolume || marketData.totalVolume;
             prediction.prediction_end_date = pred.prediction_end_date || pred.predictionEndDate;
+            // Update b_param and fee_rate from market data
+            prediction.b_param = pred.b_param || marketData.b_param;
+            prediction.fee_rate = pred.fee_rate || marketData.fee_rate;
           }
 
           // Update marketInfo structure if needed or directly set options
@@ -522,7 +531,10 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
               poolAmount: opt.poolAmount || opt.volume,
               avgBuyPrice: opt.avgBuyPrice || opt.avg_buy_price,
               avgSellPrice: opt.avgSellPrice || opt.avg_sell_price,
-              userShares: opt.userShares || opt.user_shares
+              userShares: opt.userShares || opt.user_shares,
+              price: opt.price,
+              buy_price: opt.buy_price,
+              sell_price: opt.sell_price
             }));
           }
         }

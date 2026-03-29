@@ -725,6 +725,10 @@
     border-bottom: none;
   }
 
+  .env-market-table th:nth-child(2) {
+    text-align: center;
+  }
+
   .env-market-table th:last-child {
     text-align: right;
   }
@@ -748,6 +752,10 @@
       font-weight: 600;
       opacity: 0.9;
     }
+  }
+
+  .env-market-table td:nth-child(2) {
+    text-align: center;
   }
 
   .env-market-table td:last-child {
