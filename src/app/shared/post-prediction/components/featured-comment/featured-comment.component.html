@@ -1,16 +1,13 @@
 <div class="env-hill-section" (click)="comment ? toggleExpanded() : onOverthrow()" [title]="comment ? 'Click para ver más o destronar' : 'Sé el primero'">
   <div class="env-hill-left">
-    <span class="env-crown">👑</span>
-    <div>
-      <div class="env-hill-text">Rey de la Colina</div>
-      <div class="env-hill-sub">
+    <div class="env-hill-text">
+        <span class="hill-label">Rey de la Colina &mdash; </span>
         <ng-container *ngIf="comment">
-            {{ comment.user }} lidera el trono (🔥 {{ comment.burnedAmount | number }} F)
+            <span class="hill-leader">{{ comment.user }} lidera con {{ comment.burnedAmount | number }} FIERCE</span>
         </ng-container>
         <ng-container *ngIf="!comment">
-            Nadie ocupa el trono aún — sé el primero
+            <span class="hill-leader">Nadie ocupa el trono aún</span>
         </ng-container>
-      </div>
     </div>
   </div>
   <button class="env-hill-btn" (click)="comment ? onOverthrow($event) : onOverthrow(); $event.stopPropagation()">
