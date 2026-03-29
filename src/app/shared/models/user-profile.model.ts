@@ -8,4 +8,5 @@ export interface UserProfileResponse {
     description?: string;
     fierce_balance?: number;
     user_id: number;
+    type_profile: 'USER' | 'RWA';
 }

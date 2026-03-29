@@ -1,0 +1,64 @@
+<div class="rwa-minidex-container">
+  <div class="minidex-header">
+    <h3>
+      <i class="fas fa-gem"></i>
+      RWA Minidex
+    </h3>
+    <div class="minidex-info">
+      <span>Real-World Asset Tokens</span>
+    </div>
+  </div>
+
+  <div class="minidex-table">
+    <div class="table-header">
+      <div class="col-name">Name / Symbol</div>
+      <div class="col-price">Price</div>
+      <div class="col-change">24h Change</div>
+      <div class="col-market">Market Cap</div>
+      <div class="col-volume">Volume</div>
+      <div class="col-action"></div>
+    </div>
+
+    <div class="table-body">
+      <div *ngFor="let token of rwaTokens" class="table-row">
+        <div class="col-name">
+          <div class="token-info">
+            <div class="token-icon">
+              <i class="fas fa-coins"></i>
+            </div>
+            <div class="token-details">
+              <div class="token-name">{{ token.name }}</div>
+              <div class="token-symbol">{{ token.symbol }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-price">
+          <span class="price-value">{{ token.price }}</span>
+        </div>
+        <div class="col-change">
+          <span class="change-value" [ngClass]="token.positive ? 'positive' : 'negative'">
+            <i [class]="token.positive ? 'fas fa-arrow-up' : 'fas fa-arrow-down'"></i>
+            {{ token.change }}
+          </span>
+        </div>
+        <div class="col-market">
+          <span class="market-cap">{{ token.marketCap }}</span>
+        </div>
+        <div class="col-volume">
+          <span class="volume-value">{{ token.volume }}</span>
+        </div>
+        <div class="col-action">
+          <button class="trade-btn">
+            <i class="fas fa-exchange-alt"></i>
+            Trade
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="rwaTokens.length === 0" class="empty-state">
+    <i class="fas fa-chart-line"></i>
+    <p>No RWA tokens available at this moment.</p>
+  </div>
+</div>

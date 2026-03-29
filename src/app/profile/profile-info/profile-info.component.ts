@@ -22,6 +22,7 @@ export class ProfileInfoComponent implements OnInit {
   public errorMessage: string | null = null;
   public isOwnProfile: boolean = false;
   @Output() userIdLoaded = new EventEmitter<number>();
+  @Output() profileTypeDetected = new EventEmitter<'USER' | 'RWA'>();
 
   constructor(
     private profileService: ProfileInfoService,
@@ -52,6 +53,8 @@ export class ProfileInfoComponent implements OnInit {
             if (resp.data && resp.data.length > 0) {
               this.userProfile = resp.data[0];
               this.userIdLoaded.emit(this.userProfile.user_id);
+              const profileType = this.userProfile.type_profile || 'USER';
+              this.profileTypeDetected.emit(profileType);
               this.isOwnProfile = true;
               // Save username and user_id to localStorage for future comparisons
               if (this.userProfile.username) {
@@ -76,6 +79,8 @@ export class ProfileInfoComponent implements OnInit {
             if (resp.data && resp.data.length > 0) {
               this.userProfile = resp.data[0];
               this.userIdLoaded.emit(this.userProfile.user_id);
+              const profileType = this.userProfile.type_profile || 'USER';
+              this.profileTypeDetected.emit(profileType);
               this.isOwnProfile = false;
             }
             this.isLoading = false;
@@ -94,6 +99,8 @@ export class ProfileInfoComponent implements OnInit {
           if (resp.data && resp.data.length > 0) {
             this.userProfile = resp.data[0];
             this.userIdLoaded.emit(this.userProfile.user_id);
+            const profileType = this.userProfile.type_profile || 'USER';
+            this.profileTypeDetected.emit(profileType);
             this.isOwnProfile = true;
             // Save username to localStorage for future comparisons
             if (this.userProfile.username) {

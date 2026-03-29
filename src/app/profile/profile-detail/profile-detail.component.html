@@ -1,5 +1,16 @@
 <div class="profile-container">
-  <app-profile-info (userIdLoaded)="onUserIdLoaded($event)"></app-profile-info>
-  <app-user-metrics></app-user-metrics>
-  <app-user-tabs [userId]="profileUserId"></app-user-tabs>
+  <!-- Profile Info - same for both USER and RWA -->
+  <app-profile-info (userIdLoaded)="onUserIdLoaded($event)" (profileTypeDetected)="onProfileTypeDetected($event)"></app-profile-info>
+  
+  <!-- USER Profile Content -->
+  <ng-container *ngIf="profileType === 'USER'">
+    <app-user-metrics></app-user-metrics>
+    <app-user-tabs [userId]="profileUserId"></app-user-tabs>
+  </ng-container>
+
+  <!-- RWA Profile Content -->
+  <ng-container *ngIf="profileType === 'RWA'">
+    <app-rwa-user-metrics></app-rwa-user-metrics>
+    <app-rwa-user-tabs [userId]="profileUserId"></app-rwa-user-tabs>
+  </ng-container>
 </div>

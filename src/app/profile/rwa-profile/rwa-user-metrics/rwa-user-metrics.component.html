@@ -1,0 +1,96 @@
+<div class="metrics-container">
+  <div class="metrics-tabs">
+    <button class="metric-tab" [class.active]="activeTab === 'collateral'" (click)="setActiveTab('collateral')">
+      <span class="metric-value">125.5K</span>
+      <span class="metric-label">Collateral</span>
+    </button>
+    <button class="metric-tab" [class.active]="activeTab === 'registered-assets'" (click)="setActiveTab('registered-assets')">
+      <span class="metric-value">342</span>
+      <span class="metric-label">Registered Assets</span>
+    </button>
+    <button class="metric-tab" [class.active]="activeTab === 'rwa-price'" (click)="setActiveTab('rwa-price')">
+      <span class="metric-value">$45.23</span>
+      <span class="metric-label">RWA Price</span>
+    </button>
+    <button class="metric-tab" [class.active]="activeTab === 'future'" (click)="setActiveTab('future')">
+      <span class="metric-value">—</span>
+      <span class="metric-label">Por Definir</span>
+    </button>
+  </div>
+
+  <!-- Collateral Content -->
+  <div *ngIf="activeTab === 'collateral'" class="metric-content">
+    <div class="rwa-metric-display">
+      <div class="metric-header">
+        <i class="fas fa-shield-alt"></i>
+        <h3>Collateral Value</h3>
+      </div>
+      <div class="metric-value-large">125,500 USDC</div>
+      <div class="metric-details">
+        <div class="detail-item">
+          <span class="label">Total Locked:</span>
+          <span class="value">125,500 USDC</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">Available:</span>
+          <span class="value">50,000 USDC</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Registered Assets Content -->
+  <div *ngIf="activeTab === 'registered-assets'" class="metric-content">
+    <div class="rwa-metric-display">
+      <div class="metric-header">
+        <i class="fas fa-list"></i>
+        <h3>Registered Assets</h3>
+      </div>
+      <div class="metric-value-large">342 Assets</div>
+      <div class="metric-details">
+        <div class="detail-item">
+          <span class="label">Active:</span>
+          <span class="value">302</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">Inactive:</span>
+          <span class="value">40</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RWA Price Content -->
+  <div *ngIf="activeTab === 'rwa-price'" class="metric-content">
+    <div class="rwa-metric-display">
+      <div class="metric-header">
+        <i class="fas fa-chart-line"></i>
+        <h3>RWA Token Price</h3>
+      </div>
+      <div class="metric-value-large">$45.23</div>
+      <div class="metric-details">
+        <div class="detail-item">
+          <span class="label">24h Change:</span>
+          <span class="value positive">+2.5%</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">Market Cap:</span>
+          <span class="value">$1.2B</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Future Metric Content -->
+  <div *ngIf="activeTab === 'future'" class="metric-content">
+    <div class="rwa-metric-display">
+      <div class="metric-header">
+        <i class="fas fa-hourglass-half"></i>
+        <h3>Por Definir</h3>
+      </div>
+      <div class="metric-placeholder">
+        <p>This metric will be defined soon</p>
+      </div>
+    </div>
+  </div>
+</div>

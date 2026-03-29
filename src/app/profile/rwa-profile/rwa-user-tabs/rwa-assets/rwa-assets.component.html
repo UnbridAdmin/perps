@@ -1,0 +1,53 @@
+<div class="rwa-assets-container">
+  <div class="assets-header">
+    <h3>
+      <i class="fas fa-boxes"></i>
+      Your RWA Assets
+    </h3>
+    <button class="btn-action">
+      <i class="fas fa-plus"></i>
+      Add Asset
+    </button>
+  </div>
+
+  <div class="assets-grid">
+    <div *ngFor="let asset of assets" class="asset-card">
+      <div class="asset-header-card">
+        <div class="asset-info">
+          <h4>{{ asset.name }}</h4>
+          <p class="symbol">{{ asset.symbol }}</p>
+        </div>
+        <span class="status-badge" [ngClass]="'status-' + asset.status.toLowerCase()">
+          {{ asset.status }}
+        </span>
+      </div>
+
+      <div class="asset-details">
+        <div class="detail">
+          <span class="label">Value:</span>
+          <span class="value">{{ asset.value }}</span>
+        </div>
+        <div class="detail">
+          <span class="label">Shares:</span>
+          <span class="value">{{ asset.shares }}</span>
+        </div>
+      </div>
+
+      <div class="asset-actions">
+        <button class="action-btn">
+          <i class="fas fa-eye"></i>
+          View Details
+        </button>
+        <button class="action-btn">
+          <i class="fas fa-chart-line"></i>
+          Performance
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="assets.length === 0" class="empty-state">
+    <i class="fas fa-inbox"></i>
+    <p>No assets yet. Start adding RWA assets to your portfolio.</p>
+  </div>
+</div>
