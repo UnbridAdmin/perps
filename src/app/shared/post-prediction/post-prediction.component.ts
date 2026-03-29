@@ -91,6 +91,7 @@ interface Prediction {
     poolPercentage?: number;
     poolAmount?: number;
     userInvestment?: number;
+    totalBetUsers?: number;
   }>;
   sentimentVotes?: {
     total: number;
@@ -479,6 +480,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
                 matchingOption.poolAmount = poolOpt.poolAmount;
                 matchingOption.userInvestment = poolOpt.userInvestment;
                 matchingOption.poolPercentage = poolOpt.percentage;
+                matchingOption.totalBetUsers = poolOpt.totalBetUsers;
               }
             });
           }

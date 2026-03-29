@@ -31,13 +31,14 @@ interface TradeOptionData {
 export class OutcomeComponent implements OnInit, OnChanges {
   Math = Math;
 
-  constructor(private tradeService: TradeService) {}
+  constructor(private tradeService: TradeService) { }
 
   @Input() tradeData: any = null;
   @Input() isBuyMode: boolean = true;
   @Output() onSelectOption = new EventEmitter<any>();
 
   outcomes: any[] = [];
+  private lastExpandedOutcomeId: string | null = null;
 
   activeTab: { [key: string]: string } = {};
 
@@ -52,7 +53,10 @@ export class OutcomeComponent implements OnInit, OnChanges {
   private mapOptionsToOutcomes() {
     if (this.tradeData?.options && Array.isArray(this.tradeData.options)) {
       const isBinary = this.tradeData?.prediction?.prediction_type?.toUpperCase() === 'BINARY';
-      
+
+      // Preserve the currently expanded outcome ID before rebuilding
+      const currentlyExpandedId = this.outcomes.find(o => o.expanded)?.id || this.lastExpandedOutcomeId;
+
       this.outcomes = this.tradeData.options
         .filter((opt: any) => {
           // In binary markets, we usually only want to show the 'YES' side as the primary outcome row
@@ -72,9 +76,14 @@ export class OutcomeComponent implements OnInit, OnChanges {
           };
         });
 
-      // Expand the first option (which is already sorted by the backend)
+      // Restore the previously selected outcome's expanded state, or expand the first option
       if (this.outcomes.length > 0) {
-        this.outcomes[0].expanded = true;
+        const previouslyExpanded = this.outcomes.find(o => o.id === currentlyExpandedId);
+        if (previouslyExpanded) {
+          previouslyExpanded.expanded = true;
+        } else {
+          this.outcomes[0].expanded = true;
+        }
       }
 
       // Initialize active tabs for each outcome
@@ -90,9 +99,11 @@ export class OutcomeComponent implements OnInit, OnChanges {
     if (outcome) {
       if (outcome.expanded && !side) {
         outcome.expanded = false;
+        this.lastExpandedOutcomeId = null;
       } else {
         this.outcomes.forEach(o => o.expanded = false);
         outcome.expanded = true;
+        this.lastExpandedOutcomeId = outcomeId;
         this.onSelectOption.emit({ optionData: outcome.optionData, side: side || 'yes', isBuyMode: this.isBuyMode });
       }
     }
@@ -121,7 +132,7 @@ export class OutcomeComponent implements OnInit, OnChanges {
 
     return this.tradeService.calculateEffectivePrice(
       this.isBuyMode,
-      1.0, 
+      1.0,
       spotPrice,
       b,
       feeRate
@@ -138,7 +149,7 @@ export class OutcomeComponent implements OnInit, OnChanges {
 
     return this.tradeService.calculateEffectivePrice(
       this.isBuyMode,
-      1.0, 
+      1.0,
       spotPrice,
       b,
       feeRate

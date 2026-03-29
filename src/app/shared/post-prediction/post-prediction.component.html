@@ -117,7 +117,7 @@
         <span>{{ prediction.actions.comments || '0' }}</span>
       </button>
       <div class="env-tab-divider"></div>
-      <button class="env-tab" (click)="toggleBetPopover(i)" [class.active]="activeBetPopover === i"
+      <button class="env-tab" (click)="toggleBetPopover(i)" [class.active-green]="activeBetPopover === i"
         title="Pool de apuestas">
         <i class="fa-regular fa-clock"></i>
         <div class="env-tab-content">
@@ -126,7 +126,7 @@
         </div>
       </button>
       <div class="env-tab-divider"></div>
-      <button class="env-tab" (click)="toggleMarketPopover(i)" [class.active]="activeMarketPopover === i"
+      <button class="env-tab" (click)="toggleMarketPopover(i)" [class.active-green]="activeMarketPopover === i"
         title="Mercado Trading">
         <i class="fa-solid fa-chart-line"></i>
         <div class="env-tab-content">

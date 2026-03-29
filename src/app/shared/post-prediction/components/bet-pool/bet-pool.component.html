@@ -1,7 +1,10 @@
 <div class="env-panel fade-in" style="display: block;">
   <div class="env-panel-title">
     Pool de Apuestas Mutuas
-    <span class="env-burn-badge" *ngIf="burnRate > 0">🔥 {{ burnRate * 100 }}% se quema</span>
+    <span class="env-burn-badge" title="Deducciones del pozo total">
+      🔥 {{ prediction.betBurn !== undefined ? prediction.betBurn : 5 }}% burn + {{ prediction.betPlatformRewards !==
+      undefined ? prediction.betPlatformRewards : 25 }}% fee
+    </span>
     <button class="close-panel-btn" (click)="onClose()"
       style="background: none; border: none; color: var(--env-muted); cursor: pointer; float: right; font-size: 16px;">×</button>
   </div>
@@ -19,20 +22,24 @@
   </div>
 
   <div class="env-pool-opts">
-    <ng-container *ngFor="let option of sortedOptions">
+    <ng-container *ngFor="let option of (prediction?.options || [])">
       <div class="env-pool-row" [class.active]="selectedOptionId === (option.prediction_option_id || option.id)"
         (click)="onSelectOption(option.prediction_option_id || option.id)"
         [style.borderColor]="selectedOptionId === (option.prediction_option_id || option.id) ? 'var(--env-green)' : 'transparent'">
         <span class="env-pool-row-label">
           {{ option.prediction_option_title || option.title }}
-          <span class="env-pool-pct">{{ option.poolPercentage || 0 }}%</span>
+          <span class="env-pool-pct">{{ option.poolPercentage !== undefined ? option.poolPercentage : (option.percentage
+            || 0) }}%</span>
         </span>
-        <span class="env-pool-total">Total: {{ (option.poolAmount || 0) | number:'1.0-0' }} Fierce</span>
+        <span class="env-pool-total">
+          Total: {{ (option.poolAmount || 0) | number:'1.0-0' }} Fierce
+          <!-- <span class="env-pool-users">👥 {{ option.totalBetUsers || 0 }} usuarios</span> -->
+        </span>
       </div>
 
       <!-- Simulator injected inline under active option -->
       <div class="betting-simulator-inline" *ngIf="selectedOptionId === (option.prediction_option_id || option.id)"
-        style="margin-bottom: 6px; padding: 12px; background: rgba(46, 204, 138, 0.05); border: 1px solid rgba(46, 204, 138, 0.2); border-radius: 8px;">
+        style="margin-bottom: 6px; padding: 12px; background: #0f0f13; border: 1px solid rgba(46, 204, 138, 0.3); border-radius: 8px;">
         <div class="simulator-inner-panel">
           <div class="simulator-controls-compact"
             style="display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-end;">

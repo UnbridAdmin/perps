@@ -17,7 +17,6 @@ export class BetPoolComponent {
     selectedOptionId: number | null = null;
     betAmount: number = 1;
     potentialProfit: number = 0;
-    burnRate: number = 0.05; // 5% configurable
 
     onSelectOption(optionId: number) {
         if (this.selectedOptionId === optionId) {
@@ -40,19 +39,27 @@ export class BetPoolComponent {
             return;
         }
 
-        const selectedOption = this.prediction.options.find((o: any) => o.id === this.selectedOptionId);
+        const optionsList = this.prediction?.options || [];
+        const selectedOption = optionsList.find((o: any) => (o.prediction_option_id || o.id) === this.selectedOptionId);
         if (!selectedOption) return;
 
-        // Mocking values if they don't exist in the current prediction object
+        // Get values from prediction object
         const poolAmount = parseFloat(this.prediction.marketInfo?.poolAmount?.replace(/[^0-9.]/g, '') || '0');
-        const optionPool = parseFloat(selectedOption.poolAmount?.toString().replace(/[^0-9.]/g, '') || (poolAmount * ((selectedOption.poolPercentage || selectedOption.percentage) / 100)).toString());
+        const percentage = selectedOption.poolPercentage !== undefined ? selectedOption.poolPercentage : (selectedOption.percentage || 0);
+        const optionPool = parseFloat(selectedOption.poolAmount?.toString().replace(/[^0-9.]/g, '') || (poolAmount * (percentage / 100)).toString());
         const userInvestment = selectedOption.userInvestment || 0;
 
         const newOptionPool = optionPool + this.betAmount;
         const newTotalPool = poolAmount + this.betAmount;
 
+        // Porcentaje a repartir (100% - burn - fee). Por defecto 70%
+        const betBurn = this.prediction.betBurn !== undefined ? parseFloat(this.prediction.betBurn) : 5;
+        const betFee = this.prediction.betPlatformRewards !== undefined ? parseFloat(this.prediction.betPlatformRewards) : 25;
+        const rewardMultiplier = Math.max(0, 100 - betBurn - betFee) / 100;
+
+        const distributablePool = newTotalPool * rewardMultiplier;
+
         const userShare = (userInvestment + this.betAmount) / newOptionPool;
-        const distributablePool = newTotalPool * (1 - this.burnRate);
 
         const estimatedPayout = userShare * distributablePool;
         this.potentialProfit = estimatedPayout - (userInvestment + this.betAmount);
@@ -76,11 +83,5 @@ export class BetPoolComponent {
         return poolAmount.replace(/[^0-9.]/g, '');
     }
 
-    get sortedOptions(): any[] {
-        if (!this.prediction?.options || !Array.isArray(this.prediction.options)) {
-            return [];
-        }
-        // Backend already sorts by percentage (highest to lowest), no need to sort here
-        return this.prediction.options;
-    }
+
 }
