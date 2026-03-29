@@ -2,14 +2,18 @@ import { EventEmitter, Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { Observable } from "rxjs";
 import { ApiServices } from "./api.service";
+import { WalletConnectService } from "./walletconnect.service";
 import moment from "moment";
 import { LoginModel } from "../shared/models/login.model";
 
 @Injectable()
 export class AuthorizationService {
     logoutEvent: EventEmitter<any> = new EventEmitter();
-    constructor(private apiService: ApiServices,
-        private router: Router) {
+    constructor(
+        private apiService: ApiServices,
+        private router: Router,
+        private walletConnectService: WalletConnectService
+    ) {
         this.checkExpiredSession();
         this.scheduleRefresh();
     }
@@ -79,6 +83,9 @@ export class AuthorizationService {
 
         sessionStorage.removeItem('accountAddress');
         sessionStorage.clear();
+
+        // Stop wallet monitoring when session is cleared
+        this.walletConnectService.stopWalletMonitoring();
 
         this.logout().subscribe({
             next: () => console.log('✅ Session cleared'),

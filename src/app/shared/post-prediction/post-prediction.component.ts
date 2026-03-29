@@ -213,6 +213,14 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
 
   private resetAndReload(): void {
     console.log('PostPrediction: resetAndReload called, userId:', this.userId);
+
+    // Don't reload if user is not authenticated and we're not in public mode
+    // This prevents continuous reloading after logout
+    if (this.userId === undefined && !this.authService.isAuthenticated()) {
+      console.log('PostPrediction: Skipping reload - user not authenticated and no specific userId');
+      return;
+    }
+
     // Cancel any in-flight load request
     if (this.loadSubscription) {
       this.loadSubscription.unsubscribe();
@@ -229,6 +237,11 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+    // Also unsubscribe from any active load subscription
+    if (this.loadSubscription) {
+      this.loadSubscription.unsubscribe();
+      this.loadSubscription = undefined;
+    }
   }
 
 

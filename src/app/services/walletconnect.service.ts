@@ -609,4 +609,15 @@ export class WalletConnectService implements OnDestroy {
       clearInterval(this.stateMonitoringInterval);
     }
   }
+
+  /**
+   * Stop wallet monitoring intervals (call this on logout)
+   */
+  public stopWalletMonitoring(): void {
+    if (this.stateMonitoringInterval) {
+      clearInterval(this.stateMonitoringInterval);
+      this.stateMonitoringInterval = null;
+      console.log('🛑 Wallet monitoring stopped');
+    }
+  }
 }
