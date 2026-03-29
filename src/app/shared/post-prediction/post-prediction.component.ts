@@ -167,6 +167,10 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
   hasMoreData = true;
   selectedCategoryId: number | null = null;
 
+  // Track if we should reload predictions (prevent continuous reloading after logout)
+  private shouldReload = true;
+  private wasAuthenticated = false; // Track authentication status to detect logout
+
   // State for in-line Overthrow forms
   overthrowFormsState: {
     [predictionId: number]: {
@@ -183,18 +187,57 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     // in CategoryService ('filterCategoryIdSubject') emits its initial value (null)
     // immediately upon subscription, which will trigger resetAndReload() -> loadPredictions()
 
+    // Track initial auth status
+    this.wasAuthenticated = this.authService.isAuthenticated();
+
+    // Load public predictions on init
+    if (!this.wasAuthenticated) {
+      console.log('PostPrediction: Loading public predictions on init');
+      this.resetAndReload();
+    }
+
     // Subscribe to authentication changes to refresh predictions when user logs in
     this.subscriptions.add(
       this.commonService.updateUserAddress.subscribe(() => {
-        this.resetAndReload();
+        const isNowAuthenticated = this.authService.isAuthenticated();
+        
+        // Detect logout: was authenticated, now not authenticated
+        if (this.wasAuthenticated && !isNowAuthenticated) {
+          console.log('PostPrediction: LOGOUT DETECTED - ceasing predictions refresh');
+          this.shouldReload = false;
+          this.isLoading = false;
+          
+          // Clear predictions on logout
+          if (this.predictions.length > 0) {
+            this.predictions = [];
+            this.apiPredictions = [];
+          }
+        } 
+        // Detect login: was not authenticated, now is authenticated
+        else if (!this.wasAuthenticated && isNowAuthenticated) {
+          console.log('PostPrediction: LOGIN DETECTED - resuming predictions refresh');
+          this.shouldReload = true;
+          this.resetAndReload();
+        }
+        // If already authenticated and gets authenticated again: continue normally
+        else if (isNowAuthenticated && this.shouldReload) {
+          console.log('PostPrediction: Already authenticated, reloading predictions');
+          this.resetAndReload();
+        }
+        
+        // Update tracking
+        this.wasAuthenticated = isNowAuthenticated;
       })
     );
 
     // Subscribe to category filter changes
     this.subscriptions.add(
       this.categoryService.filterCategoryId$.subscribe(categoryId => {
-        this.selectedCategoryId = categoryId;
-        this.resetAndReload();
+        // Only allow category filter changes if we should be reloading
+        if (this.shouldReload) {
+          this.selectedCategoryId = categoryId;
+          this.resetAndReload();
+        }
       })
     );
 
@@ -212,7 +255,14 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
   }
 
   private resetAndReload(): void {
-    console.log('PostPrediction: resetAndReload called, userId:', this.userId);
+    console.log('PostPrediction: resetAndReload called, userId:', this.userId, 'shouldReload:', this.shouldReload);
+
+    // Guard: Only proceed if we should be reloading
+    if (!this.shouldReload) {
+      console.log('PostPrediction: Skipping reload - shouldReload is false');
+      return;
+    }
+
     // Cancel any in-flight load request
     if (this.loadSubscription) {
       this.loadSubscription.unsubscribe();
@@ -229,6 +279,11 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+    // Also unsubscribe from any active load subscription
+    if (this.loadSubscription) {
+      this.loadSubscription.unsubscribe();
+      this.loadSubscription = undefined;
+    }
   }
 
 

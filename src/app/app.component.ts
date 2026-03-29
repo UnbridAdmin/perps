@@ -286,6 +286,8 @@ export class AppComponent implements OnInit, OnDestroy {
     this.isDisconnecting = true;
     this.clearAllStorage();
     this.clearApplicationState();
+    // Detener el monitoreo de la billetera ANTES de limpiar la sesión
+    this.walletConnectService.stopWalletMonitoring();
     this.authorizationService.clearSession();
     this.signing = true;
 
