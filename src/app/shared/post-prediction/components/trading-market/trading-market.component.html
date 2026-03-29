@@ -21,7 +21,7 @@
     <thead>
       <tr>
         <th>Opción</th>
-        <th>Precio</th>
+        <th>Precio Prom.</th>
         <th>Prob. / Vol.</th>
       </tr>
     </thead>
@@ -35,7 +35,8 @@
             </div>
           </div>
         </td>
-        <td class="env-price">{{ (option.percentage / 100) || 0 | number:'1.2-2' }} Fierce</td>
+        <td class="env-price">{{ ((option.price !== undefined ? option.price : (option.percentage / 100)) * 100) |
+          number:'1.1-1' }} ¢</td>
         <td>
           <div class="env-prob-bar-wrap">
             <div class="env-prob-bar">

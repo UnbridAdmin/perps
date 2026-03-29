@@ -138,8 +138,8 @@
     </div>
 
     <!-- Expanded Panels -->
-    <app-trading-market *ngIf="activeMarketPopover === i" [prediction]="prediction"
-      (trade)="navigateToTrade(prediction)" (close)="closePopover()">
+    <app-trading-market *ngIf="activeMarketPopover === i" [prediction]="prediction" [bParam]="prediction.b_param || 10"
+      [feeRate]="prediction.fee_rate || 0.01" (trade)="navigateToTrade(prediction)" (close)="closePopover()">
     </app-trading-market>
 
     <app-bet-pool *ngIf="activeBetPopover === i" [prediction]="prediction" (vote)="onPlaceMutualBet(i, $event)"

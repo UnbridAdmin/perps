@@ -10,11 +10,36 @@ import { CommonModule } from '@angular/common';
 })
 export class TradingMarketComponent {
     @Input() prediction: any;
+    @Input() bParam: number = 10;
+    @Input() feeRate: number = 0.01;
     @Output() trade = new EventEmitter<void>();
     @Output() close = new EventEmitter<void>();
 
+    // AMM pricing parameters
+    private amount: number = 1;
+    private isBuyMode: boolean = true;
+
     onTrade() {
         this.trade.emit();
+    }
+
+    // Calculate effective price using AMM logic
+    calculateEffectivePrice(spotPrice: number): number {
+        const feeFactor = 1 - this.feeRate;
+
+        if (this.isBuyMode) {
+            const net = this.amount * feeFactor;
+            const impact = (1 - spotPrice) * (net / this.bParam);
+            const endPrice = Math.min(0.999, spotPrice + impact);
+            const avgPrice = (spotPrice + endPrice) / 2;
+            return Math.min(0.999, avgPrice / feeFactor);
+        } else {
+            const shares = this.amount;
+            const impact = spotPrice * (shares / this.bParam);
+            const endPrice = Math.max(0.001, spotPrice - impact);
+            const avgPrice = (spotPrice + endPrice) / 2;
+            return Math.max(0.001, avgPrice * feeFactor);
+        }
     }
 
     onClose() {
@@ -33,5 +58,16 @@ export class TradingMarketComponent {
         }
 
         return [];
+    }
+
+    // Get effective price for an option
+    getEffectivePrice(option: any): number {
+        // Priority: 1. Backend-provided dynamic price
+        if (this.isBuyMode && option.buy_price) return Number(option.buy_price);
+        if (!this.isBuyMode && option.sell_price) return Number(option.sell_price);
+
+        // 2. Manual AMM math fallback
+        const spotPrice = option.price || 0.5;
+        return this.calculateEffectivePrice(spotPrice);
     }
 }
