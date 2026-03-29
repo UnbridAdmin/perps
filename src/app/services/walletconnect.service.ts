@@ -50,6 +50,7 @@ export class WalletConnectService implements OnDestroy {
   public appKit: any;
   private appKitSubscriptions: (() => void)[] = [];
   private stateMonitoringInterval: any = null;
+  private isMonitoring = false; // Flag para controlar si está monitoreando
   /**
    * @property walletState$
    * Es la ÚNICA FUENTE DE VERDAD sobre el estado de la billetera.
@@ -124,9 +125,13 @@ export class WalletConnectService implements OnDestroy {
       clearInterval(this.stateMonitoringInterval);
     }
 
+    this.isMonitoring = true;
     this.stateMonitoringInterval = setInterval(async () => {
       try {
-        await this.updateConnectionState();
+        // Solo ejecutar si está monitoreando
+        if (this.isMonitoring) {
+          await this.updateConnectionState();
+        }
       } catch (error) {
         console.error('❌ Error en monitoreo de estado:', error);
       }
@@ -382,6 +387,8 @@ export class WalletConnectService implements OnDestroy {
 
   private handleDisconnection(): void {
     console.log('🔌 Manejando desconexión completa');
+    // Detener el monitoreo inmediatamente
+    this.stopWalletMonitoring();
     this.walletStateSubject.next(INITIAL_STATE);
     this.clearPersistedState();
     this.connectingWallet.next(false);
@@ -605,15 +612,19 @@ export class WalletConnectService implements OnDestroy {
   ngOnDestroy(): void {
     this.appKitSubscriptions.forEach(unsubscribe => unsubscribe());
     //this.clearPersistedState();
+    this.isMonitoring = false;
     if (this.stateMonitoringInterval) {
       clearInterval(this.stateMonitoringInterval);
+      this.stateMonitoringInterval = null;
     }
+    console.log('🧹 WalletConnectService destruido y monitoreo detenido');
   }
 
   /**
    * Stop wallet monitoring intervals (call this on logout)
    */
   public stopWalletMonitoring(): void {
+    this.isMonitoring = false;
     if (this.stateMonitoringInterval) {
       clearInterval(this.stateMonitoringInterval);
       this.stateMonitoringInterval = null;
