@@ -2,7 +2,8 @@
   <div class="env-panel-title">
     Pool de Apuestas Mutuas
     <span class="env-burn-badge" title="Deducciones del pozo total">
-      🔥 {{ prediction.betBurn !== undefined ? prediction.betBurn : 5 }}% burn + {{ prediction.betPlatformRewards !== undefined ? prediction.betPlatformRewards : 25 }}% fee
+      🔥 {{ prediction.betBurn !== undefined ? prediction.betBurn : 5 }}% burn + {{ prediction.betPlatformRewards !==
+      undefined ? prediction.betPlatformRewards : 25 }}% fee
     </span>
     <button class="close-panel-btn" (click)="onClose()"
       style="background: none; border: none; color: var(--env-muted); cursor: pointer; float: right; font-size: 16px;">×</button>
@@ -22,16 +23,17 @@
 
   <div class="env-pool-opts">
     <ng-container *ngFor="let option of (prediction?.options || [])">
-        <div class="env-pool-row" [class.active]="selectedOptionId === (option.prediction_option_id || option.id)"
+      <div class="env-pool-row" [class.active]="selectedOptionId === (option.prediction_option_id || option.id)"
         (click)="onSelectOption(option.prediction_option_id || option.id)"
         [style.borderColor]="selectedOptionId === (option.prediction_option_id || option.id) ? 'var(--env-green)' : 'transparent'">
         <span class="env-pool-row-label">
           {{ option.prediction_option_title || option.title }}
-          <span class="env-pool-pct">{{ option.poolPercentage !== undefined ? option.poolPercentage : (option.percentage || 0) }}%</span>
+          <span class="env-pool-pct">{{ option.poolPercentage !== undefined ? option.poolPercentage : (option.percentage
+            || 0) }}%</span>
         </span>
         <span class="env-pool-total">
           Total: {{ (option.poolAmount || 0) | number:'1.0-0' }} Fierce
-          <span class="env-pool-users">👥 {{ option.totalBetUsers || 0 }} usuarios</span>
+          <!-- <span class="env-pool-users">👥 {{ option.totalBetUsers || 0 }} usuarios</span> -->
         </span>
       </div>
 
