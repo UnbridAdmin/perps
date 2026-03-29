@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ProfileInfoComponent } from '../profile-info/profile-info.component';
 import { UserMetricsComponent } from '../user-metrics/user-metrics.component';
 import { UserTabsComponent } from '../user-tabs/user-tabs.component';
+import { RwaProfileInfoComponent } from '../rwa-profile/rwa-profile-info/rwa-profile-info.component';
 import { RwaUserMetricsComponent } from '../rwa-profile/rwa-user-metrics/rwa-user-metrics.component';
 import { RwaUserTabsComponent } from '../rwa-profile/rwa-user-tabs/rwa-user-tabs.component';
 
@@ -14,6 +15,7 @@ import { RwaUserTabsComponent } from '../rwa-profile/rwa-user-tabs/rwa-user-tabs
     ProfileInfoComponent,
     UserMetricsComponent,
     UserTabsComponent,
+    RwaProfileInfoComponent,
     RwaUserMetricsComponent,
     RwaUserTabsComponent
   ],
