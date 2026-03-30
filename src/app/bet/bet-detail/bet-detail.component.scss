@@ -1,0 +1,384 @@
+@use '../../../styles/variables' as *;
+
+.bet-detail-container {
+  background-color: $background-color;
+  color: $text-primary;
+  min-height: 100vh;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.back-button {
+  padding: 16px;
+
+  .back-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateX(-4px);
+    }
+
+    i {
+      font-size: 1.8rem;
+      color: #fff;
+      position: relative;
+      top: 1px;
+    }
+  }
+}
+
+.prediction-header {
+  padding: 16px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.user-details h3 {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.user-details p {
+  font-size: 14px;
+  color: $text-muted;
+}
+
+.env-card-img-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+
+  .env-thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .env-title {
+    font-size: 23px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: $text-primary;
+    flex: 1;
+  }
+}
+
+.stats {
+  display: flex;
+  gap: 24px;
+  color: $text-muted;
+  font-size: 14px;
+  margin-top: 16px;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  span {
+    font-size: 1.5rem;
+    color: $money-green;
+    font-weight: 700;
+  }
+}
+
+.loading-indicator {
+  text-align: center;
+  padding: 40px;
+  color: $text-muted;
+  font-size: 1rem;
+}
+
+.main-content {
+  max-width: 700px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 20px;
+}
+
+.left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background: $background-light;
+  border-radius: 16px;
+  border: 1px solid $border-color;
+  padding: 16px;
+}
+
+.featured-comment-container-standalone {
+  margin: 0;
+
+  ::ng-deep .featured-comment-container {
+    max-width: 100%;
+    margin: 0;
+    border: none;
+    background: rgba(255, 255, 255, 0.02);
+  }
+}
+
+// Bet Pool panel adjustments - remove close button since it's a standalone page
+::ng-deep .env-panel {
+  .close-panel-btn {
+    display: none !important;
+  }
+}
+
+// In-line Overthrow Form Styles
+.overthrow-form-container {
+  margin: 8px 0 16px 0;
+  background: rgba(247, 208, 68, 0.03);
+  border: 1px solid rgba(247, 208, 68, 0.15);
+  border-radius: 16px;
+  overflow: hidden;
+  animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  .overthrow-header {
+    background: rgba(247, 208, 68, 0.1);
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: #F7D044;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid rgba(247, 208, 68, 0.1);
+
+    i {
+      filter: drop-shadow(0 0 4px rgba(247, 208, 68, 0.4));
+    }
+  }
+
+  .overthrow-body {
+    padding: 16px;
+
+    .input-row {
+      display: flex;
+      gap: 12px;
+
+      .user-avatar-small {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        overflow: hidden;
+        flex-shrink: 0;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+
+      .input-area {
+        flex-grow: 1;
+
+        textarea {
+          width: 100%;
+          background: transparent;
+          border: none;
+          color: white;
+          font-size: 1rem;
+          resize: none;
+          outline: none;
+          padding: 4px 0;
+
+          &::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+          }
+        }
+
+        .gif-preview-mini {
+          margin-top: 10px;
+          position: relative;
+          max-width: 180px;
+          min-height: 40px;
+          background: rgba(247, 208, 68, 0.05);
+          border-radius: 12px;
+          overflow: hidden;
+          border: 1px solid rgba(247, 208, 68, 0.2);
+
+          img {
+            width: 100%;
+            display: block;
+          }
+
+          .remove-btn {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: rgba(0, 0, 0, 0.6);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+          }
+        }
+
+        .gif-url-input-mini {
+          margin-top: 8px;
+
+          input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            outline: none;
+
+            &:focus {
+              border-color: #F7D044;
+            }
+          }
+        }
+      }
+    }
+
+    .overthrow-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+
+      .left-tools {
+        display: flex;
+        gap: 8px;
+
+        .tool-btn {
+          background: transparent;
+          border: none;
+          color: #F7D044;
+          cursor: pointer;
+          font-size: 1rem;
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background 0.2s;
+
+          &:hover {
+            background: rgba(247, 208, 68, 0.1);
+          }
+
+          &.active {
+            background: rgba(247, 208, 68, 0.2);
+          }
+        }
+      }
+
+      .right-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .cost-info {
+          font-size: 0.8rem;
+          color: #ff4b4b;
+          font-weight: 700;
+
+          span {
+            text-decoration: underline;
+          }
+        }
+
+        .overthrow-btn {
+          background: #F7D044;
+          color: black;
+          border: none;
+          padding: 6px 14px;
+          border-radius: 18px;
+          font-weight: 800;
+          font-size: 0.85rem;
+          cursor: pointer;
+
+          &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+          }
+        }
+
+        .cancel-link {
+          background: transparent;
+          border: none;
+          color: rgba(255, 255, 255, 0.5);
+          font-size: 0.85rem;
+          cursor: pointer;
+
+          &:hover {
+            color: white;
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding: 0 12px;
+  }
+}

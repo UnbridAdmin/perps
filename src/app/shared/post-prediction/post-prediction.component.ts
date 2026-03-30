@@ -18,8 +18,7 @@ import { VotingConfirmationModalComponent } from '../voting-confirmation-modal/v
 import { FierceIntuitionComponent } from './components/fierce-intuition/fierce-intuition.component';
 import { HowItWorkIntuitionComponent } from './components/how-it-work-intuition/how-it-work-intuition.component';
 import { FeaturedCommentComponent } from './components/featured-comment/featured-comment.component';
-import { BetPoolComponent } from './components/bet-pool/bet-pool.component';
-import { TradingMarketComponent } from './components/trading-market/trading-market.component';
+
 import { BetPoolService } from './components/bet-pool/bet-pool.service';
 import { SidebarMenuService } from '../../sidebar-menu/sidebar-menu.service';
 import { FeaturedCommentService } from './components/featured-comment/featured-comment.service';
@@ -129,7 +128,7 @@ interface Prediction {
 @Component({
   selector: 'app-post-prediction',
   standalone: true,
-  imports: [CommonModule, RouterModule, InfiniteScrollModule, HttpClientModule, FormsModule, FierceIntuitionComponent, FeaturedCommentComponent, BetPoolComponent, TradingMarketComponent],
+  imports: [CommonModule, RouterModule, InfiniteScrollModule, HttpClientModule, FormsModule, FierceIntuitionComponent, FeaturedCommentComponent],
   templateUrl: './post-prediction.component.html',
   styleUrls: ['./post-prediction.component.scss']
 })
@@ -981,6 +980,11 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
   // Navigate to trade detail page
   navigateToTrade(prediction: any): void {
     this.router.navigate(['/trade', prediction.prediction_id]);
+  }
+
+  // Navigate to bet detail page
+  navigateToBet(prediction: any): void {
+    this.router.navigate(['/bet', prediction.prediction_id]);
   }
 
   // Navigate to post detail page
