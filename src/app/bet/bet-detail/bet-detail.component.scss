@@ -104,23 +104,55 @@
   }
 }
 
-.stats {
+.panel-pool-info {
   display: flex;
-  gap: 24px;
-  color: $text-muted;
-  font-size: 14px;
-  margin-top: 16px;
-}
-
-.stat-item {
-  display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  margin-top: 16px;
+  padding: 12px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 
-  span {
-    font-size: 1.5rem;
-    color: $money-green;
-    font-weight: 700;
+  .pool-main {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .pool-amount {
+      font-size: 1rem;
+      color: $text-muted;
+      font-weight: 600;
+
+      &.highlight {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #00d26a;
+        text-shadow: 0 0 10px rgba(0, 210, 106, 0.3);
+      }
+    }
+
+    .pool-date {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: $text-muted;
+      font-size: 0.9rem;
+
+      i {
+        color: #f7931a;
+        font-size: 1rem;
+      }
+    }
+
+    .pool-burn-badge {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 0.75rem;
+      color: rgba(255, 107, 107, 0.9);
+      background: rgba(255, 107, 107, 0.08);
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 107, 107, 0.15);
+    }
   }
 }
 
@@ -132,7 +164,7 @@
 }
 
 .main-content {
-  max-width: 700px;
+  //max-width: 700px;
   margin: 0 auto;
   width: 100%;
   box-sizing: border-box;

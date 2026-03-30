@@ -30,12 +30,21 @@
       </div>
     </div>
 
-    <div class="stats">
-      <div class="stat-item">
-        <span>Pool {{ prediction.marketInfo?.poolAmount | number:'1.0-2' }} Fierce</span>
+    <div class="panel-pool-info">
+      <div class="pool-main">
+        <div class="pool-amount highlight">Vol. {{ getPoolAmountWithoutUnit() }} Fierce</div>
+        <span class="pool-burn-badge" title="Deducciones del pozo total">
+          🔥 {{ prediction.betBurn !== undefined ? prediction.betBurn : 5 }}% burn + {{ prediction.betPlatformRewards
+          !==
+          undefined ? prediction.betPlatformRewards : 25 }}% fee
+        </span>
       </div>
-      <div class="stat-item">
-        <span>{{ prediction.participants }} participantes</span>
+      <div class="pool-main" style="text-align: right;">
+        <div class="pool-date">
+          <i class="fa-solid fa-clock"></i>
+          <span>{{ prediction.prediction_end_date || prediction.predictionEndDate || 'N/A' | date:'d MMM y, h:mm a'
+            }}</span>
+        </div>
       </div>
     </div>
   </div>

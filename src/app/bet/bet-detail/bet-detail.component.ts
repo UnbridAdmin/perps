@@ -67,84 +67,8 @@ export class BetDetailComponent implements OnInit, OnDestroy {
     const isAuthenticated = this.authService.isAuthenticated();
     const isWalletConnected = await this.walletConnectService.checkConnection();
 
-    // Load prediction data
-    const params: any = {
-      page: 1,
-      limit: 1,
-      predictionId: this.predictionId
-    };
-
-    const apiCall = (isAuthenticated && isWalletConnected)
-      ? this.postPredictionService.getAuthenticatedPredictions(params)
-      : this.postPredictionService.getPublicPredictions(params);
-
-    apiCall.subscribe({
-      next: (response: any) => {
-        const apiResponse = response.data;
-        if (apiResponse?.data && apiResponse.data.length > 0) {
-          const apiPred = apiResponse.data[0];
-
-          // Calculate totals for percentages
-          const totalVotes = apiPred.options.reduce((sum: number, opt: any) =>
-            sum + (opt.prediction_intuition_votes || 0), 0);
-
-          this.prediction = {
-            prediction_id: apiPred.prediction_id,
-            prediction_category_id: apiPred.prediction_category_id,
-            creator: apiPred.creatorUsername || 'Prediction Market',
-            creatorAvatar: apiPred.creatorAvatar || undefined,
-            category: apiPred.categoryName || 'General',
-            question: apiPred.prediction_title,
-            imageUrl: apiPred.prediction_image || undefined,
-            totalVolume: apiPred.totalVolume || 0,
-            prediction_create_at: apiPred.prediction_create_at,
-            prediction_end_date: apiPred.prediction_end_date,
-            prediction_mutual_amount: apiPred.prediction_mutual_amount,
-            betBurn: apiPred.betBurn,
-            betPlatformRewards: apiPred.betPlatformRewards,
-            options: apiPred.options.map((opt: any) => ({
-              id: opt.prediction_option_id,
-              prediction_option_id: opt.prediction_option_id,
-              title: opt.prediction_option_title,
-              prediction_option_title: opt.prediction_option_title,
-              votes: opt.prediction_intuition_votes || 0,
-              percentage: totalVotes > 0
-                ? Math.round(((opt.prediction_intuition_votes || 0) / totalVotes) * 100)
-                : 0
-            })),
-            marketInfo: {
-              poolAmount: apiPred.prediction_mutual_amount?.toString() || '0',
-              participants: parseInt(apiPred.totalParticipants) || 0,
-              options: []
-            },
-            featuredComment: apiPred.king_comment ? {
-              user: apiPred.king_comment.username,
-              avatar: apiPred.king_comment.avatar || 'https://api.dicebear.com/9.x/fun-emoji/svg',
-              text: apiPred.king_comment.comment,
-              gifUrl: apiPred.king_comment.url_image || undefined,
-              burnedAmount: apiPred.king_comment.burned_fierce
-            } : undefined,
-            participants: apiPred.totalParticipants,
-            b_param: apiPred.b_param,
-            fee_rate: apiPred.fee_rate
-          };
-
-          // Load pool data
-          this.loadPoolData();
-        }
-        this.isLoading = false;
-      },
-      error: (error) => {
-        this.isLoading = false;
-        console.error('Error loading bet details:', error);
-      }
-    });
-  }
-
-  private loadPoolData(): void {
-    const isAuthenticated = this.authService.isAuthenticated();
-
-    const poolCall = isAuthenticated
+    // Load all data from pool service (single call)
+    const poolCall = (isAuthenticated && isWalletConnected)
       ? this.betPoolService.getUserPredictionPoolData(this.predictionId)
       : this.betPoolService.getPredictionPoolData(this.predictionId);
 
@@ -153,26 +77,43 @@ export class BetDetailComponent implements OnInit, OnDestroy {
         if (response.success && response.data) {
           const poolData = response.data;
 
-          if (this.prediction) {
-            this.prediction.marketInfo.poolAmount = poolData.marketInfo?.poolAmount || '0';
-
-            if (this.prediction.options && poolData.options) {
-              poolData.options.forEach((poolOpt: any) => {
-                const matchingOption = this.prediction.options.find(
-                  (o: any) => (o.id || o.prediction_option_id) === poolOpt.id
-                );
-                if (matchingOption) {
-                  matchingOption.poolAmount = poolOpt.poolAmount;
-                  matchingOption.userInvestment = poolOpt.userInvestment;
-                  matchingOption.poolPercentage = poolOpt.percentage;
-                  matchingOption.totalBetUsers = poolOpt.totalBetUsers;
-                }
-              });
-            }
-          }
+          // Build prediction object from pool data (now includes header data)
+          this.prediction = {
+            prediction_id: poolData.predictionId,
+            prediction_category_id: poolData.predictionCategoryId,
+            creator: poolData.creatorUsername || 'Prediction Market',
+            creatorAvatar: poolData.creatorAvatar || undefined,
+            category: poolData.categoryName || 'General',
+            question: poolData.predictionTitle,
+            imageUrl: poolData.predictionImage || undefined,
+            prediction_create_at: poolData.predictionCreateDate,
+            prediction_end_date: poolData.predictionEndDate,
+            betBurn: poolData.betBurn,
+            betPlatformRewards: poolData.betPlatformRewards,
+            marketInfo: {
+              poolAmount: poolData.marketInfo?.poolAmount || '0',
+              participants: poolData.betUsers || 0,
+              options: []
+            },
+            options: poolData.options?.map((opt: any) => ({
+              id: opt.id,
+              prediction_option_id: opt.id,
+              title: opt.title,
+              prediction_option_title: opt.title,
+              poolAmount: opt.poolAmount,
+              userInvestment: opt.userInvestment,
+              poolPercentage: opt.percentage,
+              totalBetUsers: opt.totalBetUsers
+            })) || [],
+            participants: poolData.betUsers?.toString() || '0'
+          };
         }
+        this.isLoading = false;
       },
-      error: (err) => console.error('Error loading pool data:', err)
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error loading bet details:', error);
+      }
     });
   }
 
@@ -199,7 +140,7 @@ export class BetDetailComponent implements OnInit, OnDestroy {
               title: 'Apuesta registrada',
               message1: `Tu apuesta de ${amount} F ha sido procesada exitosamente.`
             });
-            this.loadPoolData();
+            this.loadBetDetails();
             this.sidebarMenuService.notifyBalanceUpdate();
           } else {
             await this.confirmDialogService.showError({
@@ -227,6 +168,11 @@ export class BetDetailComponent implements OnInit, OnDestroy {
 
   goBack() {
     this.router.navigate(['/home']);
+  }
+
+  getPoolAmountWithoutUnit(): string {
+    const poolAmount = this.prediction?.marketInfo?.poolAmount || '0';
+    return poolAmount.toString().replace(/[^0-9.]/g, '');
   }
 
   // Overthrow logic

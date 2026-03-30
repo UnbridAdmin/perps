@@ -1,24 +1,4 @@
-<div class="bet-collapsible-panel">
-  <div class="panel-header">
-    <span class="panel-title">Pool de Apuestas Mutuas</span>
-    <span class="pool-burn-badge" title="Deducciones del pozo total">
-      🔥 {{ prediction.betBurn !== undefined ? prediction.betBurn : 5 }}% burn + {{ prediction.betPlatformRewards !==
-      undefined ? prediction.betPlatformRewards : 25 }}% fee
-    </span>
-    <button class="close-panel-btn" (click)="onClose()">×</button>
-  </div>
-
-  <div class="panel-pool-info">
-    <div class="pool-main">
-      <div class="pool-label">Pozo acumulado</div>
-      <div class="pool-amount">{{ getPoolAmountWithoutUnit() }} Fierce</div>
-    </div>
-    <div class="pool-main" style="text-align: right;">
-      <div class="pool-label">Fecha Fin</div>
-      <div class="pool-amount" style="font-size: 16px;">{{ prediction.prediction_end_date || prediction.predictionEndDate || 'N/A' }}</div>
-    </div>
-  </div>
-
+<div class="bet-options-container">
   <div class="panel-instruction"
     *ngIf="!prediction.marketInfo?.poolAmount || getPoolAmountWithoutUnit() === '0' || getPoolAmountWithoutUnit() === '0.0'">
     <strong>¡Sé el primero en apostar</strong> y establece las probabilidades!
@@ -26,8 +6,7 @@
 
   <div class="betting-options">
     <ng-container *ngFor="let option of (prediction?.options || [])">
-      <div class="bet-option-row"
-        [class.active]="selectedOptionId === (option.prediction_option_id || option.id)"
+      <div class="bet-option-row" [class.active]="selectedOptionId === (option.prediction_option_id || option.id)"
         (click)="onSelectOption(option.prediction_option_id || option.id)">
 
         <!-- Percentage progress fill background -->
@@ -40,7 +19,8 @@
             <div class="option-left">
               <span class="option-name">{{ option.prediction_option_title || option.title }}</span>
               <span class="option-percentage-tag">
-                {{ option.poolPercentage !== undefined ? option.poolPercentage : (option.percentage || 0) }}%
+                {{ formatPercentage(option.poolPercentage !== undefined ? option.poolPercentage : (option.percentage
+                || 0)) }}%
               </span>
             </div>
             <div class="option-right">
@@ -62,8 +42,7 @@
       </div>
 
       <!-- Simulator injected inline under active option -->
-      <div class="betting-simulator-inline"
-        *ngIf="selectedOptionId === (option.prediction_option_id || option.id)">
+      <div class="betting-simulator-inline" *ngIf="selectedOptionId === (option.prediction_option_id || option.id)">
         <div class="simulator-inner-panel">
           <div class="simulator-controls-compact">
             <div class="input-box">
