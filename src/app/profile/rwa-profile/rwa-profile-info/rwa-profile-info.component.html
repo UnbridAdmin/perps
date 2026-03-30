@@ -68,17 +68,19 @@
         <i class="fas fa-gem"></i> RWA Profile
       </div> -->
     </div>
-    <div class="handle">@{{ userProfile.username }}</div>
+    <div class="handle">@{{ userProfile.username }} - <span class="location">Bucaramanga, Colombia</span></div>
+
+    <div class="sector-tag">🌱 AGRO · RWA</div>
 
     <div class="stats">
       <div class="stat-item">
-        <span>👥</span> <strong>{{ userProfile.followers }}</strong> Followers
+        <strong>{{ userProfile.followers }}</strong> Followers
       </div>
       <div class="stat-item">
-        <span>👤</span> <strong>{{ userProfile.following }}</strong> Following
+        <strong>{{ userProfile.following }}</strong> Following
       </div>
       <div class="stat-item">
-        <span>📺</span> <strong>{{ userProfile.subscribers }}</strong> Subscribers
+        <strong>{{ userProfile.subscribers }}</strong> Activos Tokenizados
       </div>
     </div>
 

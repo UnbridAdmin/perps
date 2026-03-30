@@ -22,6 +22,7 @@ export class RwaProfileInfoComponent implements OnInit {
   public errorMessage: string | null = null;
   public isOwnProfile: boolean = false;
   @Output() userIdLoaded = new EventEmitter<number>();
+  @Output() profileTypeDetected = new EventEmitter<'USER' | 'RWA'>();
 
   constructor(
     private profileService: ProfileInfoService,
@@ -44,69 +45,102 @@ export class RwaProfileInfoComponent implements OnInit {
     if (usernameFromUrl) {
       // If a username is specified in URL, check if it's the authenticated user's profile
       const authenticatedUsername = this.authService.getAuthenticatedUsername();
-      
+
       if (this.authService.isAuthenticated() && authenticatedUsername === usernameFromUrl) {
         // Viewing own profile - use private service
         this.profileService.getUserProfile().subscribe({
-          next: (profile) => {
-            this.userProfile = profile;
-            this.isOwnProfile = true;
+          next: (resp: any) => {
+            if (resp.data && resp.data.length > 0) {
+              this.userProfile = resp.data[0];
+              this.userIdLoaded.emit(this.userProfile.user_id);
+              const profileType = this.userProfile.type_profile || 'USER';
+              this.profileTypeDetected.emit(profileType);
+              this.isOwnProfile = true;
+              // Save username and user_id to localStorage for future comparisons
+              if (this.userProfile.username) {
+                localStorage.setItem('username', this.userProfile.username);
+              }
+              if (this.userProfile.user_id) {
+                localStorage.setItem('user_id', this.userProfile.user_id.toString());
+              }
+            }
             this.isLoading = false;
-            this.userIdLoaded.emit(profile.user_id);
-            console.log('RWA Profile loaded (own):', profile);
           },
           error: (err) => {
-            this.errorMessage = 'Failed to load profile';
+            console.error('Error fetching auth profile:', err);
+            this.errorMessage = 'Could not load profile.';
             this.isLoading = false;
-            console.error('Error loading profile:', err);
           }
         });
       } else {
         // Viewing someone else's profile - use public service
         this.profileService.getUserPublicProfile(usernameFromUrl).subscribe({
-          next: (profile) => {
-            this.userProfile = profile;
-            this.isOwnProfile = false;
+          next: (resp: any) => {
+            if (resp.data && resp.data.length > 0) {
+              this.userProfile = resp.data[0];
+              this.userIdLoaded.emit(this.userProfile.user_id);
+              const profileType = this.userProfile.type_profile || 'USER';
+              this.profileTypeDetected.emit(profileType);
+              this.isOwnProfile = false;
+            }
             this.isLoading = false;
-            this.userIdLoaded.emit(profile.user_id);
-            console.log('RWA Profile loaded (public):', profile);
           },
           error: (err) => {
-            this.errorMessage = 'User not found';
+            console.error('Error fetching public profile:', err);
+            this.errorMessage = 'Could not load public profile.';
             this.isLoading = false;
-            console.error('Error loading public profile:', err);
           }
         });
       }
-    } else {
-      // No username provided, try to load authenticated user's profile
-      if (this.authService.isAuthenticated()) {
-        this.profileService.getUserProfile().subscribe({
-          next: (profile) => {
-            this.userProfile = profile;
+    } else if (this.authService.isAuthenticated()) {
+      // If no username is specified but the user is logged in, show their own profile
+      this.profileService.getUserProfile().subscribe({
+        next: (resp: any) => {
+          if (resp.data && resp.data.length > 0) {
+            this.userProfile = resp.data[0];
+            this.userIdLoaded.emit(this.userProfile.user_id);
+            const profileType = this.userProfile.type_profile || 'USER';
+            this.profileTypeDetected.emit(profileType);
             this.isOwnProfile = true;
-            this.isLoading = false;
-            this.userIdLoaded.emit(profile.user_id);
-            console.log('RWA Profile loaded (authenticated):', profile);
-          },
-          error: (err) => {
-            this.errorMessage = 'Failed to load profile';
-            this.isLoading = false;
-            console.error('Error loading profile:', err);
+            // Save username to localStorage for future comparisons
+            if (this.userProfile.username) {
+              localStorage.setItem('username', this.userProfile.username);
+            }
           }
-        });
-      } else {
-        this.errorMessage = 'Not authenticated';
-        this.isLoading = false;
-      }
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error('Error fetching auth profile:', err);
+          this.errorMessage = 'Could not load profile.';
+          this.isLoading = false;
+        }
+      });
+    } else {
+      this.isLoading = false;
+      this.errorMessage = 'No profile information available.';
     }
   }
 
-  openEditProfileModal(): void {
+  public openEditProfileModal(): void {
+    console.log('Opening edit profile modal');
+    if (!this.userProfile) return;
+
     const modalRef = this.modalService.open(EditProfileModalComponent, {
-      size: 'lg',
+      centered: true,
       backdrop: 'static',
-      keyboard: false
+      windowClass: 'edit-profile-modal-window'
+    });
+
+    modalRef.componentInstance.userProfile = this.userProfile;
+
+    modalRef.result.then((result) => {
+      if (result) {
+        console.log('Profile updated:', result);
+        // Here we would call the update service and then reload
+        this.userProfile = { ...this.userProfile, ...result };
+      }
+    }, (reason) => {
+      // Dismissed
     });
   }
 }
