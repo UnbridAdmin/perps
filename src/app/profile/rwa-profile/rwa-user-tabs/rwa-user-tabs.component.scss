@@ -1,0 +1,53 @@
+// RWA User Tabs Styles
+.rwa-tabs {
+  .tabs-header {
+    display: flex;
+    border-bottom: 1px solid #222;
+  }
+
+  .rwa-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #888;
+    padding: 15px;
+    cursor: pointer;
+    text-align: center;
+    border-bottom: 2px solid transparent;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 0px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    i {
+      font-size: 16px;
+    }
+
+    &.active {
+      color: #fff;
+      border-bottom-color: #5b9bd5;
+    }
+  }
+
+  .tabs-content {
+    padding: 20px;
+
+    .tab-content {
+      animation: fadeIn 0.3s ease;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

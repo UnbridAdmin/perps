@@ -30,13 +30,11 @@
     </div>
 
     <!-- Follow Button -->
-    <button class="follow-btn own" *ngIf="isOwnProfile" (click)="openEditProfileModal()">
-      <i class='bx bx-edit-alt'></i> Edit Profile
+    <button class="follow-btn" *ngIf="isOwnProfile" (click)="openEditProfileModal()">
+      <span>☰</span> Edit Profile
     </button>
-    <button class="btn btn-success follow-btn" *ngIf="!isOwnProfile" (click)="followUser()"
-      [disabled]="isFollowingLoading">
-      <i class='bx' [ngClass]="isFollowingLoading ? 'bx-loader-alt bx-spin' : 'bx-user-plus'"></i>
-      {{ isFollowingLoading ? 'Processing...' : 'Follow' }}
+    <button class="follow-btn" *ngIf="!isOwnProfile">
+      <span>☰</span> Follow
     </button>
   </div>
 
@@ -70,7 +68,9 @@
         <i class="fas fa-gem"></i> RWA Profile
       </div> -->
     </div>
-    <div class="handle">@{{ userProfile.username }}</div>
+    <div class="handle">@{{ userProfile.username }} - <span class="location">Bucaramanga, Colombia</span></div>
+
+    <div class="sector-tag">🌱 AGRO · RWA</div>
 
     <div class="stats">
       <div class="stat-item">
@@ -80,7 +80,7 @@
         <strong>{{ userProfile.following }}</strong> Following
       </div>
       <div class="stat-item">
-        <strong>{{ userProfile.subscribers }}</strong> Subscribers
+        <strong>{{ userProfile.subscribers }}</strong> Activos Tokenizados
       </div>
     </div>
 

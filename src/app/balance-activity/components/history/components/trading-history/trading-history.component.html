@@ -26,7 +26,7 @@
                                 <span class="side-badge" *ngIf="item.side" [ngClass]="item.side.toLowerCase()">{{ item.side }}</span>
                                 <span class="option-title">{{ item.option_title }}</span>
                                 <span class="divider">•</span>
-                                <span class="price">{{ (item.price * 100).toFixed(0) }}¢</span>
+                                <span class="price">{{ (item.price * 100).toFixed(2) }}¢</span>
                                 <span class="divider">•</span>
                                 <span class="shares">{{ item.shares.toFixed(2) }} shares</span>
                             </div>

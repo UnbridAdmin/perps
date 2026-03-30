@@ -1,0 +1,42 @@
+<div class="rwa-tabs">
+  <div class="tabs-header">
+    <button class="rwa-tab" [class.active]="activeTab === 'my-predictions'" (click)="setActiveTab('my-predictions')">
+      <i class="fas fa-chart-line"></i>
+      <span>Predictions</span>
+    </button>
+    <button class="rwa-tab" [class.active]="activeTab === 'assets'" (click)="setActiveTab('assets')">
+      <i class="fas fa-boxes"></i>
+      <span>Assets</span>
+    </button>
+    <button class="rwa-tab" [class.active]="activeTab === 'rwa-minidex'" (click)="setActiveTab('rwa-minidex')">
+      <i class="fas fa-gem"></i>
+      <span>RWA Minidex</span>
+    </button>
+    <button class="rwa-tab" [class.active]="activeTab === 'reports'" (click)="setActiveTab('reports')">
+      <i class="fas fa-file-alt"></i>
+      <span>Reports</span>
+    </button>
+  </div>
+
+  <div class="tabs-content">
+    <!-- My Predictions Tab -->
+    <div *ngIf="activeTab === 'my-predictions'" class="tab-content">
+      <app-post-prediction [userId]="userId"></app-post-prediction>
+    </div>
+
+    <!-- Assets Tab -->
+    <div *ngIf="activeTab === 'assets'" class="tab-content">
+      <app-rwa-assets [userId]="userId"></app-rwa-assets>
+    </div>
+
+    <!-- RWA Minidex Tab -->
+    <div *ngIf="activeTab === 'rwa-minidex'" class="tab-content">
+      <app-rwa-minidex [userId]="userId"></app-rwa-minidex>
+    </div>
+
+    <!-- Reports Tab -->
+    <div *ngIf="activeTab === 'reports'" class="tab-content">
+      <app-rwa-reports [userId]="userId"></app-rwa-reports>
+    </div>
+  </div>
+</div>

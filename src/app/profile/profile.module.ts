@@ -11,7 +11,10 @@ import { SignalMetricsComponent } from './signal-metrics/signal-metrics.componen
 import { EarningsMetricsComponent } from './earnings-metrics/earnings-metrics.component';
 import { UserTabsComponent } from './user-tabs/user-tabs.component';
 import { EditProfileModalComponent } from './edit-profile-modal/edit-profile-modal.component';
-import { FollowerListComponent } from './follower-list/follower-list.component';
+import { RwaProfileInfoComponent } from './rwa-profile/rwa-profile-info/rwa-profile-info.component';
+import { RwaUserMetricsComponent } from './rwa-profile/rwa-user-metrics/rwa-user-metrics.component';
+import { RwaUserTabsComponent } from './rwa-profile/rwa-user-tabs/rwa-user-tabs.component';
+
 
 @NgModule({
   declarations: [],
@@ -27,7 +30,9 @@ import { FollowerListComponent } from './follower-list/follower-list.component';
     EarningsMetricsComponent,
     UserTabsComponent,
     EditProfileModalComponent,
-    FollowerListComponent
+    RwaProfileInfoComponent,
+    RwaUserMetricsComponent,
+    RwaUserTabsComponent
   ]
 })
 export class ProfileModule { }

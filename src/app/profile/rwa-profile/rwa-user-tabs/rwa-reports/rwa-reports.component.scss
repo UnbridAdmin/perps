@@ -1,0 +1,210 @@
+// RWA Reports Styles
+.rwa-reports-container {
+  padding: 16px 0;
+
+  .reports-header {
+    padding: 0 16px;
+    margin-bottom: 20px;
+
+    h3 {
+      margin: 0 0 8px 0;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      i {
+        color: #667eea;
+      }
+    }
+
+    .reports-info {
+      color: #657786;
+      font-size: 13px;
+    }
+  }
+
+  .reports-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 0 16px;
+    margin-bottom: 20px;
+
+    .report-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(102, 126, 234, 0.2);
+      border-radius: 12px;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: #667eea;
+        transform: translateX(4px);
+      }
+
+      .report-icon {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 20px;
+        flex-shrink: 0;
+
+        i {
+          font-size: 18px;
+        }
+      }
+
+      .report-content {
+        flex: 1;
+
+        .report-header {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 8px;
+
+          .report-title {
+            color: #fff;
+            font-weight: 600;
+            font-size: 14px;
+            margin: 0;
+          }
+
+          .report-type {
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+          }
+        }
+
+        .report-meta {
+          display: flex;
+          gap: 16px;
+          flex-wrap: wrap;
+
+          .report-date,
+          .report-status {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+
+            i {
+              font-size: 10px;
+            }
+          }
+
+          .report-date {
+            color: #657786;
+          }
+
+          .report-status {
+            i {
+              width: 6px;
+              height: 6px;
+              background-color: currentColor;
+              border-radius: 50%;
+            }
+
+            &.status-published {
+              color: #31a24c;
+            }
+
+            &.status-draft {
+              color: #f59e0b;
+            }
+
+            &.status-archived {
+              color: #657786;
+            }
+          }
+        }
+      }
+
+      .report-actions {
+        display: flex;
+        gap: 8px;
+
+        @media (max-width: 480px) {
+          flex-direction: column;
+          width: 100%;
+        }
+
+        .action-btn {
+          padding: 8px 12px;
+          border-radius: 6px;
+          border: none;
+          cursor: pointer;
+          font-size: 12px;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          transition: all 0.2s ease;
+          white-space: nowrap;
+
+          i {
+            font-size: 11px;
+          }
+
+          &.view-btn {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+
+            &:hover {
+              background: rgba(102, 126, 234, 0.2);
+              color: #fff;
+            }
+          }
+
+          &.download-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+
+            &:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 16px;
+    color: #657786;
+
+    i {
+      font-size: 48px;
+      color: #667eea;
+      margin-bottom: 12px;
+      display: block;
+      opacity: 0.5;
+    }
+
+    p {
+      margin: 0;
+      font-size: 14px;
+    }
+  }
+}

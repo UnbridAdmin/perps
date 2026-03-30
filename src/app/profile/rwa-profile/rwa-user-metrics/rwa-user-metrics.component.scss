@@ -1,0 +1,137 @@
+// RWA User Metrics Styles
+.metrics-container {
+  padding: 16px;
+
+  .metrics-tabs {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 16px;
+
+    .metric-tab {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #888;
+      cursor: pointer;
+      text-align: center;
+      border-bottom: 2px solid transparent;
+      transition: all 0.3s ease;
+      border-radius: 0px !important;
+
+      &:hover {
+        color: #fff;
+      }
+
+      &.active {
+        color: #fff;
+        border-bottom-color: #c77dff;
+      }
+
+      .metric-value {
+        display: block;
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 3px;
+      }
+
+      .metric-label {
+        display: block;
+        font-size: 11px;
+        text-transform: uppercase;
+      }
+    }
+  }
+
+  .metric-content {
+    animation: fadeIn 0.3s ease;
+  }
+
+  .rwa-metric-display {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    border-radius: 12px;
+    padding: 24px;
+
+    .metric-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+
+      i {
+        font-size: 24px;
+        color: #667eea;
+      }
+
+      h3 {
+        margin: 0;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 600;
+      }
+    }
+
+    .metric-value-large {
+      font-size: 32px;
+      font-weight: 700;
+      color: #667eea;
+      margin-bottom: 16px;
+    }
+
+    .metric-details {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+
+      @media (max-width: 480px) {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+        .label {
+          color: #657786;
+          font-size: 12px;
+        }
+
+        .value {
+          color: #fff;
+          font-weight: 600;
+          font-size: 13px;
+
+          &.positive {
+            color: #31a24c;
+          }
+        }
+      }
+    }
+
+    .metric-placeholder {
+      text-align: center;
+      padding: 32px;
+      color: #657786;
+
+      p {
+        margin: 0;
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
