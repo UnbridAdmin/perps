@@ -203,15 +203,18 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
         
         // Detect logout: was authenticated, now not authenticated
         if (this.wasAuthenticated && !isNowAuthenticated) {
-          console.log('PostPrediction: LOGOUT DETECTED - ceasing predictions refresh');
-          this.shouldReload = false;
+          console.log('PostPrediction: LOGOUT DETECTED - clearing and reloading public predictions');
           this.isLoading = false;
           
-          // Clear predictions on logout
-          if (this.predictions.length > 0) {
-            this.predictions = [];
-            this.apiPredictions = [];
-          }
+          // Clear current predictions
+          this.predictions = [];
+          this.apiPredictions = [];
+
+          // Re-enable loading and fetch public predictions after session cleanup settles
+          this.shouldReload = true;
+          setTimeout(() => {
+            this.resetAndReload();
+          }, 300);
         } 
         // Detect login: was not authenticated, now is authenticated
         else if (!this.wasAuthenticated && isNowAuthenticated) {

@@ -66,6 +66,21 @@ export class HeaderComponent implements OnInit, OnDestroy {
       })
     );
 
+    // Subscribe to logout events
+    this.subscriptions.add(
+      this.authorizationService.logoutEvent.subscribe(() => {
+        console.log('📡 Header received logout event');
+        this.userAddress = '';
+        this.walletConnected = false;
+        this.isAuthenticated = false;
+        console.log('✅ Header state after logout:', {
+          userAddress: this.userAddress,
+          walletConnected: this.walletConnected,
+          isAuthenticated: this.isAuthenticated
+        });
+      })
+    );
+
     // Subscribe to category changes from CategoryService
     this.subscriptions.add(
       this.categoryService.selectedCategory$.subscribe(category => {
