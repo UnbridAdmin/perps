@@ -37,7 +37,7 @@
         </span>
         <span class="env-pool-total">
           Total: {{ (option.poolAmount || 0) | number:'1.0-0' }} Fierce
-          <!-- <span class="env-pool-users">👥 {{ option.totalBetUsers || 0 }} usuarios</span> -->
+          <span class="env-pool-users">👤 {{ option.totalBetUsers || 0 }}</span>
         </span>
       </div>
 
@@ -54,14 +54,14 @@
                 style="width: 100%; box-sizing: border-box; background: var(--env-bg); border: 0.5px solid var(--env-border); border-radius: 6px; padding: 6px 10px; color: var(--env-text); font-size: 13px; outline: none;">
             </div>
 
-            <div class="profit-preview" [class.positive]="potentialProfit > 0" style="flex: 1;">
+            <!-- <div class="profit-preview" [class.positive]="potentialProfit > 0" style="flex: 1;">
               <span class="label"
                 style="font-size: 11px; color: var(--env-muted); display: block; margin-bottom: 4px;">Ganancia
                 Est.</span>
               <span class="value" style="font-size: 14px; color: var(--env-green); font-weight: 500;">
                 {{ potentialProfit > 0 ? '+' : '' }}{{ potentialProfit | number:'1.2-2' }} Fierce
               </span>
-            </div>
+            </div> -->
           </div>
 
           <button class="env-market-cta" [disabled]="betAmount <= 0" (click)="onConfirmVote()"

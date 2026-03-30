@@ -20,7 +20,7 @@
   <div class="comment-grid" [class.has-gif]="!!comment.gifUrl" style="display: flex; gap: 12px; align-items: flex-start;">
     <div class="env-avatar" [style.backgroundImage]="'url(' + (comment.avatar || 'https://api.dicebear.com/9.x/fun-emoji/svg') + ')'" [style.backgroundSize]="'cover'"></div>
     <div style="flex: 1; font-size: 13px; color: var(--env-text);">
-      "{{ comment.text }}"
+      <span [innerHTML]="getTextWithLinks(comment.text)"></span>
     </div>
     <div class="gif-column" *ngIf="comment.gifUrl">
       <img [src]="comment.gifUrl" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;">
