@@ -13,13 +13,14 @@ import { WalletConnectService } from '../../services/walletconnect.service';
 import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
 import { SidebarMenuService } from '../../sidebar-menu/sidebar-menu.service';
 import { FeaturedCommentService } from '../../shared/post-prediction/components/featured-comment/featured-comment.service';
+import { PostCommentsComponent } from '../../shared/post-prediction/components/post-comments/post-comments.component';
 import { ApiServices } from '../../services/api.service';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-bet-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, BetPoolComponent, FeaturedCommentComponent],
+  imports: [CommonModule, FormsModule, BetPoolComponent, FeaturedCommentComponent, PostCommentsComponent],
   templateUrl: './bet-detail.component.html',
   styleUrl: './bet-detail.component.scss',
 })

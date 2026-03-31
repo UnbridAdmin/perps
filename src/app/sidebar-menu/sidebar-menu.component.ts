@@ -28,6 +28,7 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
   isAuthenticated: boolean = false;
   walletConnected: boolean = false;
   userProfileImage: string = 'https://ipfs.unbrid.com/app/user-profile.webp';
+  sessionAddressExists: boolean = false;
   private isDisconnecting: boolean = false;
   private subscriptions: Subscription = new Subscription();
 
@@ -158,6 +159,9 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
     if (!this.isHomePage) {
       this.categoryService.clearSelection();
     }
+
+    // Verificar sessionAddress en localStorage
+    this.checkSessionAddress();
   }
 
   private loadUserProfile(): void {
@@ -239,6 +243,10 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
     this.unbridBalance = 0;
     this.userProfileImage = 'https://ipfs.unbrid.com/app/user-profile.webp';
     this.isAuthenticated = false;
+  }
+
+  private checkSessionAddress(): void {
+    this.sessionAddressExists = !!localStorage.getItem('sessionAddress');
   }
 
   ngAfterViewInit() {
@@ -348,6 +356,12 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
     }, () => { });
   }
 
+  refreshBalance(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.loadUserProfile();
+  }
+
   async disconnectWallet(): Promise<void> {
     this.isDisconnecting = true;
 
@@ -401,13 +415,13 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
             await web3Modal.disconnect();
             console.log('🔌 Web3Modal disconnected');
           }
-          
+
           // Close the modal if open
           if (typeof web3Modal.close === 'function') {
             await web3Modal.close();
             console.log('🚪 Web3Modal closed');
           }
-          
+
           // Reset the modal state if possible
           if (typeof web3Modal.reset === 'function') {
             await web3Modal.reset();
@@ -421,7 +435,7 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
       // Clear persisted state from service
       this.walletConnectService.clearPersistedState();
       this.walletConnectService.stopWalletMonitoring();
-      
+
       // Force close any open modals
       const modalElements = document.querySelectorAll('[role="dialog"], .w3m-modal, .wallet-modal, .reown-modal');
       modalElements.forEach(element => {
@@ -432,7 +446,7 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
       // Additional cleanup - force remove any remaining modal backdrops
       const backdrops = document.querySelectorAll('.modal-backdrop, .w3m-modal-backdrop');
       backdrops.forEach(backdrop => backdrop.remove());
-      
+
       console.log('✅ Logout completado - Usuario permanece en página actual');
     } catch (error) {
       console.error('❌ Error during logout:', error);

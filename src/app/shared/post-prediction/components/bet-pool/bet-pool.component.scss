@@ -109,27 +109,40 @@
                     gap: 8px;
                     flex: 1;
 
-                    .option-name {
-                        font-size: 14px;
-                        font-weight: 600;
-                        color: #e1e8ed;
-                    }
+                    .option-name-wrapper {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 2px;
 
-                    .option-percentage-tag {
-                        font-size: 11px;
-                        font-weight: 700;
-                        color: #4ade80;
-                        background: rgba(255, 152, 0, 0.1);
-                        padding: 2px 6px;
-                        border-radius: 4px;
+                        .option-name {
+                            font-size: 14px;
+                            font-weight: 600;
+                            color: #e1e8ed;
+                        }
+
+                        .option-percentage-tag {
+                            font-size: 11px;
+                            font-weight: 700;
+                            color: #4ade80;
+                            background: rgba(255, 152, 0, 0.1);
+                            padding: 2px 6px;
+                            border-radius: 4px;
+                            width: fit-content;
+                        }
                     }
                 }
 
                 .option-right {
                     display: flex;
-                    flex-direction: column;
-                    align-items: flex-end;
-                    gap: 2px;
+                    flex-direction: row;
+                    align-items: center;
+                    gap: 12px;
+
+                    .divider {
+                        width: 1px;
+                        height: 16px;
+                        background: rgba(255, 255, 255, 0.15);
+                    }
 
                     .investment-info,
                     .pool-info {

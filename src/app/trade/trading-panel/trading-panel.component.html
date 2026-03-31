@@ -81,12 +81,17 @@
 
     <div class="trade-info-container" *ngIf="isBuyMode">
       <div class="main-info">
-        <span class="label">Shares to receive 📈</span>
+        <span class="label">To Win 📈</span>
         <span class="value win-amount">{{ toWin | number:'1.2-2' }}</span>
       </div>
       <div class="sub-info" *ngIf="estAvgPrice > 0">
-        <span class="label">Avg. Price {{ (estAvgPrice * 100) | number:'1.2-2' }}¢ <i
-            class="fa-solid fa-circle-info info-icon"></i></span>
+        <span class="label">Avg. Price {{ (estAvgPrice * 100) | number:'1.2-2' }}¢
+          <span class="tooltip-container">
+            <i class="fa-solid fa-circle-info info-icon"></i>
+            <span class="tooltip-text">Precio promedio estimado por acción después de tarifas. Este es el costo real por
+              acción que pagarás. Puede variar al momento de ejecutar la orden.</span>
+          </span>
+        </span>
       </div>
     </div>
 
@@ -96,8 +101,13 @@
         <span class="value receive-amount">$F {{ potentialProceeds | number:'1.2-2' }}</span>
       </div>
       <div class="sub-info" *ngIf="estAvgPrice > 0">
-        <span class="label">Avg. Price {{ (estAvgPrice * 100) | number:'1.2-2' }}¢ <i
-            class="fa-solid fa-circle-info info-icon"></i></span>
+        <span class="label">Avg. Price {{ (estAvgPrice * 100) | number:'1.2-2' }}¢
+          <span class="tooltip-container">
+            <i class="fa-solid fa-circle-info info-icon"></i>
+            <span class="tooltip-text">Precio promedio estimado por acción después de tarifas. Este es el precio real
+              por acción que recibirás. Puede variar al momento de ejecutar la orden.</span>
+          </span>
+        </span>
       </div>
     </div>
 
