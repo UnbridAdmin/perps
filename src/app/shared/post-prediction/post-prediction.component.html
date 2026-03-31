@@ -1,15 +1,46 @@
 <div class="prediction-list env-wrap" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50"
   (scrolled)="onScroll()">
 
-  <!-- Loading indicator -->
-  <div class="loading-indicator" *ngIf="isLoading && predictions.length === 0">
-    Loading predictions...
+  <!-- Loading skeleton -->
+  @if(isLoading && predictions.length === 0){
+  <div class="skeleton-container">
+    @for (item of [1, 2, 3, 4, 5]; track item) {
+    <div class="env-card-loader skeleton-card">
+      <div class="skt">
+        <div class="env-card-header">
+          <div class="env-avatar skeleton-avatar"></div>
+          <div class="env-user-info">
+            <div class="skeleton-line skeleton-username"></div>
+            <div class="skeleton-line skeleton-tag"></div>
+          </div>
+        </div>
+        <div class="env-card-img-row">
+          <div class="env-thumb skeleton-thumb"></div>
+          <div class="env-title">
+            <div class="skeleton-line skeleton-title-line"></div>
+            <div class="skeleton-line skeleton-title-line short"></div>
+          </div>
+        </div>
+        <div class="skeleton-sentiment">
+          <div class="skeleton-btn"></div>
+          <div class="skeleton-btn"></div>
+          <div class="skeleton-btn"></div>
+        </div>
+        <div class="env-card-footer">
+          <div class="skeleton-tab"></div>
+          <div class="skeleton-tab"></div>
+          <div class="skeleton-tab"></div>
+        </div>
+      </div>
+    </div>
+    }
   </div>
-
+  }
+  @else{
   <div class="env-card" *ngFor="let prediction of predictions; let i = index">
     <!-- Quick Action Buttons -->
     <div class="quick-action-buttons">
-      <button class="quick-action-btn bet-btn" (click)="toggleBetPopover(i)" title="Pool de apuestas">
+      <button class="quick-action-btn bet-btn" (click)="navigateToBet(prediction)" title="Pool de apuestas">
         BET
       </button>
       <button class="quick-action-btn trade-btn" (click)="navigateToTrade(prediction)" title="Ir al Trading">
@@ -117,8 +148,7 @@
         <span>{{ prediction.actions.comments || '0' }}</span>
       </button>
       <div class="env-tab-divider"></div>
-      <button class="env-tab" (click)="toggleBetPopover(i)" [class.active-green]="activeBetPopover === i"
-        title="Pool de apuestas">
+      <button class="env-tab" (click)="navigateToBet(prediction)" title="Pool de apuestas">
         <i class="fa-regular fa-clock"></i>
         <div class="env-tab-content">
           <span>Apuestas</span>
@@ -126,8 +156,7 @@
         </div>
       </button>
       <div class="env-tab-divider"></div>
-      <button class="env-tab" (click)="toggleMarketPopover(i)" [class.active-green]="activeMarketPopover === i"
-        title="Mercado Trading">
+      <button class="env-tab" (click)="navigateToTrade(prediction)" title="Mercado Trading">
         <i class="fa-solid fa-chart-line"></i>
         <div class="env-tab-content">
           <span>Mercado</span>
@@ -137,16 +166,9 @@
       </button>
     </div>
 
-    <!-- Expanded Panels -->
-    <app-trading-market *ngIf="activeMarketPopover === i" [prediction]="prediction" [bParam]="prediction.b_param || 10"
-      [feeRate]="prediction.fee_rate || 0.01" (trade)="navigateToTrade(prediction)" (close)="closePopover()">
-    </app-trading-market>
 
-    <app-bet-pool *ngIf="activeBetPopover === i" [prediction]="prediction" (vote)="onPlaceMutualBet(i, $event)"
-      (close)="closePopover()">
-    </app-bet-pool>
   </div>
-
+  }
   <!-- Loading more indicator -->
   <div class="loading-more" *ngIf="isLoading && predictions.length > 0">
     Loading more predictions...

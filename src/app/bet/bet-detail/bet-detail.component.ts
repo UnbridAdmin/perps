@@ -2,36 +2,31 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { CommonModule } from '@angular/common';
-import { OutcomeComponent } from '../outcome/outcome.component';
-import { TradingPanelComponent } from '../trading-panel/trading-panel.component';
-import { PostCommentsComponent } from '../../shared/post-prediction/components/post-comments/post-comments.component';
-import { PriceTrendComponent } from '../price-trend/price-trend.component';
-import { IntuitionVsMarketAnalysisComponent } from '../intuition-vs-market-analysis/intuition-vs-market-analysis.component';
+import { FormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
+import { BetPoolComponent } from '../../shared/post-prediction/components/bet-pool/bet-pool.component';
 import { FeaturedCommentComponent } from '../../shared/post-prediction/components/featured-comment/featured-comment.component';
-import { TradeService } from '../trade.service';
+import { BetPoolService } from '../../shared/post-prediction/components/bet-pool/bet-pool.service';
+import { PostPredictionService } from '../../shared/post-prediction/post-prediction.service';
 import { AuthorizationService } from '../../services/authorization.service';
 import { WalletConnectService } from '../../services/walletconnect.service';
-import { FeaturedCommentService } from '../../shared/post-prediction/components/featured-comment/featured-comment.service';
 import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
 import { SidebarMenuService } from '../../sidebar-menu/sidebar-menu.service';
+import { FeaturedCommentService } from '../../shared/post-prediction/components/featured-comment/featured-comment.service';
+import { PostCommentsComponent } from '../../shared/post-prediction/components/post-comments/post-comments.component';
 import { ApiServices } from '../../services/api.service';
-import { FormsModule } from '@angular/forms';
-import { firstValueFrom, Subscription } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
-  selector: 'app-trade-detail',
+  selector: 'app-bet-detail',
   standalone: true,
-  imports: [CommonModule, OutcomeComponent, TradingPanelComponent, PostCommentsComponent, IntuitionVsMarketAnalysisComponent, FeaturedCommentComponent, FormsModule],
-  templateUrl: './trade-detail.component.html',
-  styleUrl: './trade-detail.component.scss',
+  imports: [CommonModule, FormsModule, BetPoolComponent, FeaturedCommentComponent, PostCommentsComponent],
+  templateUrl: './bet-detail.component.html',
+  styleUrl: './bet-detail.component.scss',
 })
-export class TradeDetailComponent implements OnInit, OnDestroy {
+export class BetDetailComponent implements OnInit, OnDestroy {
   predictionId: number = 0;
-  tradeData: any = null;
-  currentPrediction: any = null;
-  selectedOptionData: any = null;
-  selectedSide: 'yes' | 'no' = 'yes';
-  isBuyMode: boolean = true;
+  prediction: any = null;
   isLoading = false;
   private subscriptions: Subscription = new Subscription();
 
@@ -48,93 +43,126 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private location: Location,
-    private tradeService: TradeService,
+    private betPoolService: BetPoolService,
+    private postPredictionService: PostPredictionService,
     private authService: AuthorizationService,
     private walletConnectService: WalletConnectService,
-    private featuredCommentService: FeaturedCommentService,
     private confirmDialogService: ConfirmDialogService,
     private sidebarMenuService: SidebarMenuService,
+    private featuredCommentService: FeaturedCommentService,
     private apiService: ApiServices
   ) { }
 
   ngOnInit() {
-    // Get prediction ID from route params
     this.subscriptions.add(
       this.route.params.subscribe(params => {
         this.predictionId = +params['id'] || 0;
         if (this.predictionId) {
-          this.loadTradeDetails();
-        }
-      })
-    );
-
-    // Subscribe to trade completion notifications to refresh data
-    this.subscriptions.add(
-      this.tradeService.tradeCompleted$.subscribe(({ success, predictionId }) => {
-        if (success && predictionId === this.predictionId) {
-          console.log('Trade completed, refreshing trade details...');
-          this.loadTradeDetails();
+          this.loadBetDetails();
         }
       })
     );
   }
 
-  handleOptionSelect(event: any) {
-    if (event.optionData) {
-      this.selectedOptionData = event.optionData;
-      this.selectedSide = event.side || 'yes';
-      if (event.isBuyMode !== undefined) {
-        this.isBuyMode = event.isBuyMode;
-      }
-    } else {
-      this.selectedOptionData = event;
-      this.selectedSide = 'yes';
-    }
-  }
-
-  async loadTradeDetails(): Promise<void> {
+  async loadBetDetails(): Promise<void> {
     this.isLoading = true;
 
-    // Check both authentication and wallet connection
     const isAuthenticated = this.authService.isAuthenticated();
     const isWalletConnected = await this.walletConnectService.checkConnection();
 
-    const apiCall = (isAuthenticated && isWalletConnected)
-      ? this.tradeService.getTradeDetails({ prediction_id: this.predictionId })
-      : this.tradeService.getTradePublicDetails({ prediction_id: this.predictionId });
+    // Load all data from pool service (single call)
+    const poolCall = (isAuthenticated && isWalletConnected)
+      ? this.betPoolService.getUserPredictionPoolData(this.predictionId)
+      : this.betPoolService.getPredictionPoolData(this.predictionId);
 
-    apiCall.subscribe({
+    poolCall.subscribe({
       next: (response: any) => {
-        this.isLoading = false;
-        if (response.data?.success) {
-          this.tradeData = this.tradeService.mapTradeDetailsResponse(response);
-          if (response.data?.prediction) {
-            const rawPred = response.data.prediction;
-            this.currentPrediction = {
-              ...rawPred,
-              prediction_id: rawPred.prediction_id,
-              creator: rawPred.creatorUsername,
-              featuredComment: rawPred.king_comment ? {
-                user: rawPred.king_comment.username,
-                avatar: rawPred.king_comment.avatar || 'https://api.dicebear.com/9.x/fun-emoji/svg',
-                text: rawPred.king_comment.comment,
-                gifUrl: rawPred.king_comment.url_image || undefined,
-                burnedAmount: rawPred.king_comment.burned_fierce
-              } : undefined
-            };
-          }
-          if (this.tradeData && this.tradeData.options && this.tradeData.options.length > 0) {
-            this.selectedOptionData = this.tradeData.options[0];
-          }
-        } else {
-          console.error('Error loading trade details:', response.data?.message);
+        if (response.success && response.data) {
+          const poolData = response.data;
+
+          // Build prediction object from pool data (now includes header data)
+          this.prediction = {
+            prediction_id: poolData.predictionId,
+            prediction_category_id: poolData.predictionCategoryId,
+            creator: poolData.creatorUsername || 'Prediction Market',
+            creatorAvatar: poolData.creatorAvatar || undefined,
+            category: poolData.categoryName || 'General',
+            question: poolData.predictionTitle,
+            imageUrl: poolData.predictionImage || undefined,
+            prediction_create_at: poolData.predictionCreateDate,
+            prediction_end_date: poolData.predictionEndDate,
+            betBurn: poolData.betBurn,
+            betPlatformRewards: poolData.betPlatformRewards,
+            marketInfo: {
+              poolAmount: poolData.marketInfo?.poolAmount || '0',
+              participants: poolData.betUsers || 0,
+              options: []
+            },
+            options: poolData.options?.map((opt: any) => ({
+              id: opt.id,
+              prediction_option_id: opt.id,
+              title: opt.title,
+              prediction_option_title: opt.title,
+              poolAmount: opt.poolAmount,
+              userInvestment: opt.userInvestment,
+              poolPercentage: opt.percentage,
+              totalBetUsers: opt.totalBetUsers
+            })) || [],
+            participants: poolData.betUsers?.toString() || '0'
+          };
         }
+        this.isLoading = false;
       },
       error: (error) => {
         this.isLoading = false;
-        console.error('Error loading trade details:', error);
+        console.error('Error loading bet details:', error);
       }
     });
+  }
+
+  async onPlaceMutualBet(event: { optionId: number, amount: number }): Promise<void> {
+    const { optionId, amount } = event;
+
+    try {
+      if (!this.authService.isAuthenticated()) {
+        await this.confirmDialogService.showInfo({
+          title: 'Inicio de sesión requerido',
+          message1: 'Debes iniciar sesión para realizar apuestas.'
+        });
+        return;
+      }
+
+      this.betPoolService.placeMutualBet({
+        predictionId: this.predictionId,
+        optionId: optionId,
+        amount: amount
+      }).subscribe({
+        next: async (response: any) => {
+          if (response.success) {
+            await this.confirmDialogService.showSuccess({
+              title: 'Apuesta registrada',
+              message1: `Tu apuesta de ${amount} F ha sido procesada exitosamente.`
+            });
+            this.loadBetDetails();
+            this.sidebarMenuService.notifyBalanceUpdate();
+          } else {
+            await this.confirmDialogService.showError({
+              title: 'Error',
+              message1: response.message || 'No se pudo procesar la apuesta.'
+            });
+          }
+        },
+        error: async (err: any) => {
+          console.error('Bet error:', err);
+          await this.confirmDialogService.showError({
+            title: 'Error del servidor',
+            message1: err.error?.message || 'Error al procesar la apuesta.'
+          });
+        }
+      });
+    } catch (error) {
+      console.error('Error in betting process:', error);
+    }
   }
 
   ngOnDestroy(): void {
@@ -143,6 +171,11 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
 
   goBack() {
     this.location.back();
+  }
+
+  getPoolAmountWithoutUnit(): string {
+    const poolAmount = this.prediction?.marketInfo?.poolAmount || '0';
+    return poolAmount.toString().replace(/[^0-9.]/g, '');
   }
 
   // Overthrow logic
@@ -218,7 +251,7 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
         }
       }
 
-      const currentKingBurn = this.currentPrediction?.featuredComment?.burnedAmount || 0;
+      const currentKingBurn = this.prediction?.featuredComment?.burnedAmount || 0;
       const newBurnAmount = currentKingBurn + 1;
 
       this.featuredCommentService.overthrowKing(
@@ -234,7 +267,7 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
             message1: 'Tu comentario es ahora el Rey de la Colina.'
           });
           this.cancelOverthrow();
-          this.loadTradeDetails(); // Refresh to show the new king
+          this.loadBetDetails();
           this.sidebarMenuService.notifyBalanceUpdate();
         },
         error: (error) => {

@@ -161,8 +161,20 @@ export class AppComponent implements OnInit, OnDestroy {
    * MANEJADOR PRINCIPAL: Cambios inmediatos de cuenta
    */
   private handleImmediateAccountChange(info: any): void {
-    if (this.accountChangeInProgress || this.isDisconnecting) {
+    if (this.accountChangeInProgress) {
       return;
+    }
+
+    // If we're in "disconnecting" state but receive a new valid address,
+    // the user is reconnecting — reset the flag so login can proceed.
+    const incomingAddress = info?.address?.toLowerCase() || null;
+    if (this.isDisconnecting) {
+      if (incomingAddress) {
+        console.log('🔄 Reconnection detected while isDisconnecting was still true — resetting flag');
+        this.isDisconnecting = false;
+      } else {
+        return; // Still disconnecting and no new address — ignore
+      }
     }
 
     const newAddress = info?.address?.toLowerCase() || null;
@@ -193,15 +205,18 @@ export class AppComponent implements OnInit, OnDestroy {
         this.handleImmediateDisconnect();
         this.isFirstConnection = true;
       } else if (!prevAddress && newAddress) {
-        // RECONEXION: Verificar si ya está autenticado
-        if (this.authorizationService.isAuthenticated() &&
-          this.commonService.getAccountAddress()?.toLowerCase() === newAddress) {
-          console.log('🟢 RECONEXIÓN - Usuario ya autenticado, saltando firma');
+        // RECONEXION: Verificar si ya está autenticado para esta dirección específica
+        const sessionAddress = localStorage.getItem('sessionAddress');
+        const isSameAddress = sessionAddress?.toLowerCase() === newAddress;
+        
+        // ALWAYS request signature after logout - don't skip authentication
+        if (this.authorizationService.isAuthenticated() && isSameAddress) {
+          console.log('🟢 RECONEXIÓN - Usuario ya autenticado para esta dirección, saltando firma');
           this.commonService.saveAccountAddress(newAddress);
           this.commonService.updateUserAddress.next(true);
           this.isFirstConnection = false;
         } else {
-          console.log('🔵 RECONEXIÓN - Procesando...');
+          console.log('🔵 RECONEXIÓN - Dirección diferente o no autenticado, procesando...');
           this.processFirstConnection(newAddress);
           this.isFirstConnection = false;
         }
@@ -284,16 +299,28 @@ export class AppComponent implements OnInit, OnDestroy {
   private handleImmediateDisconnect(): void {
     this.isFirstConnection = true;
     this.isDisconnecting = true;
-    this.clearAllStorage();
-    this.clearApplicationState();
-    // Detener el monitoreo de la billetera ANTES de limpiar la sesión
+    this.currentAccount = null; // Reset so reconnection with same wallet is detected as new
+    
+    // 1. Detener el monitoreo de la billetera primero
     this.walletConnectService.stopWalletMonitoring();
+    
+    // 2. Limpiar toda la sesión de autorización
     this.authorizationService.clearSession();
+    
+    // 3. Limpiar almacenamiento local
+    this.clearAllStorage();
+    
+    // 4. Limpiar estado de la aplicación
+    this.clearApplicationState();
+    
     this.signing = true;
 
-
-    // Redirigir inmediatamente
-    this.router.navigate(['/']);
+    // Redirigir a /home después del logout
+    this.router.navigate(['/home']).then(() => {
+      console.log('✅ Desconexión completada - Redirigido a /home');
+      // CRITICAL: Reset isDisconnecting so future login attempts are not blocked
+      this.isDisconnecting = false;
+    });
   }
 
   private clearAllStorage(): void {
@@ -320,11 +347,15 @@ export class AppComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Si ya estamos autenticados para esta dirección, no pedir firma de nuevo
-    if (this.authorizationService.isAuthenticated() &&
-      this.commonService.getAccountAddress()?.toLowerCase() === address.toLowerCase()) {
-      console.log('✅ Usuario ya autenticado, saltando firma.');
+    // Verificar si la dirección actual coincide con la sesión almacenada
+    const sessionAddress = localStorage.getItem('sessionAddress');
+    const isSameAddress = sessionAddress?.toLowerCase() === address.toLowerCase();
+    
+    // Solo saltar firma si estamos autenticados Y es la misma dirección
+    if (this.authorizationService.isAuthenticated() && isSameAddress) {
+      console.log('✅ Usuario ya autenticado para esta dirección, saltando firma.');
       this.isLoggingIn = false;
+      this.commonService.saveAccountAddress(address);
       this.commonService.updateUserAddress.next(true);
       return;
     }
@@ -334,7 +365,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.commonService.signatureProcessing?.next(true);
 
     try {
-      console.log('🔍 Verificando usuario...');
+      console.log('🔍 Verificando usuario para dirección:', address);
 
       const existResp = await this.authorizationService
         .existUser({ address: address })
@@ -390,16 +421,34 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * LIMPIEZA RÁPIDA DE SESIÓN ANTERIOR
+   * LIMPIEZA COMPLETA DE SESIÓN ANTERIOR
    */
   private async quickCleanPreviousSession(): Promise<void> {
     try {
+      console.log('🧹 Limpiando sesión anterior para cambio de cuenta...');
+      
+      // 1. Detener monitoreo de wallet
+      this.walletConnectService.stopWalletMonitoring();
+      
+      // 2. Limpiar sesión de autorización
       this.authorizationService.clearSession();
-      console.log('✅ Sesión anterior limpiada');
+      
+      // 3. Limpiar almacenamiento local específico
+      const keysToRemove = ['expirationDate', 'signatureData', 'sessionAddress', 'username', 'user_id'];
+      keysToRemove.forEach(key => localStorage.removeItem(key));
+      
+      // 4. Limpiar cache
+      this.cacheService.clear();
+      
+      // 5. Resetear estado de la aplicación
+      this.commonService.saveAccountAddress('');
+      this.commonService.updateUserAddress.next(true);
+      this.walletConnectService.updateBalance.next(true);
+      
+      console.log('✅ Sesión anterior completamente limpiada');
     } catch (error) {
-      console.log('⚠️ Error en limpieza rápida:', error);
+      console.log('⚠️ Error en limpieza de sesión anterior:', error);
     }
-
   }
 
   private async handleExistingUser(info: any): Promise<void> {
@@ -500,6 +549,7 @@ export class AppComponent implements OnInit, OnDestroy {
   logout() {
     this.isDisconnecting = true;
     this.handleImmediateDisconnect();
+    // isDisconnecting is reset to false inside handleImmediateDisconnect after navigation completes
   }
 
   ngOnDestroy(): void {

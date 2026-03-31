@@ -1,60 +1,7 @@
 @use '../../../../../styles/variables' as *;
 
-.bet-collapsible-panel {
+.bet-options-container {
     margin-top: 16px;
-    background: rgba(26, 26, 26, 0.95);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    padding: 20px;
-    animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border-left: 4px solid #4ade80;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-}
-
-.panel-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-
-    .panel-title {
-        font-size: 16px;
-        font-weight: 700;
-        color: #4ade80;
-        letter-spacing: 0.5px;
-    }
-
-    .panel-participants {
-        font-size: 13px;
-        color: #71767b;
-        margin-left: auto;
-        margin-right: 15px;
-        background: rgba(255, 255, 255, 0.05);
-        padding: 4px 10px;
-        border-radius: 20px;
-    }
-}
-
-.close-panel-btn {
-    background: rgba(255, 255, 255, 0.05);
-    border: none;
-    color: #71767b;
-    font-size: 20px;
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: all 0.2s;
-
-    &:hover {
-        background: rgba(255, 0, 0, 0.2);
-        color: #ff4d4d;
-    }
 }
 
 .panel-pool-info {
@@ -144,7 +91,7 @@
         }
 
         .option-content-wrapper {
-            padding: 12px 16px;
+            padding: 4px 16px;
             height: 100%;
             display: flex;
             align-items: center;
@@ -162,27 +109,40 @@
                     gap: 8px;
                     flex: 1;
 
-                    .option-name {
-                        font-size: 14px;
-                        font-weight: 600;
-                        color: #e1e8ed;
-                    }
+                    .option-name-wrapper {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 2px;
 
-                    .option-percentage-tag {
-                        font-size: 11px;
-                        font-weight: 700;
-                        color: #4ade80;
-                        background: rgba(255, 152, 0, 0.1);
-                        padding: 2px 6px;
-                        border-radius: 4px;
+                        .option-name {
+                            font-size: 14px;
+                            font-weight: 600;
+                            color: #e1e8ed;
+                        }
+
+                        .option-percentage-tag {
+                            font-size: 11px;
+                            font-weight: 700;
+                            color: #4ade80;
+                            background: rgba(255, 152, 0, 0.1);
+                            padding: 2px 6px;
+                            border-radius: 4px;
+                            width: fit-content;
+                        }
                     }
                 }
 
                 .option-right {
                     display: flex;
-                    flex-direction: column;
-                    align-items: flex-end;
-                    gap: 2px;
+                    flex-direction: row;
+                    align-items: center;
+                    gap: 12px;
+
+                    .divider {
+                        width: 1px;
+                        height: 16px;
+                        background: rgba(255, 255, 255, 0.15);
+                    }
 
                     .investment-info,
                     .pool-info {
@@ -198,6 +158,10 @@
                         .value {
                             font-weight: 700;
                             color: $money-green;
+                        }
+
+                        .value.participants {
+                            color: #a0aab0;
                         }
                     }
 

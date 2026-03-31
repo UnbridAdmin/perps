@@ -1,6 +1,6 @@
 @use '../../../styles/variables' as *;
 
-.trade-detail-container {
+.bet-detail-container {
   background-color: $background-color;
   color: $text-primary;
   min-height: 100vh;
@@ -76,13 +76,11 @@
   color: $text-muted;
 }
 
-// Adapted styles from post-prediction.component.scss for image display
 .env-card-img-row {
   display: flex;
   align-items: center;
   gap: 12px;
   margin: 16px 0;
-  cursor: pointer;
 
   .env-thumb {
     width: 48px;
@@ -106,31 +104,67 @@
   }
 }
 
-.stats {
+.panel-pool-info {
   display: flex;
-  gap: 24px;
-  color: $text-muted;
-  font-size: 14px;
-  margin-top: 16px;
-}
-
-.stat-item {
-  display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  margin-top: 16px;
+  padding: 12px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 
-  span {
-    font-size: 1.5rem;
-    color: $money-green;
-    font-weight: 700;
+  .pool-main {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .pool-amount {
+      font-size: 1rem;
+      color: $text-muted;
+      font-weight: 600;
+
+      &.highlight {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #00d26a;
+        text-shadow: 0 0 10px rgba(0, 210, 106, 0.3);
+      }
+    }
+
+    .pool-date {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: $text-muted;
+      font-size: 0.9rem;
+
+      i {
+        color: #f7931a;
+        font-size: 1rem;
+      }
+    }
+
+    .pool-burn-badge {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 0.75rem;
+      color: rgba(255, 107, 107, 0.9);
+      background: rgba(255, 107, 107, 0.08);
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 107, 107, 0.15);
+    }
   }
 }
 
+.loading-indicator {
+  text-align: center;
+  padding: 40px;
+  color: $text-muted;
+  font-size: 1rem;
+}
 
 .main-content {
-  display: flex;
-  gap: 20px;
-  max-width: 1400px;
+  //max-width: 700px;
   margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
@@ -138,23 +172,30 @@
 }
 
 .left-column {
-  flex: 1.5;
   display: flex;
   flex-direction: column;
   gap: 24px;
   background: $background-light;
   border-radius: 16px;
   border: 1px solid $border-color;
+  padding: 16px;
 }
 
 .featured-comment-container-standalone {
-  margin: 0 16px;
+  margin: 0;
 
   ::ng-deep .featured-comment-container {
     max-width: 100%;
     margin: 0;
     border: none;
     background: rgba(255, 255, 255, 0.02);
+  }
+}
+
+// Bet Pool panel adjustments - remove close button since it's a standalone page
+::ng-deep .env-panel {
+  .close-panel-btn {
+    display: none !important;
   }
 }
 
@@ -368,17 +409,6 @@
   }
 }
 
-.right-column {
-  background: transparent;
-  border-radius: 16px;
-  border: none;
-  padding: 0;
-  position: sticky;
-  top: 20px;
-  height: fit-content;
-  flex: 0 0 400px;
-}
-
 // Skeleton Loading Styles
 .skeleton-container {
   width: 100%;
@@ -443,13 +473,24 @@
   }
 }
 
-.skeleton-volume {
-  width: 180px;
+.skeleton-pool-amount {
+  width: 150px;
   height: 24px;
+  margin-bottom: 8px;
 }
 
-.skeleton-outcome-panel,
-.skeleton-trading-panel {
+.skeleton-burn-badge {
+  width: 180px;
+  height: 20px;
+}
+
+.skeleton-date-right {
+  width: 120px;
+  height: 16px;
+  margin-left: auto;
+}
+
+.skeleton-pool-panel {
   padding: 16px;
   background: rgba(255, 255, 255, 0.02);
   border-radius: 12px;
@@ -481,14 +522,8 @@
   }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 768px) {
   .main-content {
-    flex-direction: column;
-  }
-
-  .right-column {
-    position: static;
-    flex: none;
-    width: 100%;
+    padding: 0 12px;
   }
 }

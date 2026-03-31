@@ -28,6 +28,7 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
   isAuthenticated: boolean = false;
   walletConnected: boolean = false;
   userProfileImage: string = 'https://ipfs.unbrid.com/app/user-profile.webp';
+  sessionAddressExists: boolean = false;
   private isDisconnecting: boolean = false;
   private subscriptions: Subscription = new Subscription();
 
@@ -72,7 +73,20 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
         if (this.isAuthenticated) {
           this.loadUserProfile();
           this.loadWalletAddress();
+        } else {
+          // If not authenticated, clear user data
+          this.clearUserData();
         }
+      })
+    );
+
+    // Subscribe to logout events
+    this.subscriptions.add(
+      this.authorizationService.logoutEvent.subscribe(() => {
+        console.log('📡 Sidebar received logout event');
+        this.clearUserData();
+        this.walletConnected = false;
+        this.userAddress = '';
       })
     );
 
@@ -145,6 +159,9 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
     if (!this.isHomePage) {
       this.categoryService.clearSelection();
     }
+
+    // Verificar sessionAddress en localStorage
+    this.checkSessionAddress();
   }
 
   private loadUserProfile(): void {
@@ -218,6 +235,18 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
       // Si falla, usar el address de commonService como fallback
       this.userAddress = this.commonService.getAccountAddress() || '';
     }
+  }
+
+  private clearUserData(): void {
+    console.log('🧹 Clearing sidebar user data');
+    this.username = '';
+    this.unbridBalance = 0;
+    this.userProfileImage = 'https://ipfs.unbrid.com/app/user-profile.webp';
+    this.isAuthenticated = false;
+  }
+
+  private checkSessionAddress(): void {
+    this.sessionAddressExists = !!localStorage.getItem('sessionAddress');
   }
 
   ngAfterViewInit() {
@@ -327,6 +356,12 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
     }, () => { });
   }
 
+  refreshBalance(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.loadUserProfile();
+  }
+
   async disconnectWallet(): Promise<void> {
     this.isDisconnecting = true;
 
@@ -339,18 +374,19 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
     setTimeout(async () => {
       await this.logout();
 
-      // Navigate to login after logout
-      this.router.navigate(['/login']);
-
-      this.isDisconnecting = false;
-      console.log("✅ Wallet disconnection completed");
+      // Redirigir a /home después del logout
+      this.router.navigate(['/home']).then(() => {
+        this.isDisconnecting = false;
+        console.log("✅ Wallet disconnection completed - Redirigido a /home");
+      });
     }, 100);
   }
 
   private clearAllStorage(): void {
     sessionStorage.clear();
-    const keysToRemove = ['expirationDate', 'signatureData', 'accountAddress', 'username', 'user_id'];
+    const keysToRemove = ['expirationDate', 'signatureData', 'accountAddress', 'username', 'user_id', 'sessionAddress'];
     keysToRemove.forEach(key => localStorage.removeItem(key));
+    console.log('🧹 Storage cleared including sessionAddress');
   }
 
   private clearApplicationState(): void {
@@ -370,25 +406,48 @@ export class SidebarMenuComponent implements AfterViewInit, OnDestroy {
         await this.authorizationService.logout().toPromise();
       }
 
-      // Disconnect wallet using AppKit
+      // Disconnect wallet using AppKit - MORE AGGRESSIVE DISCONNECT
       const web3Modal = this.walletConnectService.getWeb3Modal();
       if (web3Modal) {
-        // Close modal if open
-        if (web3Modal.getIsConnected()) {
-          await web3Modal.disconnect();
+        try {
+          // Try multiple disconnect approaches
+          if (typeof web3Modal.disconnect === 'function') {
+            await web3Modal.disconnect();
+            console.log('🔌 Web3Modal disconnected');
+          }
+
+          // Close the modal if open
+          if (typeof web3Modal.close === 'function') {
+            await web3Modal.close();
+            console.log('🚪 Web3Modal closed');
+          }
+
+          // Reset the modal state if possible
+          if (typeof web3Modal.reset === 'function') {
+            await web3Modal.reset();
+            console.log('🔄 Web3Modal reset');
+          }
+        } catch (disconnectError) {
+          console.log('⚠️ Error during web3Modal disconnect:', disconnectError);
         }
       }
 
+      // Clear persisted state from service
+      this.walletConnectService.clearPersistedState();
+      this.walletConnectService.stopWalletMonitoring();
+
       // Force close any open modals
-      const modalElements = document.querySelectorAll('[role="dialog"], .w3m-modal, .wallet-modal');
+      const modalElements = document.querySelectorAll('[role="dialog"], .w3m-modal, .wallet-modal, .reown-modal');
       modalElements.forEach(element => {
         (element as HTMLElement).style.display = 'none';
+        (element as HTMLElement).remove();
       });
 
-      // Additional cleanup for AppKit
-      if (web3Modal && typeof web3Modal.close === 'function') {
-        web3Modal.close();
-      }
+      // Additional cleanup - force remove any remaining modal backdrops
+      const backdrops = document.querySelectorAll('.modal-backdrop, .w3m-modal-backdrop');
+      backdrops.forEach(backdrop => backdrop.remove());
+
+      console.log('✅ Logout completado - Usuario permanece en página actual');
     } catch (error) {
       console.error('❌ Error during logout:', error);
     }

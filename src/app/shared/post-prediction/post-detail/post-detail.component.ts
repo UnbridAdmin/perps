@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { Location } from '@angular/common';
 import { PostPredictionComponent } from '../post-prediction.component';
 import { PostCommentsComponent } from '../components/post-comments/post-comments.component';
 
@@ -15,7 +16,10 @@ export class PostDetailComponent implements OnInit {
   predictionId: number | null = null;
   currentPrediction: any = null;
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(
+    private route: ActivatedRoute,
+    private location: Location
+  ) { }
 
   ngOnInit() {
     this.route.params.subscribe(params => {
@@ -25,5 +29,9 @@ export class PostDetailComponent implements OnInit {
 
   handlePredictionLoaded(prediction: any) {
     this.currentPrediction = prediction;
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

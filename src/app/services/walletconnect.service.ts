@@ -195,7 +195,7 @@ export class WalletConnectService implements OnDestroy {
     }
   }
 
-  private clearPersistedState(): void {
+  public clearPersistedState(): void {
     try {
       localStorage.removeItem(this.STORAGE_KEY);
       console.log('🗑️ Estado persistido eliminado');
@@ -392,6 +392,18 @@ export class WalletConnectService implements OnDestroy {
     this.walletStateSubject.next(INITIAL_STATE);
     this.clearPersistedState();
     this.connectingWallet.next(false);
+    
+    // Force clear any cached connection state from AppKit
+    if (this.appKit) {
+      try {
+        // Clear any internal AppKit state
+        if (typeof this.appKit.reset === 'function') {
+          this.appKit.reset();
+        }
+      } catch (error) {
+        console.log('⚠️ Error resetting AppKit during disconnection:', error);
+      }
+    }
   }
 
   public async checkConnection(): Promise<boolean> {

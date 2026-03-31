@@ -78,23 +78,39 @@ export class AuthorizationService {
     }
 
     public clearSession(): void {
+        console.log('🧹 Clearing session data...');
+        
+        // Clear all localStorage items related to authentication
         const keysToRemove = ['expirationDate', 'signatureData', 'accountAddress', 'sessionAddress', 'username', 'user_id'];
-        keysToRemove.forEach(key => localStorage.removeItem(key));
+        keysToRemove.forEach(key => {
+            localStorage.removeItem(key);
+            console.log(`🗑️ Removed localStorage key: ${key}`);
+        });
 
+        // Clear sessionStorage
         sessionStorage.removeItem('accountAddress');
         sessionStorage.clear();
+        console.log('🗑️ Cleared sessionStorage');
 
+        // Clear wallet connection persisted state
+        this.walletConnectService.clearPersistedState();
+        
         // Stop wallet monitoring when session is cleared
         this.walletConnectService.stopWalletMonitoring();
 
+        // Emit logout event for components to react
+        this.logoutEvent.emit();
+
+        // Call backend logout
         this.logout().subscribe({
-            next: () => console.log('✅ Session cleared'),
-            error: () => console.log('⚠️ Session already invalid')
+            next: () => console.log('✅ Backend session cleared'),
+            error: () => console.log('⚠️ Backend session already invalid')
         });
 
-        if (!this.router.url.includes('/login') && this.router.url !== '/') {
-            this.router.navigate(['/']);
-        }
+        // Redirigir a /home después del logout
+        this.router.navigate(['/home']).then(() => {
+            console.log('✅ Session cleanup completed - Redirigido a /home');
+        });
     }
 
     public setSession(expires: string, address: string): void {

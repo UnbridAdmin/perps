@@ -147,11 +147,12 @@
         <li><a class="link_name" href="#">Setting</a></li>
       </ul>
     </li> -->
-    <li class="balance-container" *ngIf="walletConnected || userAddress">
+    <li class="balance-container" *ngIf="walletConnected || userAddress || sessionAddressExists">
       <div class="balance-content" routerLink="/balance-activity" style="cursor: pointer;">
         <div class="balance-header">
           <i class='bx bx-wallet'></i>
           <span class="balance-label">Balance</span>
+          <i class="fa fa-refresh balance-refresh" (click)="refreshBalance($event)"></i>
         </div>
         <span class="balance-amount">{{ unbridBalance | number:'1.2-2' }} Fierce</span>
       </div>
@@ -160,7 +161,7 @@
       <button class="btn-create btn-primary" (click)="openCreatePrediction()">crear</button>
     </li>
     <li>
-      <div class="profile-details" *ngIf="walletConnected || userAddress">
+      <div class="profile-details" *ngIf="walletConnected || userAddress || sessionAddressExists">
         <div class="profile-content">
           <img src="{{userProfileImage}}" alt="profileImg">
         </div>

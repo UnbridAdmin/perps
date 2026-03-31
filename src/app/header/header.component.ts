@@ -24,6 +24,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   userAddress: string = '';
   isAuthenticated: boolean = false;
   walletConnected: boolean = false;
+  sessionAddressExists: boolean = false;
   private subscriptions: Subscription = new Subscription();
 
   /** Árbol completo de categorías para el header */
@@ -42,12 +43,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
     // Inicializar estado de autenticación y dirección
     this.isAuthenticated = this.authorizationService.isAuthenticated();
     this.checkInitialWalletState();
+    this.checkSessionAddress();
 
     // Subscribe to user address updates
     this.subscriptions.add(
       this.commonService.updateUserAddress.subscribe(() => {
         this.isAuthenticated = this.authorizationService.isAuthenticated();
         this.userAddress = this.commonService.getAccountAddress() || '';
+        this.checkSessionAddress();
       })
     );
 
@@ -63,6 +66,21 @@ export class HeaderComponent implements OnInit, OnDestroy {
         }
 
         this.isAuthenticated = this.authorizationService.isAuthenticated();
+      })
+    );
+
+    // Subscribe to logout events
+    this.subscriptions.add(
+      this.authorizationService.logoutEvent.subscribe(() => {
+        console.log('📡 Header received logout event');
+        this.userAddress = '';
+        this.walletConnected = false;
+        this.isAuthenticated = false;
+        console.log('✅ Header state after logout:', {
+          userAddress: this.userAddress,
+          walletConnected: this.walletConnected,
+          isAuthenticated: this.isAuthenticated
+        });
       })
     );
 
@@ -85,6 +103,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.userAddress = this.commonService.getAccountAddress() || '';
       this.walletConnected = !!this.userAddress;
     }
+  }
+
+  private checkSessionAddress(): void {
+    this.sessionAddressExists = !!localStorage.getItem('sessionAddress');
   }
 
   ngOnDestroy(): void {

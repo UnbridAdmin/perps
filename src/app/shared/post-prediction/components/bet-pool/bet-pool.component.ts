@@ -83,5 +83,7 @@ export class BetPoolComponent {
         return poolAmount.replace(/[^0-9.]/g, '');
     }
 
-
+    formatPercentage(value: number): string {
+        return Math.round(value * 100) / 100 + '';
+    }
 }

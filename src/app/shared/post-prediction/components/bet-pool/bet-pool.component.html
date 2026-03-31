@@ -1,71 +1,61 @@
-<div class="env-panel fade-in" style="display: block;">
-  <div class="env-panel-title">
-    Pool de Apuestas Mutuas
-    <span class="env-burn-badge" title="Deducciones del pozo total">
-      🔥 {{ prediction.betBurn !== undefined ? prediction.betBurn : 5 }}% burn + {{ prediction.betPlatformRewards !==
-      undefined ? prediction.betPlatformRewards : 25 }}% fee
-    </span>
-    <button class="close-panel-btn" (click)="onClose()"
-      style="background: none; border: none; color: var(--env-muted); cursor: pointer; float: right; font-size: 16px;">×</button>
-  </div>
-
-  <div class="env-pool-pozo">
-    <div class="env-pozo-main">
-      <div class="env-pozo-label">Pozo acumulado</div>
-      <div class="env-pozo-val">{{ getPoolAmountWithoutUnit() }} Fierce</div>
-    </div>
-    <div class="env-pozo-date">
-      <div class="env-pozo-label">Fecha Fin</div>
-      <div class="env-pozo-val">{{ prediction.prediction_end_date || prediction.predictionEndDate || 'N/A' }}</div>
-    </div>
-  </div>
-
-  <div class="env-empty-hint"
+<div class="bet-options-container">
+  <div class="panel-instruction"
     *ngIf="!prediction.marketInfo?.poolAmount || getPoolAmountWithoutUnit() === '0' || getPoolAmountWithoutUnit() === '0.0'">
     <strong>¡Sé el primero en apostar</strong> y establece las probabilidades!
   </div>
 
-  <div class="env-pool-opts">
+  <div class="betting-options">
     <ng-container *ngFor="let option of (prediction?.options || [])">
-      <div class="env-pool-row" [class.active]="selectedOptionId === (option.prediction_option_id || option.id)"
-        (click)="onSelectOption(option.prediction_option_id || option.id)"
-        [style.borderColor]="selectedOptionId === (option.prediction_option_id || option.id) ? 'var(--env-green)' : 'transparent'">
-        <span class="env-pool-row-label">
-          {{ option.prediction_option_title || option.title }}
-          <span class="env-pool-pct">{{ option.poolPercentage !== undefined ? option.poolPercentage : (option.percentage
-            || 0) }}%</span>
-        </span>
-        <span class="env-pool-total">
-          Total: {{ (option.poolAmount || 0) | number:'1.0-0' }} Fierce
-          <span class="env-pool-users">👤 {{ option.totalBetUsers || 0 }}</span>
-        </span>
+      <div class="bet-option-row" [class.active]="selectedOptionId === (option.prediction_option_id || option.id)"
+        (click)="onSelectOption(option.prediction_option_id || option.id)">
+
+        <!-- Percentage progress fill background -->
+        <div class="option-progress"
+          [style.width.%]="option.poolPercentage !== undefined ? option.poolPercentage : (option.percentage || 0)">
+        </div>
+
+        <div class="option-content-wrapper">
+          <div class="option-main-info">
+            <div class="option-left">
+              <div class="option-name-wrapper">
+                <span class="option-name">{{ option.prediction_option_title || option.title }}</span>
+                <span class="option-percentage-tag">
+                  {{ formatPercentage(option.poolPercentage !== undefined ? option.poolPercentage : (option.percentage
+                  || 0)) }}%
+                </span>
+              </div>
+            </div>
+            <div class="option-right">
+              <div class="pool-info">
+                <span class="label">Total:</span>
+                <span class="value">{{ (option.poolAmount || 0) | number:'1.0-0' }} F</span>
+              </div>
+              <div class="divider"></div>
+              <div class="investment-info" *ngIf="option.userInvestment > 0">
+                <span class="label">Your bet:</span>
+                <span class="value">{{ option.userInvestment | number:'1.0-0' }} F</span>
+              </div>
+              <div class="divider" *ngIf="option.userInvestment > 0"></div>
+              <div class="pool-info">
+                <span class="label">👤</span>
+                <span class="value participants">{{ option.totalBetUsers || 0 }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Simulator injected inline under active option -->
-      <div class="betting-simulator-inline" *ngIf="selectedOptionId === (option.prediction_option_id || option.id)"
-        style="margin-bottom: 6px; padding: 12px; background: #0f0f13; border: 1px solid rgba(46, 204, 138, 0.3); border-radius: 8px;">
+      <div class="betting-simulator-inline" *ngIf="selectedOptionId === (option.prediction_option_id || option.id)">
         <div class="simulator-inner-panel">
-          <div class="simulator-controls-compact"
-            style="display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-end;">
-            <div class="input-box" style="flex: 1;">
-              <label
-                style="font-size: 11px; color: var(--env-muted); display: block; margin-bottom: 4px;">Fierce</label>
-              <input type="number" [(ngModel)]="betAmount" (input)="onAmountChange()" min="1" step="10"
-                style="width: 100%; box-sizing: border-box; background: var(--env-bg); border: 0.5px solid var(--env-border); border-radius: 6px; padding: 6px 10px; color: var(--env-text); font-size: 13px; outline: none;">
+          <div class="simulator-controls-compact">
+            <div class="input-box">
+              <label>Fierce</label>
+              <input type="number" [(ngModel)]="betAmount" (input)="onAmountChange()" min="1" step="10">
             </div>
-
-            <!-- <div class="profit-preview" [class.positive]="potentialProfit > 0" style="flex: 1;">
-              <span class="label"
-                style="font-size: 11px; color: var(--env-muted); display: block; margin-bottom: 4px;">Ganancia
-                Est.</span>
-              <span class="value" style="font-size: 14px; color: var(--env-green); font-weight: 500;">
-                {{ potentialProfit > 0 ? '+' : '' }}{{ potentialProfit | number:'1.2-2' }} Fierce
-              </span>
-            </div> -->
           </div>
 
-          <button class="env-market-cta" [disabled]="betAmount <= 0" (click)="onConfirmVote()"
-            style="width: 100%; border: none; cursor: pointer;" [style.opacity]="betAmount <= 0 ? 0.5 : 1">
+          <button class="confirm-bet-btn" [disabled]="betAmount <= 0" (click)="onConfirmVote()">
             Confirmar Apuesta
           </button>
         </div>
