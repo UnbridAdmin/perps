@@ -74,16 +74,16 @@
       </div>
       <div class="comment-content">
         <div class="comment-header">
-          <span class="comment-user" [routerLink]="['/', comment.user]" style="cursor: pointer;">{{ comment.user }}</span>
+          <span class="comment-user" [routerLink]="['/', comment.user]" style="cursor: pointer;">{{ comment.user
+            }}</span>
           <span class="comment-time">{{ comment.timeAgo }}</span>
         </div>
-        <div class="comment-text">
-          {{ comment.text }}
+        <div class="comment-text" [innerHTML]="getTextWithLinks(comment.text)">
         </div>
         <div class="comment-gif" *ngIf="comment.gifUrl">
           <img [src]="comment.gifUrl" alt="GIF">
         </div>
-        <div class="comment-footer">
+        <!-- <div class="comment-footer">
           <button class="action-btn" [class.active]="comment.isLiked" (click)="toggleLike(comment)">
             <i class="fa-regular fa-heart" *ngIf="!comment.isLiked"></i>
             <i class="fa-solid fa-heart" *ngIf="comment.isLiked"></i>
@@ -95,7 +95,7 @@
           <button class="action-btn">
             <i class="fa-solid fa-share-nodes"></i>
           </button>
-        </div>
+        </div> -->
       </div>
     </div>
 

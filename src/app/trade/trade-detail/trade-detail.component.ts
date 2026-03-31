@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { OutcomeComponent } from '../outcome/outcome.component';
 import { TradingPanelComponent } from '../trading-panel/trading-panel.component';
@@ -46,6 +47,7 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
+    private location: Location,
     private tradeService: TradeService,
     private authService: AuthorizationService,
     private walletConnectService: WalletConnectService,
@@ -140,7 +142,7 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
   }
 
   goBack() {
-    this.router.navigate(['/home']);
+    this.location.back();
   }
 
   // Overthrow logic

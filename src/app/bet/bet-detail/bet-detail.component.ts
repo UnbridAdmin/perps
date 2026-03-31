@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
@@ -40,6 +41,7 @@ export class BetDetailComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
+    private location: Location,
     private betPoolService: BetPoolService,
     private postPredictionService: PostPredictionService,
     private authService: AuthorizationService,
@@ -167,7 +169,7 @@ export class BetDetailComponent implements OnInit, OnDestroy {
   }
 
   goBack() {
-    this.router.navigate(['/home']);
+    this.location.back();
   }
 
   getPoolAmountWithoutUnit(): string {

@@ -1,0 +1,66 @@
+.skeleton-card {
+    overflow-y: hidden !important;
+    overflow-x: hidden !important;
+    background: linear-gradient(120deg,
+            #111111 30%,
+            #171921 38%,
+            #171921 40%,
+            #111111 48%);
+    background-size: 200% 100%;
+    background-position: 100% 0;
+    animation: load 2s infinite;
+    border-radius: 5px;
+
+    .skt {
+        pointer-events: none;
+        opacity: 0;
+
+        .NgxEditor {
+            display: none;
+        }
+
+        canvas {
+            opacity: 0;
+        }
+
+        color: #9c27b0 !important;
+        background-color: #9c27b0 !important;
+        background-image: unset !important;
+        border-bottom: #9c27b0 !important;
+
+        span {
+            opacity: 0;
+        }
+
+        img {
+            //opacity: 0;
+            display: none !important;
+            background-color: #9c27b0 !important;
+        }
+
+        button {
+            background-color: #9c27b0 !important;
+            border: none !important;
+        }
+
+        border-color: 1px solid #9c27b0 !important;
+
+        svg {
+            opacity: 0;
+        }
+
+        form {
+            opacity: 0;
+        }
+
+        /*#network {
+            opacity: 0;
+        }*/
+    }
+}
+
+@keyframes load {
+    100% {
+        background-position: -100% 0;
+    }
+}

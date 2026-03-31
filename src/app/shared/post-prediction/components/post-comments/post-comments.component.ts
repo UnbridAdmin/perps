@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { PostCommentsService } from './post-comments.service';
 import { AuthorizationService } from '../../../../services/authorization.service';
 import { ConfirmDialogService } from '../../../confirm-dialog/confirm-dialog.service';
@@ -51,7 +52,8 @@ export class PostCommentsComponent implements OnInit {
     private confirmDialogService: ConfirmDialogService,
     private sidebarMenuService: SidebarMenuService,
     private walletConnectService: WalletConnectService,
-    private apiService: ApiServices
+    private apiService: ApiServices,
+    private sanitizer: DomSanitizer
   ) { }
 
   ngOnInit(): void {
@@ -263,5 +265,19 @@ export class PostCommentsComponent implements OnInit {
       comment.likes++;
       comment.isLiked = true;
     }
+  }
+
+  getTextWithLinks(text: string): SafeHtml {
+    if (!text) return '';
+
+    // Regular expression to detect URLs
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+
+    // Replace URLs with anchor tags that open in new tab
+    const processedText = text.replace(urlRegex, (url) => {
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: var(--primary-color, #007bff); text-decoration: underline;">${url}</a>`;
+    });
+
+    return this.sanitizer.bypassSecurityTrustHtml(processedText);
   }
 }
