@@ -1,13 +1,14 @@
-<div class="env-hill-section" (click)="comment ? toggleExpanded() : onOverthrow()" [title]="comment ? 'Click para ver más o destronar' : 'Sé el primero'">
+<div class="env-hill-section" (click)="comment ? toggleExpanded() : onOverthrow()"
+  [title]="comment ? 'Click para ver más o destronar' : 'Sé el primero'">
   <div class="env-hill-left">
     <div class="env-hill-text">
-        <span class="hill-label">Rey de la Colina &mdash; </span>
-        <ng-container *ngIf="comment">
-            <span class="hill-leader">{{ comment.user }} lidera con {{ comment.burnedAmount | number }} FIERCE</span>
-        </ng-container>
-        <ng-container *ngIf="!comment">
-            <span class="hill-leader">Nadie ocupa el trono aún</span>
-        </ng-container>
+      <span class="hill-label"> 👑 Rey de la Colina &mdash; </span>
+      <ng-container *ngIf="comment">
+        <span class="hill-leader">{{ comment.user }} lidera con {{ comment.burnedAmount | number }} FIERCE</span>
+      </ng-container>
+      <ng-container *ngIf="!comment">
+        <span class="hill-leader">Nadie ocupa el trono aún</span>
+      </ng-container>
     </div>
   </div>
   <button class="env-hill-btn" (click)="comment ? onOverthrow($event) : onOverthrow(); $event.stopPropagation()">
@@ -17,8 +18,11 @@
 
 <!-- Comment content when expanded -->
 <div class="comment-content" *ngIf="comment && isExpanded" style="padding: 12px 16px;">
-  <div class="comment-grid" [class.has-gif]="!!comment.gifUrl" style="display: flex; gap: 12px; align-items: flex-start;">
-    <div class="env-avatar" [style.backgroundImage]="'url(' + (comment.avatar || 'https://api.dicebear.com/9.x/fun-emoji/svg') + ')'" [style.backgroundSize]="'cover'"></div>
+  <div class="comment-grid" [class.has-gif]="!!comment.gifUrl"
+    style="display: flex; gap: 12px; align-items: flex-start;">
+    <div class="env-avatar"
+      [style.backgroundImage]="'url(' + (comment.avatar || 'https://api.dicebear.com/9.x/fun-emoji/svg') + ')'"
+      [style.backgroundSize]="'cover'"></div>
     <div style="flex: 1; font-size: 13px; color: var(--env-text);">
       <span [innerHTML]="getTextWithLinks(comment.text)"></span>
     </div>

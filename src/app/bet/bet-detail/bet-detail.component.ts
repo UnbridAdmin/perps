@@ -75,43 +75,107 @@ export class BetDetailComponent implements OnInit, OnDestroy {
       ? this.betPoolService.getUserPredictionPoolData(this.predictionId)
       : this.betPoolService.getPredictionPoolData(this.predictionId);
 
+    // Also fetch prediction details to get king_comment
+    const predictionParams = {
+      page: 1,
+      limit: 1,
+      predictionId: this.predictionId
+    };
+
+    const predictionCall = isAuthenticated && isWalletConnected
+      ? this.postPredictionService.getAuthenticatedPredictions(predictionParams)
+      : this.postPredictionService.getPublicPredictions(predictionParams);
+
     poolCall.subscribe({
       next: (response: any) => {
         if (response.success && response.data) {
           const poolData = response.data;
 
-          // Build prediction object from pool data (now includes header data)
-          this.prediction = {
-            prediction_id: poolData.predictionId,
-            prediction_category_id: poolData.predictionCategoryId,
-            creator: poolData.creatorUsername || 'Prediction Market',
-            creatorAvatar: poolData.creatorAvatar || undefined,
-            category: poolData.categoryName || 'General',
-            question: poolData.predictionTitle,
-            imageUrl: poolData.predictionImage || undefined,
-            prediction_create_at: poolData.predictionCreateDate,
-            prediction_end_date: poolData.predictionEndDate,
-            betBurn: poolData.betBurn,
-            betPlatformRewards: poolData.betPlatformRewards,
-            marketInfo: {
-              poolAmount: poolData.marketInfo?.poolAmount || '0',
-              participants: poolData.betUsers || 0,
-              options: []
+          // Fetch prediction details to get king_comment
+          predictionCall.subscribe({
+            next: (predResponse: any) => {
+              let kingComment = null;
+              if (predResponse?.data?.data && predResponse.data.data.length > 0) {
+                const predData = predResponse.data.data[0];
+                kingComment = predData.king_comment;
+              }
+
+              // Build prediction object from pool data (now includes header data)
+              this.prediction = {
+                prediction_id: poolData.predictionId,
+                prediction_category_id: poolData.predictionCategoryId,
+                creator: poolData.creatorUsername || 'Prediction Market',
+                creatorAvatar: poolData.creatorAvatar || undefined,
+                category: poolData.categoryName || 'General',
+                question: poolData.predictionTitle,
+                imageUrl: poolData.predictionImage || undefined,
+                prediction_create_at: poolData.predictionCreateDate,
+                prediction_end_date: poolData.predictionEndDate,
+                betBurn: poolData.betBurn,
+                betPlatformRewards: poolData.betPlatformRewards,
+                featuredComment: kingComment ? {
+                  user: kingComment.username,
+                  avatar: kingComment.avatar || `https://api.dicebear.com/9.x/fun-emoji/svg?seed=${kingComment.username}`,
+                  text: kingComment.comment,
+                  gifUrl: kingComment.url_image || undefined,
+                  burnedAmount: kingComment.burned_fierce || 0
+                } : null,
+                marketInfo: {
+                  poolAmount: poolData.marketInfo?.poolAmount || '0',
+                  participants: poolData.betUsers || 0,
+                  options: []
+                },
+                options: poolData.options?.map((opt: any) => ({
+                  id: opt.id,
+                  prediction_option_id: opt.id,
+                  title: opt.title,
+                  prediction_option_title: opt.title,
+                  poolAmount: opt.poolAmount,
+                  userInvestment: opt.userInvestment,
+                  poolPercentage: opt.percentage,
+                  totalBetUsers: opt.totalBetUsers
+                })) || [],
+                participants: poolData.betUsers?.toString() || '0'
+              };
+              this.isLoading = false;
             },
-            options: poolData.options?.map((opt: any) => ({
-              id: opt.id,
-              prediction_option_id: opt.id,
-              title: opt.title,
-              prediction_option_title: opt.title,
-              poolAmount: opt.poolAmount,
-              userInvestment: opt.userInvestment,
-              poolPercentage: opt.percentage,
-              totalBetUsers: opt.totalBetUsers
-            })) || [],
-            participants: poolData.betUsers?.toString() || '0'
-          };
+            error: (predError) => {
+              console.error('Error loading prediction details:', predError);
+              // Continue without king_comment
+              this.prediction = {
+                prediction_id: poolData.predictionId,
+                prediction_category_id: poolData.predictionCategoryId,
+                creator: poolData.creatorUsername || 'Prediction Market',
+                creatorAvatar: poolData.creatorAvatar || undefined,
+                category: poolData.categoryName || 'General',
+                question: poolData.predictionTitle,
+                imageUrl: poolData.predictionImage || undefined,
+                prediction_create_at: poolData.predictionCreateDate,
+                prediction_end_date: poolData.predictionEndDate,
+                betBurn: poolData.betBurn,
+                betPlatformRewards: poolData.betPlatformRewards,
+                featuredComment: null,
+                marketInfo: {
+                  poolAmount: poolData.marketInfo?.poolAmount || '0',
+                  participants: poolData.betUsers || 0,
+                  options: []
+                },
+                options: poolData.options?.map((opt: any) => ({
+                  id: opt.id,
+                  prediction_option_id: opt.id,
+                  title: opt.title,
+                  prediction_option_title: opt.title,
+                  poolAmount: opt.poolAmount,
+                  userInvestment: opt.userInvestment,
+                  poolPercentage: opt.percentage,
+                  totalBetUsers: opt.totalBetUsers
+                })) || [],
+                participants: poolData.betUsers?.toString() || '0'
+              };
+              this.isLoading = false;
+            }
+          });
         }
-        this.isLoading = false;
       },
       error: (error) => {
         this.isLoading = false;
