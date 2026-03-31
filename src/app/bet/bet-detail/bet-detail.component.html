@@ -49,9 +49,45 @@
     </div>
   </div>
 
-  <!-- Loading -->
-  <div class="loading-indicator" *ngIf="isLoading">
-    Loading bet details...
+  <!-- Loading Skeleton -->
+  <div class="skeleton-container" *ngIf="isLoading">
+    <div class="prediction-header">
+      <div class="user-info">
+        <div class="avatar skeleton-avatar"></div>
+        <div class="user-details">
+          <div class="skeleton-line skeleton-username"></div>
+          <div class="skeleton-line skeleton-date"></div>
+        </div>
+      </div>
+
+      <div class="env-card-img-row">
+        <div class="env-thumb skeleton-thumb"></div>
+        <div class="env-title">
+          <div class="skeleton-line skeleton-title-line"></div>
+          <div class="skeleton-line skeleton-title-line short"></div>
+        </div>
+      </div>
+
+      <div class="panel-pool-info">
+        <div class="pool-main">
+          <div class="skeleton-line skeleton-pool-amount"></div>
+          <div class="skeleton-line skeleton-burn-badge"></div>
+        </div>
+        <div class="pool-main" style="text-align: right;">
+          <div class="skeleton-line skeleton-date-right"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="left-column">
+        <div class="skeleton-pool-panel">
+          <div class="skeleton-line skeleton-panel-title"></div>
+          <div class="skeleton-line skeleton-panel-content"></div>
+          <div class="skeleton-line skeleton-panel-content short"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Main Content -->

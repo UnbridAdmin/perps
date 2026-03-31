@@ -1,5 +1,35 @@
 <div class="trading-panel">
-  <div class="selected-outcome" *ngIf="optionData && predictionType === 'MULTIPLE'">
+  <!-- Loading Skeleton -->
+  <div class="skeleton-container" *ngIf="isLoading">
+    <div class="skeleton-tabs">
+      <div class="skeleton-tab active"></div>
+      <div class="skeleton-tab"></div>
+    </div>
+
+    <div class="skeleton-options">
+      <div class="skeleton-option-btn"></div>
+      <div class="skeleton-option-btn"></div>
+    </div>
+
+    <div class="skeleton-trade-section">
+      <div class="skeleton-line skeleton-label"></div>
+      <div class="skeleton-line skeleton-input"></div>
+      <div class="skeleton-quick-amounts">
+        <div class="skeleton-quick-btn"></div>
+        <div class="skeleton-quick-btn"></div>
+        <div class="skeleton-quick-btn"></div>
+        <div class="skeleton-quick-btn"></div>
+        <div class="skeleton-quick-btn"></div>
+      </div>
+      <div class="skeleton-trade-info">
+        <div class="skeleton-line skeleton-info-label"></div>
+        <div class="skeleton-line skeleton-info-value"></div>
+      </div>
+      <div class="skeleton-line skeleton-button"></div>
+    </div>
+  </div>
+
+  <div class="selected-outcome" *ngIf="optionData && predictionType === 'MULTIPLE' && !isLoading">
     <span class="label">Outcome</span>
     <div class="outcome-info-row">
       <div class="outcome-image" *ngIf="optionData.prediction_option_image">

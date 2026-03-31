@@ -5,8 +5,51 @@
     </button>
   </div>
 
+  <!-- Loading Skeleton -->
+  <div class="skeleton-container" *ngIf="isLoading">
+    <div class="prediction-header">
+      <div class="user-info">
+        <div class="avatar skeleton-avatar"></div>
+        <div class="user-details">
+          <div class="skeleton-line skeleton-username"></div>
+          <div class="skeleton-line skeleton-date"></div>
+        </div>
+      </div>
+
+      <div class="env-card-img-row">
+        <div class="env-thumb skeleton-thumb"></div>
+        <div class="env-title">
+          <div class="skeleton-line skeleton-title-line"></div>
+          <div class="skeleton-line skeleton-title-line short"></div>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="skeleton-line skeleton-volume"></div>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="left-column">
+        <div class="skeleton-outcome-panel">
+          <div class="skeleton-line skeleton-panel-title"></div>
+          <div class="skeleton-line skeleton-panel-content"></div>
+          <div class="skeleton-line skeleton-panel-content short"></div>
+        </div>
+      </div>
+      <div class="right-column">
+        <div class="skeleton-trading-panel">
+          <div class="skeleton-line skeleton-panel-title"></div>
+          <div class="skeleton-line skeleton-panel-content"></div>
+          <div class="skeleton-line skeleton-panel-content"></div>
+          <div class="skeleton-line skeleton-panel-content short"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Question with optional thumbnail (adapted from post-prediction.component.html) -->
-  <div class="prediction-header">
+  <div class="prediction-header" *ngIf="!isLoading">
     <div class="user-info">
       <div class="avatar"
         [style.backgroundImage]="'url(' + (tradeData?.prediction?.creatorAvatar || 'https://api.dicebear.com/9.x/fun-emoji/svg') + ')'">
@@ -39,7 +82,8 @@
 
   <div class="main-content">
     <div class="left-column">
-      <app-outcome [tradeData]="tradeData" [isBuyMode]="isBuyMode" (onSelectOption)="handleOptionSelect($event)"></app-outcome>
+      <app-outcome [tradeData]="tradeData" [isBuyMode]="isBuyMode"
+        (onSelectOption)="handleOptionSelect($event)"></app-outcome>
 
       <!-- Featured Comment Section (King of the Hill) -->
       <div class="featured-comment-container-standalone">
@@ -104,11 +148,11 @@
       <app-post-comments [predictionId]="predictionId" [prediction]="currentPrediction"></app-post-comments>
     </div>
     <div class="right-column">
-      <app-trading-panel [optionData]="selectedOptionData" [initialSide]="selectedSide" [isBuyMode]="isBuyMode" (onModeChange)="isBuyMode = $event" [userBalance]="tradeData?.user_balance"
+      <app-trading-panel [optionData]="selectedOptionData" [initialSide]="selectedSide" [isBuyMode]="isBuyMode"
+        (onModeChange)="isBuyMode = $event" [userBalance]="tradeData?.user_balance"
         [predictionTitle]="tradeData?.prediction?.prediction_title"
         [predictionType]="tradeData?.prediction?.prediction_type" [options]="tradeData?.options"
-        [bParam]="tradeData?.prediction?.b_param"
-        [feeRate]="tradeData?.prediction?.fee_rate"
+        [bParam]="tradeData?.prediction?.b_param" [feeRate]="tradeData?.prediction?.fee_rate"
         [predictionId]="predictionId"></app-trading-panel>
       <app-intuition-vs-market-analysis
         [predictionTitle]="tradeData?.prediction?.prediction_title"></app-intuition-vs-market-analysis>
