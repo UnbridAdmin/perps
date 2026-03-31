@@ -23,7 +23,7 @@ export class ConfirmDialogService {
   constructor(
     private appRef: ApplicationRef,
     private injector: EnvironmentInjector
-  ) {}
+  ) { }
 
   /**
    * Muestra un mensaje informativo simple (solo botón de aceptar)
@@ -68,7 +68,7 @@ export class ConfirmDialogService {
       rightButton: 'Aceptar',
       rightButtonActive: true,
       disableClose: false,
-      image_icon: 'assets/icons/error-icon.png', // Puedes agregar un icono de error
+      image_icon: 'https://ipfs.unbrid.com/app/error.png', // Puedes agregar un icono de error
       ...config
     };
 
@@ -85,7 +85,7 @@ export class ConfirmDialogService {
       rightButton: 'Aceptar',
       rightButtonActive: true,
       disableClose: false,
-      image_icon: 'assets/icons/success-icon.png', // Puedes agregar un icono de éxito
+      image_icon: 'https://ipfs.unbrid.com/app/success.svg', // Puedes agregar un icono de éxito
       ...config
     };
 
