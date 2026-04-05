@@ -26,6 +26,10 @@ export class FeaturedCommentComponent {
         if (event) {
             event.stopPropagation();
         }
+        // Toggle comentario visible al mismo tiempo que se abre el formulario
+        if (this.comment) {
+            this.isExpanded = !this.isExpanded;
+        }
         this.overthrow.emit();
     }
 

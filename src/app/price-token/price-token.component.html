@@ -1,0 +1,23 @@
+<div class="widget-card">
+  <div class="widget-title">
+    <span>$FIERCE TOKEN</span>
+    <div class="live-dot">LIVE</div>
+  </div>
+
+  <div class="token-price-big">{{ tokenPrice | number: '1.4-4' }} <span class="usdt">USDT</span></div>
+  <div class="token-price-sub">Price por token</div>
+
+  <div class="price-change-row">
+    <span class="price-up" [ngClass]="{'positive': priceChange >= 0, 'negative': priceChange < 0}">
+      {{ priceChange >= 0 ? '▲' : '▼' }} {{ priceChange | number: '1.1-1' }}%
+    </span>
+    <span class="price-period">últimos 30d</span>
+  </div>
+
+  <div class="sparkline-container" *ngIf="history.length > 0">
+    <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart" [stroke]="chartOptions.stroke"
+      [fill]="chartOptions.fill" [tooltip]="chartOptions.tooltip" [xaxis]="chartOptions.xaxis"
+      [yaxis]="chartOptions.yaxis" [grid]="chartOptions.grid">
+    </apx-chart>
+  </div>
+</div>

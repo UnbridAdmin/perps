@@ -6,12 +6,14 @@ import {
     NgModule,
 } from '@angular/core';
 import { AgilToastComponent } from './toaster/agil-toast/agil-toast.component';
+import { NgApexchartsModule } from 'ng-apexcharts';
 
 const APP_CONTAINERS = [];
 @NgModule({
     imports: [
         CommonModule,
-        FormsModule
+        FormsModule,
+        NgApexchartsModule
     ],
     declarations: [
         AgilToastComponent,
@@ -19,7 +21,8 @@ const APP_CONTAINERS = [];
     exports: [
         AgilToastComponent,
         CommonModule,
-        FormsModule
+        FormsModule,
+        NgApexchartsModule
     ],
     providers: [],
     schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],

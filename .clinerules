@@ -1,0 +1,98 @@
+# REGLAS DEL PROYECTO UNBRID PERPS
+# Este archivo define la arquitectura, patrones y convenciones que se DEBEN seguir en TODO el código
+
+## 📁 ESTRUCTURA Y ORGANIZACIÓN DE ARCHIVOS
+1.  **Arquitectura Feature-based (por módulo/funcionalidad)**
+    - Cada característica tiene su propio directorio dedicado: `src/app/[feature-name]/`
+    - Dentro de cada feature van sus archivos:
+      - `[feature].component.ts`
+      - `[feature].component.html`
+      - `[feature].component.scss`
+      - `[feature].service.ts` (SERVICIO PROPIO DE LA FEATURE)
+    - Componentes compartidos van en `src/app/shared/`
+    - Servicios globales van en `src/app/services/`
+
+2.  **Convenciones de Nomenclatura OBLIGATORIAS:**
+    ✅ Archivos: `kebab-case.minusculas.tipo.ts`
+    ✅ Clases: `PascalCase`
+    ✅ Servicios: Nombre + `Service` (Ej: `CreatePredictionService`, `PriceTokenService`)
+    ✅ Componentes: Nombre + `Component`
+    ✅ No usar abreviaciones extrañas ni nombres cortos
+    ✅ Todo en ingles, siguiendo exactamente el patron existente
+
+## 🔧 PATRON DE SERVICIOS (EL MAS IMPORTANTE DEL PROYECTO)
+✅ **PATRON ESTANDAR PARA TODOS LOS SERVICIOS:**
+```typescript
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { ApiServices } from '../services/api.service';
+
+@Injectable({ providedIn: 'root' })
+export class NombreFeatureService {
+  constructor(private apiService: ApiServices) { }
+
+  // TODOS LOS METODOS SON SIMPLES WRAPPERS DE ApiServices.apiCall()
+  metodoFeature(data: TipoParametro): Observable<any> {
+    return this.apiService.apiCall('/ruta/endpoint', 'METODO_HTTP', data);
+  }
+}
+```
+
+⚠️ **REGLAS INQUEBRANTABLES PARA SERVICIOS:**
+1.  **NO AGREGAR LOGICA EN LOS SERVICIOS**
+2.  Los servicios son SOLAMENTE puente que llama a `ApiServices`
+3.  No hacer transformaciones, mapas, ni nada aqui, eso va en el componente
+4.  No implementar cache ni logica adicional, usar exclusivamente `apiCall()`
+5.  Un solo servicio por feature, exactamente igual que los existentes
+
+## 🔗 API SERVICE EL PADRE DE TODOS
+- `ApiServices` es el servicio base unico que maneja TODAS las peticiones HTTP
+- **TODOS** los servicios del proyecto deben inyectar y usar solo este servicio
+- No usar directamente `HttpClient` en ningun otro lugar
+- Metodos disponibles:
+  - `apiCall(endpoint, method, data)` -> Para peticiones autenticadas (NORMAL)
+  - `publicApiCall(endpoint, method, data)` -> Para endpoints publicos
+  - `pingApiCall(endpoint, method, data)` -> Para health checks
+
+## 🧩 PATRON DE COMPONENTES
+✅ **Estructura estandar:**
+```typescript
+@Component({
+  selector: 'app-nombre-feature',
+  standalone: true,
+  imports: [],
+  templateUrl: './nombre-feature.component.html',
+  styleUrl: './nombre-feature.component.scss'
+})
+export class NombreFeatureComponent {
+  constructor(private nombreFeatureService: NombreFeatureService) { }
+}
+```
+
+## 🎨 ESTILOS
+- Cada componente tiene su propio archivo `.scss`
+- Estilos globales en `src/styles/` y `src/scss/`
+- Usar variables y mixins existentes, no crear nuevos sin necesidad
+- BEM no es obligatorio, seguir el estilo ya usado en archivos existentes
+
+## 🚫 COSAS QUE NO SE DEBEN HACER NUNCA:
+❌ No crear servicios que no sigan exactamente el patron existente
+❌ No usar HttpClient directamente en componentes
+❌ No agregar logica de negocio en los servicios (solo en componentes)
+❌ No romper la estructura de directorios
+❌ No inventar nuevas convenciones, copiar exactamente lo que ya existe
+❌ No cambiar nada en `api.service.ts` sin previa aprobación
+❌ No modificar el comportamiento base de peticiones
+
+## ✅ COSAS QUE SI SE DEBEN HACER SIEMPRE:
+✅ Cuando crees una feature NUEVA:
+  1.  Crear directorio `src/app/nueva-feature/`
+  2.  Crear `nueva-feature.component.ts/html/scss`
+  3.  Crear `nueva-feature.service.ts` siguiendo exactamente el patron
+  4.  El servicio solo debe tener metodos que llamen a `this.apiService.apiCall()`
+  5.  Inyectar el servicio en el componente
+  6.  Todo el resto de logica va DENTRO del componente
+
+✅ Copiar y pegar patrones exactamente iguales a los ya existentes, no reinventar
+✅ Seguir la misma indentacion, saltos de linea y formato que el codigo actual
+✅ Respetar los imports y estructura de clases tal cual estan
