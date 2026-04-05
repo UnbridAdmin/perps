@@ -325,14 +325,24 @@
         }
 
         .overthrow-btn {
-          background: #F7D044;
-          color: black;
-          border: none;
-          padding: 6px 14px;
-          border-radius: 18px;
-          font-weight: 800;
-          font-size: 0.85rem;
+          font-size: 11px !important;
+          padding: 1px 12px;
+          border-radius: 10px !important;
+          background: #f5c842;
+          color: #000;
+          border: 0.5px solid rgba(193, 134, 35, 0.3);
           cursor: pointer;
+          white-space: nowrap;
+          font-weight: 500;
+          height: 32px !important;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          span {
+            font-size: 11px !important;
+          }
+
 
           &:disabled {
             opacity: 0.5;
