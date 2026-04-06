@@ -7,6 +7,6 @@ export class PriceTokenService {
   constructor(private apiService: ApiServices) { }
 
   getTokenPrice(): Observable<any> {
-    return this.apiService.apiCall('/fierce/token-price', 'GET', {});
+    return this.apiService.apiCall('fierce/token-price', 'GET', {});
   }
 }

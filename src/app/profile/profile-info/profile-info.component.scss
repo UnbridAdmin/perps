@@ -171,6 +171,16 @@
   font-size: 22px;
   font-weight: 600;
   color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.verified-check {
+  fill: $primary-color;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
 }
 
 .creator-badge {
@@ -184,6 +194,7 @@
   border-radius: 20px;
   font-size: 12px;
   white-space: nowrap;
+  cursor: pointer;
 }
 
 .creator-badge svg {
