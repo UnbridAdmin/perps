@@ -7,6 +7,9 @@ import { WalletConnectService } from '../../services/walletconnect.service';
 import { UserProfileResponse } from '../../shared/models/user-profile.model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EditProfileModalComponent } from '../edit-profile-modal/edit-profile-modal.component';
+import { ApiServices } from '../../services/api.service';
+import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-profile-info',
@@ -19,6 +22,7 @@ export class ProfileInfoComponent implements OnInit {
 
   public userProfile: UserProfileResponse | null = null;
   public isLoading: boolean = true;
+  public isFollowingLoading: boolean = false;
   public errorMessage: string | null = null;
   public isOwnProfile: boolean = false;
   @Output() userIdLoaded = new EventEmitter<number>();
@@ -29,7 +33,9 @@ export class ProfileInfoComponent implements OnInit {
     private authService: AuthorizationService,
     private walletService: WalletConnectService,
     private route: ActivatedRoute,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private apiService: ApiServices,
+    private confirmDialogService: ConfirmDialogService
   ) { }
 
   ngOnInit(): void {
@@ -142,6 +148,102 @@ export class ProfileInfoComponent implements OnInit {
     }, (reason) => {
       // Dismissed
     });
+  }
+
+  public async followUser(): Promise<void> {
+    if (!this.userProfile || this.isOwnProfile || this.isFollowingLoading) return;
+
+    this.isFollowingLoading = true;
+
+    try {
+      // 1. Check if user is authenticated
+      if (!this.authService.isAuthenticated()) {
+        const isConnected = await this.walletService.checkConnection();
+        if (!isConnected) {
+          this.isFollowingLoading = false;
+          this.confirmDialogService.showInfo({
+            title: 'Billetera requerida',
+            message1: 'Por favor, conecta tu billetera para poder seguir a otros usuarios.'
+          });
+          return;
+        }
+
+        const walletAddress = await this.walletService.getConnectedWalletAddress();
+
+        try {
+          const existResponse = await firstValueFrom(this.authService.existUser({ address: walletAddress })) as any;
+          if (existResponse?.data?.exists) {
+            this.isFollowingLoading = false;
+            // User exists in DB but not authenticated - show login required
+            this.confirmDialogService.showInfo({
+              title: 'Inicio de sesión requerido',
+              message1: 'Debes iniciar sesión para poder realizar esta acción.'
+            });
+            return;
+          }
+        } catch (error) {
+          console.error('Error checking if user exists:', error);
+        }
+
+        // Generate message to sign
+        const message = `Click to sign in and accept the Unbrid Terms of Service(https://unbrid.com/privacy-policy). Login with secure code: ${Date.now()}`;
+
+        // Request signature
+        const signatureData = await this.walletService.signMessage(message);
+
+        // Create user request payload
+        const createUserRequest = {
+          address: walletAddress,
+          coin_id: 1,
+          message: signatureData.message,
+          signature: signatureData.signature,
+          referral_code: 'syyPTsvh70245910'
+        };
+
+        // Call secure-create-user endpoint
+        const createUserResponse = await firstValueFrom(
+          this.apiService.publicApiCall('user/secure-create-user', 'POST', createUserRequest)
+        ) as any;
+
+        if (createUserResponse?.success || createUserResponse?.message === 'SUCCESS') {
+          if (createUserResponse?.data && createUserResponse.data.length > 0) {
+            this.authService.setSession(createUserResponse.data[0].expires, walletAddress);
+          }
+        } else {
+          throw new Error('Failed to authenticate');
+        }
+      }
+
+      // 2. Proceed with follow action
+      this.profileService.followUser(this.userProfile.user_id).subscribe({
+        next: (resp: any) => {
+          this.isFollowingLoading = false;
+          if (this.userProfile) {
+            this.userProfile.followers++; // Optimistic update
+          }
+          this.confirmDialogService.showSuccess({
+            title: '¡Siguiendo!',
+            message1: `Ahora sigues a ${this.userProfile?.username}.`
+          });
+        },
+        error: (err) => {
+          this.isFollowingLoading = false;
+          console.error('Error following user:', err);
+          this.confirmDialogService.showError({
+            title: 'Error',
+            message1: err.error?.message || 'No se pudo completar la acción de seguir.'
+          });
+        }
+      });
+
+    } catch (error) {
+      this.isFollowingLoading = false;
+      console.error('Authentication/Follow error:', error);
+      this.confirmDialogService.showError({
+        title: 'Error',
+        message1: 'Hubo un problema al procesar tu solicitud. Por favor intenta de nuevo.'
+      });
+    }
   }
 
 }

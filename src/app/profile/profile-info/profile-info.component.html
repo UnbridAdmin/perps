@@ -72,11 +72,13 @@
     </div>
 
     <!-- Follow Button -->
-    <button class="follow-btn" *ngIf="isOwnProfile" (click)="openEditProfileModal()">
-      <span>☰</span> Edit Profile
+    <button class="follow-btn own" *ngIf="isOwnProfile" (click)="openEditProfileModal()">
+      <i class='bx bx-edit-alt'></i> Edit Profile
     </button>
-    <button class="follow-btn" *ngIf="!isOwnProfile">
-      <span>☰</span> Follow
+    <button class="btn btn-success follow-btn" *ngIf="!isOwnProfile" (click)="followUser()"
+      [disabled]="isFollowingLoading">
+      <i class='bx' [ngClass]="isFollowingLoading ? 'bx-loader-alt bx-spin' : 'bx-user-plus'"></i>
+      {{ isFollowingLoading ? 'Processing...' : 'Follow' }}
     </button>
   </div>
 

@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterOutlet, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { HeaderComponent } from './header/header.component';
 import { SidebarMenuComponent } from './sidebar-menu/sidebar-menu.component';
-import { NewsComponent } from './news/news.component';
 import { WalletConnectService, WalletState } from './services/walletconnect.service';
 import { CommonService } from './shared/commonService';
 import { AuthorizationService } from './services/authorization.service';
@@ -11,10 +10,12 @@ import { CacheService } from './services/cache.service';
 import { WalletConnectionCheckerService } from './services/WalletConnectionChecker.service';
 import { LoginModel } from './shared/models/login.model';
 import { Subscription, filter, distinctUntilChanged } from 'rxjs';
+import { PriceTokenComponent } from './price-token/price-token.component';
+import { TopBurnersComponent } from './top-burners/top-burners.component';
 
 @Component({
   selector: 'app-root',
-  imports: [CommonModule, RouterOutlet, HeaderComponent, SidebarMenuComponent, NewsComponent],
+  imports: [CommonModule, RouterOutlet, HeaderComponent, SidebarMenuComponent, PriceTokenComponent, TopBurnersComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   standalone: true,
@@ -208,7 +209,7 @@ export class AppComponent implements OnInit, OnDestroy {
         // RECONEXION: Verificar si ya está autenticado para esta dirección específica
         const sessionAddress = localStorage.getItem('sessionAddress');
         const isSameAddress = sessionAddress?.toLowerCase() === newAddress;
-        
+
         // ALWAYS request signature after logout - don't skip authentication
         if (this.authorizationService.isAuthenticated() && isSameAddress) {
           console.log('🟢 RECONEXIÓN - Usuario ya autenticado para esta dirección, saltando firma');
@@ -300,19 +301,19 @@ export class AppComponent implements OnInit, OnDestroy {
     this.isFirstConnection = true;
     this.isDisconnecting = true;
     this.currentAccount = null; // Reset so reconnection with same wallet is detected as new
-    
+
     // 1. Detener el monitoreo de la billetera primero
     this.walletConnectService.stopWalletMonitoring();
-    
+
     // 2. Limpiar toda la sesión de autorización
     this.authorizationService.clearSession();
-    
+
     // 3. Limpiar almacenamiento local
     this.clearAllStorage();
-    
+
     // 4. Limpiar estado de la aplicación
     this.clearApplicationState();
-    
+
     this.signing = true;
 
     // Redirigir a /home después del logout
@@ -350,7 +351,7 @@ export class AppComponent implements OnInit, OnDestroy {
     // Verificar si la dirección actual coincide con la sesión almacenada
     const sessionAddress = localStorage.getItem('sessionAddress');
     const isSameAddress = sessionAddress?.toLowerCase() === address.toLowerCase();
-    
+
     // Solo saltar firma si estamos autenticados Y es la misma dirección
     if (this.authorizationService.isAuthenticated() && isSameAddress) {
       console.log('✅ Usuario ya autenticado para esta dirección, saltando firma.');
@@ -426,25 +427,25 @@ export class AppComponent implements OnInit, OnDestroy {
   private async quickCleanPreviousSession(): Promise<void> {
     try {
       console.log('🧹 Limpiando sesión anterior para cambio de cuenta...');
-      
+
       // 1. Detener monitoreo de wallet
       this.walletConnectService.stopWalletMonitoring();
-      
+
       // 2. Limpiar sesión de autorización
       this.authorizationService.clearSession();
-      
+
       // 3. Limpiar almacenamiento local específico
       const keysToRemove = ['expirationDate', 'signatureData', 'sessionAddress', 'username', 'user_id'];
       keysToRemove.forEach(key => localStorage.removeItem(key));
-      
+
       // 4. Limpiar cache
       this.cacheService.clear();
-      
+
       // 5. Resetear estado de la aplicación
       this.commonService.saveAccountAddress('');
       this.commonService.updateUserAddress.next(true);
       this.walletConnectService.updateBalance.next(true);
-      
+
       console.log('✅ Sesión anterior completamente limpiada');
     } catch (error) {
       console.log('⚠️ Error en limpieza de sesión anterior:', error);

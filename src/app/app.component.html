@@ -8,7 +8,10 @@
     <div class="main-content">
       <router-outlet></router-outlet>
     </div>
-    <app-news *ngIf="showNewsSidebar"></app-news>
+    <div class="sidebar-content" *ngIf="showNewsSidebar">
+      <app-price-token></app-price-token>
+      <app-top-burners></app-top-burners>
+    </div>
   </div>
   <app-toast></app-toast>
 </div>

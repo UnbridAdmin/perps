@@ -1,0 +1,54 @@
+<div class="top-burners-container">
+  <div class="header">
+    <div class="header-left">
+      <span class="label">LEADERBOARD</span>
+      <h2 class="title">Top Burners</h2>
+    </div>
+    <div class="header-info" title="Los guardianes que han quemado más Fierce para forjar el futuro.">
+      <i class="bi bi-info-circle"></i>
+    </div>
+  </div>
+
+  <div class="burners-list" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50"
+    (scrolled)="onScroll()" [scrollWindow]="false">
+
+    <div *ngFor="let burner of burners; let i = index" class="burner-row" [ngClass]="{'top-row': i < 3}">
+      <div class="user-cell">
+        <div class="avatar-box">
+          <img [src]="burner.url_avatar || 'https://api.dicebear.com/9.x/fun-emoji/svg?seed=' + burner.user_username"
+            alt="Avatar">
+          <span class="rank-badge" *ngIf="i < 3">{{ i + 1 }}</span>
+        </div>
+        <div class="user-meta">
+          <span class="username" (click)="navigateToProfile(burner.user_username, $event)" style="cursor: pointer;">{{
+            burner.user_username }}</span>
+        </div>
+      </div>
+
+      <div class="value-cell">
+        <span class="amount"
+          [ngClass]="{'highlight-gold': i === 0, 'highlight-silver': i === 1, 'highlight-bronze': i === 2}">
+          {{ burner.total_burned_fierce | number:'1.0-1' }}
+        </span>
+        <span class="unit">FIERCE</span>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-state">
+      <div class="spinner"></div>
+      <span>Cargando guardianes...</span>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && burners.length === 0" class="empty-state">
+      <i class="bi bi-fire icon"></i>
+      <p>Aún no hay guardianes. ¡Sé el primero en quemar!</p>
+    </div>
+
+    <!-- End Message -->
+    <div *ngIf="!hasMoreData && burners.length > 0" class="end-message">
+      Has llegado al final de la élite.
+    </div>
+  </div>
+</div>

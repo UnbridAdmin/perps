@@ -18,4 +18,8 @@ export class ProfileInfoService {
         return this.apiService.publicApiCall('user/get-user-public-profile', 'GET', { username });
     }
 
+    public followUser(follower_id: number): Observable<any> {
+        return this.apiService.apiCall('user/follow', 'POST', { follower_id });
+    }
+
 }
