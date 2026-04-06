@@ -1,5 +1,4 @@
-<div class="env-hill-section" (click)="onOverthrow()"
-  [title]="'Click para ver comentario y destronar'">
+<div class="env-hill-section" (click)="onOverthrow()" [title]="'Click para ver comentario y destronar'">
   <div class="env-hill-left">
     <div class="env-hill-text">
       <span class="hill-label"> 👑 Rey de la Colina &mdash; </span>
@@ -22,7 +21,7 @@
     style="display: flex; gap: 12px; align-items: flex-start;">
     <div class="env-avatar"
       [style.backgroundImage]="'url(' + (comment.avatar || 'https://api.dicebear.com/9.x/fun-emoji/svg') + ')'"
-      [style.backgroundSize]="'cover'"></div>
+      [style.backgroundSize]="'cover'" (click)="navigateToProfile(comment.user, $event)" style="cursor: pointer;"></div>
     <div style="flex: 1; font-size: 13px; color: var(--env-text);">
       <span [innerHTML]="getTextWithLinks(comment.text)"></span>
     </div>

@@ -19,6 +19,17 @@
   min-height: calc(100vh - $header-height);
   background: $background-color;
   max-width: calc($container-max-width - $sidebar-width);
+
+  .sidebar-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding-right: 25px;
+    height: calc(100vh - $header-height);
+    overflow-y: auto;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+  }
 }
 
 .container.full-width {

@@ -11,10 +11,11 @@ import { WalletConnectionCheckerService } from './services/WalletConnectionCheck
 import { LoginModel } from './shared/models/login.model';
 import { Subscription, filter, distinctUntilChanged } from 'rxjs';
 import { PriceTokenComponent } from './price-token/price-token.component';
+import { TopBurnersComponent } from './top-burners/top-burners.component';
 
 @Component({
   selector: 'app-root',
-  imports: [CommonModule, RouterOutlet, HeaderComponent, SidebarMenuComponent, PriceTokenComponent],
+  imports: [CommonModule, RouterOutlet, HeaderComponent, SidebarMenuComponent, PriceTokenComponent, TopBurnersComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   standalone: true,
