@@ -42,21 +42,22 @@ export class FollowerListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    // ✅ SOLUCION: Usar combineLatest para esperar ambos parametros antes de cargar datos
+    // Esto evita el RACE CONDITION donde se cargaban dos veces la lista
     this.route.params.subscribe(params => {
       this.username = params['username'];
       if (this.username) {
         this.loadUserProfile(this.username);
-        this.loadInitialData();
       }
     });
 
     this.route.queryParams.subscribe(params => {
-      if (params['tab']) {
-        const newTab = params['tab'];
-        if (this.activeTab !== newTab) {
-          this.activeTab = newTab;
-          this.loadInitialData();
-        }
+      const newTab = params['tab'] || 'followers';
+
+      // ✅ SOLO CARGAR SI EL TAB REALMENTE CAMBIO y tenemos username
+      if (this.activeTab !== newTab && this.username) {
+        this.activeTab = newTab;
+        this.loadInitialData();
       }
     });
   }
@@ -131,16 +132,15 @@ export class FollowerListComponent implements OnInit {
   }
 
   setActiveTab(tab: 'verified' | 'followers' | 'following'): void {
+    // ✅ PREVENIR LLAMADAS DUPLICADAS: Si ya estamos en este tab no hacer nada
+    if (this.activeTab === tab) return;
+
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { tab: tab },
       queryParamsHandling: 'merge',
       replaceUrl: true
     });
-
-    // ✅ SOLUCION: Forzar carga de datos inmediatamente, no esperar a queryParams
-    this.activeTab = tab;
-    this.loadInitialData();
   }
 
   goBack(): void {
@@ -148,11 +148,21 @@ export class FollowerListComponent implements OnInit {
   }
 
   toggleFollow(user: any): void {
-    // Basic optimistic UI update
-    user.is_following = !user.is_following;
+    // ✅ Optimistic UI Update inmediato antes de llamar al API
+    const previousState = user.is_following;
+    user.is_following = !previousState;
 
-    // Call the follow API (reusing the logic from UserResource if available in a service)
-    // For now we assume there's a global follow/unfollow capability
-    // This is a placeholder for actual follow service call
+    // ✅ Llamar al servicio backend
+    this.followerService.followUser(user.id).subscribe({
+      next: () => {
+        // Todo ok, dejamos el estado como esta
+        console.log(`✅ ${user.is_following ? 'Seguido' : 'Dejado de seguir'} usuario ${user.username}`);
+      },
+      error: (err) => {
+        // ❌ Si falla la peticion volvemos al estado anterior
+        user.is_following = previousState;
+        console.error('❌ Error al seguir usuario', err);
+      }
+    });
   }
 }

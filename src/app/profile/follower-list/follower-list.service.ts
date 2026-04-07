@@ -5,7 +5,7 @@ import { ApiServices } from '../../services/api.service';
   providedIn: 'root'
 })
 export class FollowerListService {
-  constructor(private apiService: ApiServices) {}
+  constructor(private apiService: ApiServices) { }
 
   public getFollowers(username: string, page: number) {
     const params = { username, page };
@@ -20,5 +20,9 @@ export class FollowerListService {
   public getFollowings(username: string, page: number) {
     const params = { username, page };
     return this.apiService.apiCall('user/followings', 'GET', params);
+  }
+
+  public followUser(userId: number) {
+    return this.apiService.apiCall('user/follow', 'POST', { follower_id: userId });
   }
 }
