@@ -121,10 +121,12 @@
     <div class="handle">@{{ userProfile.username }}</div>
 
     <div class="stats">
-      <div class="stat-item">
+      <div class="stat-item" [routerLink]="['/profile/followers', userProfile.username]"
+        [queryParams]="{tab: 'followers'}">
         <strong>{{ userProfile.followers }}</strong> Followers
       </div>
-      <div class="stat-item">
+      <div class="stat-item" [routerLink]="['/profile/followers', userProfile.username]"
+        [queryParams]="{tab: 'following'}">
         <strong>{{ userProfile.following }}</strong> Following
       </div>
     </div>
