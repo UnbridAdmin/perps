@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { ProfileInfoService } from './profile-info.service';
@@ -9,7 +9,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EditProfileModalComponent } from '../edit-profile-modal/edit-profile-modal.component';
 import { ApiServices } from '../../services/api.service';
 import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Subscription, combineLatest } from 'rxjs';
 import { GetVerifiedModalComponent } from '../get-verified-modal/get-verified-modal.component';
 
 @Component({
@@ -19,7 +19,7 @@ import { GetVerifiedModalComponent } from '../get-verified-modal/get-verified-mo
   templateUrl: './profile-info.component.html',
   styleUrl: './profile-info.component.scss'
 })
-export class ProfileInfoComponent implements OnInit {
+export class ProfileInfoComponent implements OnInit, OnDestroy {
 
   public userProfile: UserProfileResponse | null = null;
   public isLoading: boolean = true;
@@ -28,6 +28,7 @@ export class ProfileInfoComponent implements OnInit {
   public isOwnProfile: boolean = false;
   @Output() userIdLoaded = new EventEmitter<number>();
   @Output() profileTypeDetected = new EventEmitter<'USER' | 'RWA'>();
+  private routeSubscription?: Subscription;
 
   constructor(
     private profileService: ProfileInfoService,
@@ -40,11 +41,24 @@ export class ProfileInfoComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.loadProfile();
+    this.routeSubscription = combineLatest([
+      this.route.paramMap,
+      this.route.queryParamMap
+    ]).subscribe(() => {
+      this.loadProfile();
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.routeSubscription) {
+      this.routeSubscription.unsubscribe();
+    }
   }
 
   private loadProfile(): void {
     this.isLoading = true;
+    this.userProfile = null;
+    this.errorMessage = null;
     // Check both path parameters (/leocruz) and query parameters (?username=leocruz)
     const usernameFromUrl = this.route.snapshot.paramMap.get('username') ||
       this.route.snapshot.queryParamMap.get('username');

@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { ProfileInfoService } from '../../profile-info/profile-info.service';
@@ -7,6 +7,7 @@ import { WalletConnectService } from '../../../services/walletconnect.service';
 import { UserProfileResponse } from '../../../shared/models/user-profile.model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EditProfileModalComponent } from '../../edit-profile-modal/edit-profile-modal.component';
+import { Subscription, combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-rwa-profile-info',
@@ -15,7 +16,7 @@ import { EditProfileModalComponent } from '../../edit-profile-modal/edit-profile
   templateUrl: './rwa-profile-info.component.html',
   styleUrl: './rwa-profile-info.component.scss'
 })
-export class RwaProfileInfoComponent implements OnInit {
+export class RwaProfileInfoComponent implements OnInit, OnDestroy {
 
   public userProfile: UserProfileResponse | null = null;
   public isLoading: boolean = true;
@@ -23,6 +24,7 @@ export class RwaProfileInfoComponent implements OnInit {
   public isOwnProfile: boolean = false;
   @Output() userIdLoaded = new EventEmitter<number>();
   @Output() profileTypeDetected = new EventEmitter<'USER' | 'RWA'>();
+  private routeSubscription?: Subscription;
 
   constructor(
     private profileService: ProfileInfoService,
@@ -33,11 +35,24 @@ export class RwaProfileInfoComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.loadProfile();
+    this.routeSubscription = combineLatest([
+      this.route.paramMap,
+      this.route.queryParamMap
+    ]).subscribe(() => {
+      this.loadProfile();
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.routeSubscription) {
+      this.routeSubscription.unsubscribe();
+    }
   }
 
   private loadProfile(): void {
     this.isLoading = true;
+    this.userProfile = null;
+    this.errorMessage = null;
     // Check both path parameters (/leocruz) and query parameters (?username=leocruz)
     const usernameFromUrl = this.route.snapshot.paramMap.get('username') ||
       this.route.snapshot.queryParamMap.get('username');
