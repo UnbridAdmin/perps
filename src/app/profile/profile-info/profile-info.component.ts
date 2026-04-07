@@ -10,6 +10,7 @@ import { EditProfileModalComponent } from '../edit-profile-modal/edit-profile-mo
 import { ApiServices } from '../../services/api.service';
 import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
 import { firstValueFrom } from 'rxjs';
+import { GetVerifiedModalComponent } from '../get-verified-modal/get-verified-modal.component';
 
 @Component({
   selector: 'app-profile-info',
@@ -144,6 +145,27 @@ export class ProfileInfoComponent implements OnInit {
         console.log('Profile updated:', result);
         // Here we would call the update service and then reload
         this.userProfile = { ...this.userProfile, ...result };
+      }
+    }, (reason) => {
+      // Dismissed
+    });
+  }
+
+  public openGetVerifiedModal(): void {
+    if (!this.userProfile) return;
+
+    const modalRef = this.modalService.open(GetVerifiedModalComponent, {
+      centered: true,
+      backdrop: 'static',
+      windowClass: 'get-verified-modal-window'
+    });
+
+    modalRef.componentInstance.userProfile = this.userProfile;
+
+    modalRef.result.then((result) => {
+      if (result) {
+        // Verification success — update profile status locally or reload
+        this.loadProfile();
       }
     }, (reason) => {
       // Dismissed

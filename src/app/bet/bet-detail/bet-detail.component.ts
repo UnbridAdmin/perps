@@ -95,8 +95,9 @@ export class BetDetailComponent implements OnInit, OnDestroy {
           predictionCall.subscribe({
             next: (predResponse: any) => {
               let kingComment = null;
+              let predData = null;
               if (predResponse?.data?.data && predResponse.data.data.length > 0) {
-                const predData = predResponse.data.data[0];
+                predData = predResponse.data.data[0];
                 kingComment = predData.king_comment;
               }
 
@@ -113,12 +114,14 @@ export class BetDetailComponent implements OnInit, OnDestroy {
                 prediction_end_date: poolData.predictionEndDate,
                 betBurn: poolData.betBurn,
                 betPlatformRewards: poolData.betPlatformRewards,
+                creator_is_verified: predData?.creator_is_verified,
                 featuredComment: kingComment ? {
                   user: kingComment.username,
                   avatar: kingComment.avatar || `https://api.dicebear.com/9.x/fun-emoji/svg?seed=${kingComment.username}`,
                   text: kingComment.comment,
                   gifUrl: kingComment.url_image || undefined,
-                  burnedAmount: kingComment.burned_fierce || 0
+                  burnedAmount: kingComment.burned_fierce || 0,
+                  is_verified: kingComment.is_verified
                 } : null,
                 marketInfo: {
                   poolAmount: poolData.marketInfo?.poolAmount || '0',

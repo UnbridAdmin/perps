@@ -9,4 +9,6 @@ export interface UserProfileResponse {
     fierce_balance?: number;
     user_id: number;
     type_profile: 'USER' | 'RWA';
+    is_verified?: string;
+    verified_last_date?: string;
 }

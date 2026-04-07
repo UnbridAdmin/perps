@@ -137,6 +137,16 @@ $text-dim: #acb4cf;
                         font-size: 0.95rem;
                         font-weight: 600;
                         color: #f1f5f9;
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 6px;
+                    }
+
+                    .verified-check {
+                        fill: #{variables.$primary-color};
+                        width: 18px;
+                        height: 18px;
+                        flex-shrink: 0;
                     }
 
                     .role {
@@ -159,9 +169,18 @@ $text-dim: #acb4cf;
                     font-weight: 700;
                     color: $accent;
 
-                    &.highlight-gold { color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.2); }
-                    &.highlight-silver { color: #cbd5e1; }
-                    &.highlight-bronze { color: #b45309; }
+                    &.highlight-gold {
+                        color: #ffd700;
+                        text-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+                    }
+
+                    &.highlight-silver {
+                        color: #cbd5e1;
+                    }
+
+                    &.highlight-bronze {
+                        color: #b45309;
+                    }
                 }
 
                 .unit {
@@ -181,7 +200,9 @@ $text-dim: #acb4cf;
     }
 
     // States
-    .loading-state, .empty-state, .end-message {
+    .loading-state,
+    .empty-state,
+    .end-message {
         text-align: center;
         padding: 20px;
         color: $text-muted;
@@ -199,7 +220,11 @@ $text-dim: #acb4cf;
     }
 }
 
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
 
 @media (max-width: 768px) {
     .top-burners-container {

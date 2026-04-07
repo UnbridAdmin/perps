@@ -1,0 +1,78 @@
+<div class="modal-wrapper">
+    <!-- Modal Header -->
+    <div class="modal-header">
+        <button class="btn-close-action" (click)="activeModal.dismiss()" aria-label="Close">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+        </button>
+        <div class="header-title">Obtener verificación</div>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-scroll-area">
+        <div class="verification-hero">
+            <div class="badge-display">
+                <svg viewBox="0 0 24 24" aria-hidden="true" class="verified-icon shadow">
+                    <g>
+                        <path
+                            d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.97-.81-4.08s-2.49-1.46-4.08-1.01c-.67-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.45-2.97-.19-4.08.81C3.39 5.39 3.14 6.97 3.6 8.36c-1.31.67-2.19 1.91-2.19 3.34s.88 2.67 2.19 3.34c-.46 1.39-.21 2.97.8 4.08s2.49 1.46 4.08 1.01c.67 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.33-2.19c1.4.45 2.97.19 4.08-.81s1.46-2.49 1.01-4.08c1.31-.67 2.19-1.91 2.19-3.34zm-11.71 4.2L6.8 12.46l1.41-1.42 2.26 2.26 4.8-5.23 1.47 1.35-6.2 6.78z">
+                        </path>
+                    </g>
+                </svg>
+            </div>
+            <!-- <h2>Obtén tu marca de verificación</h2>
+            <p class="subtitle">Destaca en la red y muestra tu autenticidad.</p> -->
+        </div>
+
+        <div class="benefits-section">
+            <div class="benefit-item">
+                <div class="benefit-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="benefit-text">
+                    <h4>Identidad Verificada</h4>
+                    <p>Muestra a todos que eres un usuario genuino y confiable.</p>
+                </div>
+            </div>
+            <div class="benefit-item">
+                <div class="benefit-icon">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <div class="benefit-text">
+                    <h4>Mayor Visibilidad</h4>
+                    <p>Tus publicaciones y predicciones destacarán en el feed.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-content">
+                <div class="info-icon">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <div class="info-text">
+                    <strong>Importante:</strong> Para mantener la marca de verificación activa, es necesario quemar 100
+                    Fierce mensualmente.
+                </div>
+            </div>
+        </div>
+
+        <div class="action-footer">
+            <div class="price-display">
+                <span class="price-label">Costo de activación</span>
+                <div class="price-value">
+                    <span class="amount">100</span>
+                    <span class="currency">Fierce</span>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-success btn-block btn-verify" (click)="getVerified()" [disabled]="isLoading">
+                    <span *ngIf="!isLoading">Activar Verificación</span>
+                    <span *ngIf="isLoading">Procesando...</span>
+                </button>
+            </div>
+            <p class="terms-hint">Al activar, aceptas los términos de servicio de Envision.</p>
+        </div>
+    </div>
+</div>

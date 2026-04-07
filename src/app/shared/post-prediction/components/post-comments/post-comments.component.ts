@@ -21,6 +21,7 @@ interface Comment {
   likes: number;
   isLiked?: boolean;
   gifUrl?: string;
+  is_verified?: string;
 }
 
 @Component({
@@ -89,7 +90,8 @@ export class PostCommentsComponent implements OnInit {
           text: apiComment.comment,
           gifUrl: apiComment.url_image,
           timeAgo: this.formatTimeAgo(apiComment.created_at),
-          likes: 0 // Backend currently doesn't support likes
+          likes: 0, // Backend currently doesn't support likes
+          is_verified: apiComment.is_verified
         }));
 
         this.comments = [...this.comments, ...mappedComments];
