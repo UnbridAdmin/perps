@@ -25,15 +25,13 @@
 
   <!-- User List Section -->
   <section class="user-list">
-    <div
-      *ngFor="let user of followers"
-      class="list-item">
+    <div *ngFor="let user of followers" class="list-item">
       <div class="user-card">
         <div class="avatar-container">
           <img [src]="user.avatar_url" alt="{{ user.display_name }}" class="avatar">
         </div>
         <div class="user-details">
-          <div class="top-row">
+          <div class="content-wrapper">
             <div class="name-badge-group">
               <span class="user-display-name">{{ user.display_name }}</span>
               <svg *ngIf="user.is_verified" class="verified-icon" viewBox="0 0 22 22" aria-hidden="true">
@@ -44,18 +42,20 @@
                 </g>
               </svg>
             </div>
-            <div class="actions">
-              <button class="btn btn-success" [class.following]="user.is_following" (click)="toggleFollow(user)">
-                {{ user.is_following ? 'Following' : (user.follows_you ? 'Follow back' : 'Follow') }}
-              </button>
+            <div class="middle-row">
+              <span class="user-handle">@{{ user.username }}</span>
+              <span *ngIf="user.follows_you" class="follows-you-badge">Follows you</span>
+            </div>
+            <div class="bottom-row">
+              <p class="bio">{{ user.bio }}</p>
             </div>
           </div>
-          <div class="middle-row">
-            <span class="user-handle">@{{ user.username }}</span>
-            <span *ngIf="user.follows_you" class="follows-you-badge">Follows you</span>
-          </div>
-          <div class="bottom-row">
-            <p class="bio">{{ user.bio }}</p>
+          <div class="actions">
+            <button class="btn follow-btn" [class.following]="user.is_following" (click)="toggleFollow(user)">
+              <span class="text-normal">{{ user.is_following ? 'Following' : (user.follows_you ? 'Follow back' :
+                'Follow') }}</span>
+              <span class="text-hover" *ngIf="user.is_following">Unfollow</span>
+            </button>
           </div>
         </div>
       </div>

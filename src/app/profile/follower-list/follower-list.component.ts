@@ -100,7 +100,10 @@ export class FollowerListComponent implements OnInit {
             username: u.user_username,
             display_name: u.user_username, // Using username as display name
             bio: u.description || '',
-            avatar_url: u.url_avatar || 'assets/images/default-avatar.png',
+            // ✅ Avatar random generado automaticamente si viene null
+            avatar_url: u.url_avatar && u.url_avatar !== 'null' && u.url_avatar !== ''
+              ? u.url_avatar
+              : `https://api.dicebear.com/9.x/fun-emoji/svg?seed=${u.user_id}`,
             is_following: u.is_following,
             follows_you: u.follows_you,
             is_verified: u.is_verified === 'YES'
