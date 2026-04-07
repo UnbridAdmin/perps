@@ -1,0 +1,133 @@
+# 📋 REGLAS DEL PROYECTO PERPS - Cline Configuration
+# Este archivo contiene todas las convenciones, patrones y reglas de arquitectura del proyecto
+
+## 🏗️ ARQUITECTURA GENERAL
+- Proyecto Angular 20+
+- Arquitectura por Feature / Módulo Vertical
+- Patrón: Cada Componente tiene su propio Servicio
+- Servicios centralizados + Servicios por Feature
+- Comunicación Backend a traves de ApiServices unificado
+
+---
+
+## 📁 ESTRUCTURA DE DIRECTORIOS
+```
+src/app/
+├── [feature-name]/           # Cada funcionalidad en su propia carpeta
+│   ├── [feature-name].component.ts
+│   ├── [feature-name].component.html
+│   ├── [feature-name].component.scss
+│   └── [feature-name].service.ts  ✅ OBLIGATORIO para cada componente
+├── services/                 # Servicios globales compartidos
+├── shared/                   # Componentes y utilidades compartidas
+└── assets/ / environments/
+```
+
+---
+
+## ✅ CONVENCIONES DE NOMENCLATURA
+| Elemento | Estilo | Ejemplo |
+|---|---|---|
+| Archivos | `kebab-case` | `follower-list.component.ts` |
+| Clases | `PascalCase` | `FollowerListComponent` |
+| Servicios | Sufijo `Service` | `TopBurnersService` |
+| Métodos | `camelCase` | `getTopBurners()` |
+| Carpetas | `kebab-case` | `profile/follower-list/` |
+
+---
+
+## 🔌 PATRÓN DE SERVICIOS (OBLIGATORIO)
+
+### ✅ Regla #1: Cada componente debe tener su servicio propio
+✅ NO pongas lógica http directamente en los componentes
+✅ Todo llamado a API pasa POR su servicio específico
+
+### ✅ Regla #2: Estructura estándar de Servicio por Feature
+```typescript
+import { Injectable } from '@angular/core';
+import { ApiServices } from '../services/api.service';
+
+@Injectable({ providedIn: 'root' })
+export class [NombreFeature]Service {
+
+  constructor(private apiService: ApiServices) { }
+
+  // SOLO métodos que llaman al apiService, nada mas
+  public getSomething(param1: type, param2: type) {
+    const params = { param1, param2 };
+    return this.apiService.[metodo]('endpoint/url', 'METHOD', params);
+  }
+}
+```
+
+### ✅ Regla #3: Uso de ApiServices
+Usa exclusivamente estos 3 métodos del ApiServices global:
+| Método | Uso |
+|---|---|
+| `apiCall()` | Llamadas autenticadas (necesitan usuario logueado) |
+| `publicApiCall()` | Endpoints públicos sin autenticación |
+| `pingApiCall()` | Para healthchecks y comprobaciones |
+
+✅ NO uses HttpClient directamente en ningun lugar
+✅ SIEMPRE pasa por ApiServices
+✅ Métodos HTTP permitidos: `GET`, `POST`, `PUT`, `DELETE`
+
+---
+
+## 🎨 PATRÓN DE COMPONENTES
+Cada componente debe tener estos 3 archivos:
+1.  `[nombre].component.ts`       -> Lógica y declaración
+2.  `[nombre].component.html`     -> Template
+3.  `[nombre].component.scss`     -> Estilos ESPECIFICOS solo para este componente
+
+✅ Estilos globales van en `src/styles/` y `src/scss/`
+✅ No repitas estilos, usa variables y clases compartidas
+
+---
+
+## ⚠️ REGLAS DE CODIGO OBLIGATORIAS
+1.  Todos los servicios se injectan con `providedIn: 'root'`
+2.  Siempre tipa parametros y retornos (evita `any` siempre que sea posible)
+3.  El backend siempre devuelve `status: 200` en respuestas exitosas
+4.  Los logs con `console.log()` se mantienen temporalmente en desarrollo
+5.  Todas las llamadas API pasan por el patrón: `Componente -> Servicio Feature -> ApiServices -> Backend`
+
+---
+
+## 🚫 LO QUE NO DEBES HACER
+❌ No crees lógica de negocio en los componentes
+❌ No llames HttpClient directamente
+❌ No pongas servicios en módulos, siempre `providedIn: 'root'`
+❌ No crees archivos sueltos, agrupa todo por feature
+❌ No mezcles lógica de diferentes features en el mismo servicio
+
+---
+
+## 📝 EJEMPLO CORRECTO COMPLETO
+✅ **top-burners.service.ts** (Patrón correcto que sigues):
+```typescript
+import { Injectable } from '@angular/core';
+import { ApiServices } from '../services/api.service';
+
+@Injectable({ providedIn: 'root' })
+export class TopBurnersService {
+  constructor(private apiService: ApiServices) { }
+
+  public getTopBurners(page: number, limit: number) {
+    const params = { page, limit };
+    return this.apiService.publicApiCall('fierce/get-top-burners', 'GET', params);
+  }
+}
+```
+
+✅ Luego el componente INYECTA este servicio, NUNCA llama ApiServices directamente
+
+---
+
+## 🎯 INSTRUCCIONES PARA CUANDO CREES NUEVO CODIGO
+Cuando te pida crear un nuevo componente o funcionalidad:
+1.  Crea la carpeta en `src/app/[nombre-feature]/`
+2.  Crea primero el archivo `.service.ts` siguiendo el patrón
+3.  Crea los 3 archivos del componente
+4.  Registra rutas si es necesario
+5.  Sigue exactamente la misma estructura que los componentes existentes

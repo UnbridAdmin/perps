@@ -12,9 +12,9 @@
 
   <!-- Tabs Navigation -->
   <nav class="tabs-nav">
-    <!-- <button class="tab-item" [class.active]="activeTab === 'verified'" (click)="setActiveTab('verified')">
+    <button class="tab-item" [class.active]="activeTab === 'verified'" (click)="setActiveTab('verified')">
       Verified Followers
-    </button> -->
+    </button>
     <button class="tab-item" [class.active]="activeTab === 'followers'" (click)="setActiveTab('followers')">
       Followers
     </button>
@@ -26,7 +26,7 @@
   <!-- User List Section -->
   <section class="user-list">
     <div
-      *ngFor="let user of (activeTab === 'followers' ? followers : activeTab === 'verified' ? (followers | slice:4:5) : [])"
+      *ngFor="let user of followers"
       class="list-item">
       <div class="user-card">
         <div class="avatar-container">
@@ -62,8 +62,15 @@
     </div>
 
     <!-- Empty state or error if data fails/empty -->
-    <div *ngIf="activeTab !== 'followers' || followers.length === 0" class="empty-state">
-      <p>No content to show for this category yet.</p>
+    <div *ngIf="!isLoading && followers.length === 0" class="empty-state">
+      <p>No content to show for {{ activeTab }} yet.</p>
+    </div>
+
+    <!-- Load More -->
+    <div *ngIf="hasMore" class="load-more-container">
+      <button class="load-more-btn" (click)="loadMore()" [disabled]="isLoading">
+        {{ isLoading ? 'Loading...' : 'Load more' }}
+      </button>
     </div>
   </section>
 </div>

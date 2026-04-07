@@ -297,3 +297,32 @@ $border-color: rgba(255, 255, 255, 0.1);
     transform: rotate(360deg);
   }
 }
+
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+  border-top: 1px solid $border-color;
+
+  .load-more-btn {
+    background: transparent;
+    border: 1px solid $border-color;
+    color: #fff;
+    padding: 10px 24px;
+    border-radius: 9999px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover:not(:disabled) {
+      background: $bg-hover;
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}

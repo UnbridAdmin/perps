@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { UserProfileResponse } from '../../shared/models/user-profile.model';
 import { ProfileInfoService } from '../profile-info/profile-info.service';
+import { FollowerListService } from './follower-list.service';
 
 interface FollowerUser {
   id: number;
@@ -28,110 +29,127 @@ export class FollowerListComponent implements OnInit {
   isLoading = true;
   username: string | null = null;
 
-  // Mock data for demonstration
-  followers: FollowerUser[] = [
-    {
-      id: 1,
-      username: 'Star76181457405',
-      display_name: 'Dorothea',
-      bio: "I'm not lazy, just on energy-saving mode.",
-      avatar_url: 'https://picsum.photos/200/200?random=1',
-      is_following: false,
-      follows_you: true
-    },
-    {
-      id: 2,
-      username: 'HeroeFujie',
-      display_name: 'HeroeFujie $XAGE _ Building on @ZugChain 🚀',
-      bio: 'Members : @xyberinc Building on @ZugChain 🚀',
-      avatar_url: 'https://picsum.photos/200/200?random=2',
-      is_following: false,
-      follows_you: true
-    },
-    {
-      id: 3,
-      username: 'TriSumika',
-      display_name: 'TRI SUMIKA',
-      bio: 'Illustrator | Degenooooor',
-      avatar_url: 'https://picsum.photos/200/200?random=3',
-      is_following: false,
-      follows_you: true
-    },
-    {
-      id: 4,
-      username: 'kumurusut',
-      display_name: 'kumurusut',
-      bio: '',
-      avatar_url: 'https://picsum.photos/200/200?random=4',
-      is_following: false,
-      follows_you: true
-    },
-    {
-      id: 5,
-      username: 'Zen0x90',
-      display_name: 'Zen 💧',
-      bio: 'Tensorian #1285 🚀 Analyst | Degen | Collab Director | AMA hoster | 1.3 Mil+ Network | Caller #Nft / #Crypto Advisor 💧 @underground caller',
-      avatar_url: 'https://picsum.photos/200/200?random=5',
-      is_following: false,
-      follows_you: true,
-      is_verified: true
-    }
-  ];
+  // Real data from service
+  followers: any[] = [];
+  currentPage = 1;
+  hasMore = true;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private profileService: ProfileInfoService
-  ) {}
+    private profileService: ProfileInfoService,
+    private followerService: FollowerListService
+  ) { }
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       this.username = params['username'];
       if (this.username) {
         this.loadUserProfile(this.username);
+        this.loadInitialData();
       }
     });
 
-    // Also check for initial tab state from query params if needed
     this.route.queryParams.subscribe(params => {
       if (params['tab']) {
-        this.activeTab = params['tab'];
+        const newTab = params['tab'];
+        if (this.activeTab !== newTab) {
+          this.activeTab = newTab;
+          this.loadInitialData();
+        }
       }
     });
   }
 
   loadUserProfile(username: string): void {
-    this.isLoading = true;
     this.profileService.getUserPublicProfile(username).subscribe({
       next: (resp: any) => {
         if (resp.data && resp.data.length > 0) {
           this.userProfile = resp.data[0];
         }
+      },
+      error: (err) => console.error('Error loading profile', err)
+    });
+  }
+
+  loadInitialData(): void {
+    this.followers = [];
+    this.currentPage = 1;
+    this.hasMore = true;
+    this.loadData();
+  }
+
+  loadData(): void {
+    if (!this.username) return;
+    this.isLoading = true;
+
+    let request;
+    if (this.activeTab === 'followers') {
+      request = this.followerService.getFollowers(this.username, this.currentPage);
+    } else if (this.activeTab === 'verified') {
+      request = this.followerService.getVerifiedFollowers(this.username, this.currentPage);
+    } else {
+      request = this.followerService.getFollowings(this.username, this.currentPage);
+    }
+
+    request.subscribe({
+      next: (resp: any) => {
+        if (resp.data) {
+          const mappedData = resp.data.map((u: any) => ({
+            id: u.user_id,
+            username: u.user_username,
+            display_name: u.user_username, // Using username as display name
+            bio: u.description || '',
+            avatar_url: u.url_avatar || 'assets/images/default-avatar.png',
+            is_following: u.is_following,
+            follows_you: u.follows_you,
+            is_verified: u.is_verified === 'YES'
+          }));
+
+          this.followers = [...this.followers, ...mappedData];
+          this.hasMore = resp.data.length === 100;
+        } else {
+          this.hasMore = false;
+        }
         this.isLoading = false;
       },
       error: (err) => {
-        console.error('Error loading profile', err);
+        console.error('Error loading followers list', err);
         this.isLoading = false;
       }
     });
   }
 
+  loadMore(): void {
+    if (this.hasMore && !this.isLoading) {
+      this.currentPage++;
+      this.loadData();
+    }
+  }
+
   setActiveTab(tab: 'verified' | 'followers' | 'following'): void {
-    this.activeTab = tab;
-    // Update URL query params without navigation
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { tab: tab },
-      queryParamsHandling: 'merge'
+      queryParamsHandling: 'merge',
+      replaceUrl: true
     });
+
+    // ✅ SOLUCION: Forzar carga de datos inmediatamente, no esperar a queryParams
+    this.activeTab = tab;
+    this.loadInitialData();
   }
 
   goBack(): void {
     window.history.back();
   }
 
-  toggleFollow(user: FollowerUser): void {
+  toggleFollow(user: any): void {
+    // Basic optimistic UI update
     user.is_following = !user.is_following;
-    // In a real app, this would call a service
+
+    // Call the follow API (reusing the logic from UserResource if available in a service)
+    // For now we assume there's a global follow/unfollow capability
+    // This is a placeholder for actual follow service call
   }
 }
