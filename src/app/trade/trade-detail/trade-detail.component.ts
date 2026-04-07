@@ -119,7 +119,8 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
                 avatar: rawPred.king_comment.avatar || 'https://api.dicebear.com/9.x/fun-emoji/svg',
                 text: rawPred.king_comment.comment,
                 gifUrl: rawPred.king_comment.url_image || undefined,
-                burnedAmount: rawPred.king_comment.burned_fierce
+                burnedAmount: rawPred.king_comment.burned_fierce,
+                is_verified: rawPred.king_comment.is_verified
               } : undefined
             };
           }

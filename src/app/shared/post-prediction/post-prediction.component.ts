@@ -42,6 +42,7 @@ interface ApiKingComment {
   avatar: string | null;
   url_image: string | null;
   username: string;
+  is_verified: string;
 }
 
 interface ApiPrediction {
@@ -57,6 +58,7 @@ interface ApiPrediction {
   createdAt: string;
   creatorUsername: string;
   creatorAvatar: string;
+  creator_is_verified: string;
   totalVolume: number;
   prediction_mutual_amount: number;
   categoryName: string | null;
@@ -78,6 +80,7 @@ interface Prediction {
   prediction_category_id: number; // Add category ID
   creator: string;
   creatorAvatar?: string;
+  creator_is_verified?: string;
   category: string;
   timeAgo: string;
   participants: string;
@@ -112,6 +115,7 @@ interface Prediction {
     text: string;
     gifUrl?: string;
     burnedAmount: number;
+    is_verified: string;
   };
   actions?: {
     comments: number;
@@ -199,12 +203,12 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.commonService.updateUserAddress.subscribe(() => {
         const isNowAuthenticated = this.authService.isAuthenticated();
-        
+
         // Detect logout: was authenticated, now not authenticated
         if (this.wasAuthenticated && !isNowAuthenticated) {
           console.log('PostPrediction: LOGOUT DETECTED - clearing and reloading public predictions');
           this.isLoading = false;
-          
+
           // Clear current predictions
           this.predictions = [];
           this.apiPredictions = [];
@@ -214,7 +218,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
           setTimeout(() => {
             this.resetAndReload();
           }, 300);
-        } 
+        }
         // Detect login: was not authenticated, now is authenticated
         else if (!this.wasAuthenticated && isNowAuthenticated) {
           console.log('PostPrediction: LOGIN DETECTED - resuming predictions refresh');
@@ -226,7 +230,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
           console.log('PostPrediction: Already authenticated, reloading predictions');
           this.resetAndReload();
         }
-        
+
         // Update tracking
         this.wasAuthenticated = isNowAuthenticated;
       })
@@ -412,6 +416,7 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
         prediction_category_id: apiPred.prediction_category_id,
         creator: apiPred.creatorUsername || 'Prediction Market',
         creatorAvatar: apiPred.creatorAvatar || undefined,
+        creator_is_verified: apiPred.creator_is_verified,
         category: apiPred.categoryName || 'General',
         timeAgo: this.calculateTimeAgo(new Date(apiPred.prediction_create_at)),
         participants: apiPred.totalParticipants,
@@ -443,7 +448,8 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
           avatar: apiPred.king_comment.avatar || 'https://api.dicebear.com/9.x/fun-emoji/svg',
           text: apiPred.king_comment.comment,
           gifUrl: apiPred.king_comment.url_image || undefined,
-          burnedAmount: apiPred.king_comment.burned_fierce
+          burnedAmount: apiPred.king_comment.burned_fierce,
+          is_verified: apiPred.king_comment.is_verified
         } : undefined,
         b_param: apiPred.b_param,
         fee_rate: apiPred.fee_rate
@@ -726,7 +732,8 @@ export class PostPredictionComponent implements OnInit, OnDestroy {
             avatar: 'https://api.dicebear.com/9.x/fun-emoji/svg?seed=you',
             text: form.text,
             gifUrl: form.gifUrl,
-            burnedAmount: newBurnAmount
+            burnedAmount: newBurnAmount,
+            is_verified: 'NO'
           };
 
           this.confirmDialogService.showSuccess({

@@ -232,7 +232,8 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          span{
+
+          span {
             font-size: 11px !important;
           }
 
@@ -339,6 +340,15 @@
     font-size: 13px;
     font-weight: 500;
     color: var(--env-text);
+
+    .verified-check {
+      fill: $primary-color;
+      width: 16px;
+      height: 16px;
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 3px;
+    }
   }
 
   .env-tag {
